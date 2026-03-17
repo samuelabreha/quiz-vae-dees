@@ -181,10 +181,11 @@ function renderQuestion(){
       revealed[String(currentIndex)] = true;
       revealedCount++;
     }
+    if(window.Mentor) Mentor.onAnswerCorrect(questions[currentIndex]);
   };
 
   window.scrollTo({top:0,behavior:'smooth'});
-
+  if(window.Mentor) Mentor.onQuestionShown(q);
 }
 
 function showResults(){
@@ -249,5 +250,6 @@ document.getElementById('startBtn').onclick = async function(){
   }
 };
 </script>
+<script src="mentor.js"></script>
 </body>
 </html>

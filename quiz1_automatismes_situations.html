@@ -697,6 +697,7 @@ function renderCard(){
       <button class="nav-btn primary" onclick="nextCard()">Suivante &#8594;</button>\
     </div>';
   document.getElementById('quizArea').innerHTML = html;
+  if(window.Mentor) Mentor.onQuestionShown(fc);
 }
 
 function selectOption(i){
@@ -721,6 +722,11 @@ function selectOption(i){
   setTimeout(function(){
     document.getElementById('answerSection').scrollIntoView({behavior:'smooth',block:'start'});
   }, 200);
+  // Mentor du Jury
+  if(window.Mentor){
+    if(i === fc.correct) Mentor.onAnswerCorrect(fc);
+    else Mentor.onAnswerWrong(fc, i);
+  }
 }
 
 function markResult(success){
@@ -767,5 +773,6 @@ function resetQuiz(){
 
 init();
 </script>
+<script src="mentor.js"></script>
 </body>
 </html>

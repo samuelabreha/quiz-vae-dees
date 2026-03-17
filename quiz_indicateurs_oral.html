@@ -183,6 +183,7 @@ function renderQuestion() {
   document.getElementById('progressFill').style.width = ((currentIndex + 1) / questions.length * 100) + '%';
   document.getElementById('progressText').textContent = (currentIndex + 1) + ' / ' + questions.length;
   window.scrollTo({top: 0, behavior: 'smooth'});
+  if(window.Mentor) Mentor.onQuestionShown(q);
 }
 
 function selectOption(i) {
@@ -200,6 +201,11 @@ function selectOption(i) {
     score++;
   }
   document.getElementById('answerSection').style.display = 'block';
+  // Mentor du Jury
+  if(window.Mentor){
+    if(i === q.correct) Mentor.onAnswerCorrect(q);
+    else Mentor.onAnswerWrong(q, i);
+  }
   setTimeout(function() {
     document.getElementById('answerSection').scrollIntoView({behavior: 'smooth', block: 'nearest'});
   }, 150);
@@ -238,5 +244,6 @@ function resetQuiz() {
   startQuiz();
 }
 </script>
+<script src="mentor.js"></script>
 </body>
 </html>

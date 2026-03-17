@@ -287,6 +287,7 @@ function renderQcm(){
       <button class="nav-btn" onclick="prevQ()">← Pr\u00e9c\u00e9dente</button>
       <button class="nav-btn primary" id="nextBtn" onclick="nextQ()" disabled>Suivante →</button>
     </div>`;
+  if(window.Mentor) Mentor.onQuestionShown(q);
 }
 
 function selectQcm(i){
@@ -302,6 +303,11 @@ function selectQcm(i){
   document.getElementById('explanation').classList.add('show');
   document.getElementById('nextBtn').disabled=false;
   updateStatsDisplay();
+  // Mentor du Jury
+  if(window.Mentor){
+    if(i===q.correct) Mentor.onAnswerCorrect(q);
+    else Mentor.onAnswerWrong(q, i);
+  }
 }
 
 function nextQ(){
@@ -344,12 +350,14 @@ function renderFc(){
       <button class="nav-btn" onclick="prevFc()">← Pr\u00e9c\u00e9dente</button>
       <button class="nav-btn primary" onclick="nextFc()">Suivante →</button>
     </div>`;
+  if(window.Mentor) Mentor.onQuestionShown(fc);
 }
 
 function revealFc(){
   document.getElementById('answerSection').style.display='block';
   document.getElementById('revealBtn').disabled=true;
   document.getElementById('revealBtn').textContent='R\u00e9ponse affich\u00e9e';
+  if(window.Mentor) Mentor.onAnswerCorrect(fcData[fcOrder[idx]]);
 }
 
 function markFc(ok){
@@ -379,5 +387,6 @@ function showResults(){
 
 init();
 </script>
+<script src="mentor.js"></script>
 </body>
 </html>
