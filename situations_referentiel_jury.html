@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Situations &amp; R&eacute;f&eacute;rentiel Jury &mdash; VAE DEES</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;color:#1a1a2e;min-height:100vh}
+
+/* Header */
+.header{background:linear-gradient(135deg,#1e3a5f 0%,#0f2744 100%);color:#fff;padding:28px 20px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.2)}
+.header h1{font-size:1.35rem;font-weight:800;margin-bottom:4px}
+.header p{font-size:.85rem;opacity:.85}
+.back-link{display:inline-block;margin-top:10px;padding:6px 16px;font-size:.82rem;color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.3);border-radius:8px;transition:all .2s}
+.back-link:hover{background:rgba(255,255,255,.15)}
+
+/* Key phrase banner */
+.key-phrase{max-width:800px;margin:20px auto;padding:16px 20px;background:linear-gradient(135deg,#fef3c7,#fde68a);border:2px solid #f59e0b;border-radius:14px;text-align:center;font-size:.9rem;color:#78350f;line-height:1.6;font-style:italic;font-weight:600}
+
+/* Nav tabs */
+.nav-tabs{max-width:800px;margin:20px auto 0;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:0 16px}
+.nav-tab{padding:10px 18px;border-radius:10px;font-size:.82rem;font-weight:700;text-decoration:none;color:#555;background:#fff;border:2px solid #e5e7eb;transition:all .2s;cursor:pointer}
+.nav-tab:hover,.nav-tab.active{background:#1e3a5f;color:#fff;border-color:#1e3a5f}
+.nav-tab.ais{border-left:4px solid #e10600}
+.nav-tab.finc{border-left:4px solid #2563eb}
+
+/* Container */
+.container{max-width:800px;margin:0 auto;padding:20px 16px}
+
+/* Situation section */
+.situation-section{display:none;animation:fadeIn .4s ease}
+.situation-section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* Situation header */
+.sit-header{background:#fff;border-radius:16px;padding:20px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,.06);border-left:5px solid}
+.sit-header.ais{border-color:#e10600}
+.sit-header.finc{border-color:#2563eb}
+.sit-header h2{font-size:1.15rem;margin-bottom:6px}
+.sit-header .tag{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700;color:#fff;margin-right:8px}
+.tag-ais{background:#e10600}
+.tag-finc{background:#2563eb}
+.sit-header p{font-size:.88rem;color:#555;line-height:1.6;margin-top:8px}
+
+/* DC tabs */
+.dc-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.dc-tab{padding:8px 16px;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;border:2px solid;transition:all .2s;background:#fff}
+.dc-tab.dc1{border-color:#e10600;color:#e10600}
+.dc-tab.dc2{border-color:#2563eb;color:#2563eb}
+.dc-tab.dc3{border-color:#059669;color:#059669}
+.dc-tab.dc4{border-color:#7c3aed;color:#7c3aed}
+.dc-tab.active.dc1{background:#e10600;color:#fff}
+.dc-tab.active.dc2{background:#2563eb;color:#fff}
+.dc-tab.active.dc3{background:#059669;color:#fff}
+.dc-tab.active.dc4{background:#7c3aed;color:#fff}
+
+/* DC content */
+.dc-content{display:none;animation:fadeIn .3s ease}
+.dc-content.active{display:block}
+
+/* Question box */
+.q-box{background:#fff;border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.q-label{display:flex;align-items:center;gap:8px;font-weight:800;font-size:.88rem;margin-bottom:10px}
+.q-label .icon{font-size:1.2rem}
+.q-text{font-size:1rem;color:#111;line-height:1.6;font-weight:600;font-style:italic;padding:10px 14px;background:#f0f4ff;border-radius:10px;border-left:4px solid #2563eb}
+
+/* Response box */
+.r-box{background:#f0fdf4;border:1px solid #bbf7d0;border-left:5px solid #059669;border-radius:14px;padding:18px;margin-bottom:16px}
+.r-label{font-weight:800;color:#059669;font-size:.85rem;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.r-text{font-size:.9rem;color:#1a1a2e;line-height:1.8}
+.r-text p{margin-bottom:8px}
+
+/* Avoid box */
+.a-box{background:#fef2f2;border:1px solid #fecaca;border-left:5px solid #dc2626;border-radius:14px;padding:16px;margin-bottom:16px}
+.a-label{font-weight:800;color:#dc2626;font-size:.85rem;margin-bottom:8px}
+.a-box ul{margin:0 0 0 18px;font-size:.88rem;color:#7f1d1d;line-height:1.7}
+.a-box li{margin:4px 0}
+
+/* Tip box */
+.t-box{background:#fefce8;border:1px solid #fef08a;border-left:5px solid #eab308;border-radius:14px;padding:16px;margin-bottom:20px}
+.t-label{font-weight:800;color:#92400e;font-size:.85rem;margin-bottom:8px}
+.t-box p{font-size:.88rem;color:#78350f;line-height:1.7}
+
+/* Separator */
+.dc-separator{height:2px;background:linear-gradient(90deg,transparent,#e5e7eb,transparent);margin:24px 0}
+
+/* Footer */
+.footer{text-align:center;padding:30px 20px;font-size:.8rem;color:#aaa}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Situations &amp; R&eacute;f&eacute;rentiel Jury</h1>
+  <p>Situation &rarr; R&eacute;f&eacute;rentiel &rarr; Questions &rarr; R&eacute;ponses mod&egrave;les</p>
+  <a href="index.html" class="back-link">&larr; Retour &agrave; l'accueil</a>
+</div>
+
+<div class="key-phrase">
+  &laquo; Dans cette situation, j'ai adapt&eacute; mon accompagnement en fonction des besoins de la personne, dans le cadre institutionnel, avec l'objectif de&hellip; &raquo;
+</div>
+
+<div class="nav-tabs" id="navTabs">
+  <div class="nav-tab ais active" onclick="showSituation('a21')">A.2.1 &mdash; Enfant L</div>
+  <div class="nav-tab ais" onclick="showSituation('a22')">A.2.2 &mdash; &Eacute;l&egrave;ve R</div>
+  <div class="nav-tab ais" onclick="showSituation('a23')">A.2.3 &mdash; &Eacute;l&egrave;ve J</div>
+  <div class="nav-tab finc" onclick="showSituation('b21')">B.2.1 &mdash; Enfant A</div>
+  <div class="nav-tab finc" onclick="showSituation('b22')">B.2.2 &mdash; Journ&eacute;e</div>
+  <div class="nav-tab finc" onclick="showSituation('b23')">B.2.3 &mdash; Projet collectif</div>
+</div>
+
+<div class="container">
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- A.2.1 — ENFANT L (Maladie de Perthes)                    -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="situation-section active" id="sit-a21">
+  <div class="sit-header ais">
+    <span class="tag tag-ais">PARTIE A &mdash; AIS</span>
+    <h2>A.2.1 &mdash; Enfant L (maladie de Perthes)</h2>
+    <p>Enfant hospitalis&eacute;e atteinte de la maladie de Legg-Perthes-Calv&eacute;. Fatigue, douleur, m&eacute;fiance initiale envers l'adulte. Enjeu d'inclusion scolaire et de maintien du lien &eacute;ducatif.</p>
+  </div>
+
+  <div class="dc-tabs">
+    <div class="dc-tab dc1 active" onclick="showDC('a21','dc1')">DC1</div>
+    <div class="dc-tab dc2" onclick="showDC('a21','dc2')">DC2</div>
+    <div class="dc-tab dc3" onclick="showDC('a21','dc3')">DC3</div>
+    <div class="dc-tab dc4" onclick="showDC('a21','dc4')">DC4</div>
+  </div>
+
+  <!-- DC1 -->
+  <div class="dc-content active" id="a21-dc1">
+    <div class="q-box">
+      <div class="q-label"><span class="icon">&#10067;</span> Question du jury</div>
+      <div class="q-text">Comment construisez-vous la relation &eacute;ducative avec cet enfant ?</div>
+    </div>
+    <div class="r-box">
+      <div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div>
+      <div class="r-text">
+        <p>&laquo; Dans cette situation, j'ai construit la relation &eacute;ducative en m'appuyant sur l'observation et l'adaptation &agrave; la singularit&eacute; de l'enfant.</p>
+        <p>J'ai pris en compte ses contraintes li&eacute;es &agrave; sa maladie, ce qui m'a amen&eacute; &agrave; ajuster mon positionnement et le cadre.</p>
+        <p>J'ai cherch&eacute; &agrave; instaurer un climat s&eacute;curisant, en &eacute;tant constant dans ma posture et en respectant son rythme.</p>
+        <p>Mon objectif &eacute;tait de favoriser l'engagement dans la relation sans mise en difficult&eacute;.</p>
+        <p>Cela a permis l'installation progressive d'une relation de confiance.</p>
+        <p>Avec le recul, cette situation m'a appris que la relation &eacute;ducative se construit dans l'ajustement constant &agrave; la personne. &raquo;</p>
+      </div>
+    </div>
+    <div class="a-box">
+      <div class="a-label">&#128308; &Agrave; &eacute;viter</div>
+      <ul>
+        <li>Parler en g&eacute;n&eacute;ral (&laquo; il faut cr&eacute;er du lien &raquo;)</li>
+        <li>Raconter toute la situation en d&eacute;tail</li>
+        <li>Oublier les actions concr&egrave;tes</li>
+        <li>Ne pas parler de l'enfant</li>
+      </ul>
+    </div>
+    <div class="t-box">
+      <div class="t-label">&#128161; Astuce</div>
+      <p>Commencez par : &laquo; Dans cette situation&hellip; &raquo; puis d&eacute;clinez : observation &rarr; adaptation &rarr; posture &rarr; effets &rarr; recul.</p>
+    </div>
+  </div>
+
+  <!-- DC2 -->
+  <div class="dc-content" id="a21-dc2">
+    <div class="q-box">
+      <div class="q-label"><span class="icon">&#10067;</span> Question du jury</div>
+      <div class="q-text">Comment avez-vous analys&eacute; cette situation &eacute;ducative ?</div>
+    </div>
+    <div class="r-box">
+      <div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div>
+      <div class="r-text">
+        <p>&laquo; J'ai r&eacute;alis&eacute; une observation fine de l'enfant dans diff&eacute;rents temps du quotidien.</p>
+        <p>Cela m'a permis d'identifier ses besoins, ses ressources et ses difficult&eacute;s.</p>
+        <p>J'ai crois&eacute; ces observations avec les &eacute;l&eacute;ments transmis par l'&eacute;quipe pluridisciplinaire.</p>
+        <p>&Agrave; partir de l&agrave;, j'ai construit une analyse &eacute;ducative qui a guid&eacute; mes objectifs et mes actions.</p>
+        <p>J'ai formalis&eacute; des objectifs op&eacute;rationnels dans le cadre du projet personnalis&eacute;.</p>
+        <p>L'&eacute;valuation r&eacute;guli&egrave;re m'a permis d'ajuster mes interventions. &raquo;</p>
+      </div>
+    </div>
+    <div class="a-box">
+      <div class="a-label">&#128308; &Agrave; &eacute;viter</div>
+      <ul>
+        <li>D&eacute;crire sans analyser</li>
+        <li>Aller trop vite aux solutions</li>
+        <li>Oublier les observations</li>
+        <li>Ne pas mentionner les objectifs</li>
+      </ul>
+    </div>
+    <div class="t-box">
+      <div class="t-label">&#128161; Astuce</div>
+      <p>Toujours suivre la logique : observer &rarr; analyser &rarr; d&eacute;cider &rarr; agir &rarr; &eacute;valuer.</p>
+    </div>
+  </div>
+
+  <!-- DC3 -->
+  <div class="dc-content" id="a21-dc3">
+    <div class="q-box">
+      <div class="q-label"><span class="icon">&#10067;</span> Question du jury</div>
+      <div class="q-text">Comment communiquez-vous avec l'&eacute;quipe au sujet de cet enfant ?</div>
+    </div>
+    <div class="r-box">
+      <div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div>
+      <div class="r-text">
+        <p>&laquo; Je communique avec l'&eacute;quipe en transmettant mes observations de mani&egrave;re claire et objective.</p>
+        <p>J'utilise les transmissions &eacute;crites et orales pour partager les &eacute;l&eacute;ments significatifs.</p>
+        <p>Je participe aux temps d'&eacute;change et de coordination (r&eacute;unions d'&eacute;quipe, synth&egrave;ses).</p>
+        <p>Je veille au respect du secret professionnel et au partage d'informations n&eacute;cessaires.</p>
+        <p>Cela permet d'assurer une coh&eacute;rence dans l'accompagnement et d'ajuster les pratiques collectivement. &raquo;</p>
+      </div>
+    </div>
+    <div class="a-box">
+      <div class="a-label">&#128308; &Agrave; &eacute;viter</div>
+      <ul>
+        <li>Dire &laquo; on parle &raquo; sans pr&eacute;ciser comment</li>
+        <li>Oublier les transmissions &eacute;crites</li>
+        <li>Ne pas mentionner le secret professionnel</li>
+      </ul>
+    </div>
+    <div class="t-box">
+      <div class="t-label">&#128161; Astuce</div>
+      <p>Parler de : transmissions cibl&eacute;es + r&eacute;unions + coordination + secret partag&eacute;.</p>
+    </div>
+  </div>
+
+  <!-- DC4 -->
+  <div class="dc-content" id="a21-dc4">
+    <div class="q-box">
+      <div class="q-label"><span class="icon">&#10067;</span> Question du jury</div>
+      <div class="q-text">Comment inscrivez-vous votre action dans le cadre institutionnel ?</div>
+    </div>
+    <div class="r-box">
+      <div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div>
+      <div class="r-text">
+        <p>&laquo; J'inscris mon action dans le cadre institutionnel en respectant les missions du dispositif AIS et les r&egrave;gles de l'&eacute;tablissement.</p>
+        <p>Je m'appuie sur le projet d'&eacute;tablissement et le r&egrave;glement de fonctionnement.</p>
+        <p>Je travaille en &eacute;quipe pluridisciplinaire et mobilise les partenaires ext&eacute;rieurs (m&eacute;decins, enseignants, famille).</p>
+        <p>Cela permet de s&eacute;curiser la prise en charge et d'assurer la continuit&eacute; du parcours de l'enfant.</p>
+        <p>J'identifie les limites de mon intervention et sais orienter vers les ressources adapt&eacute;es. &raquo;</p>
+      </div>
+    </div>
+    <div class="a-box">
+      <div class="a-label">&#128308; &Agrave; &eacute;viter</div>
+      <ul>
+        <li>R&eacute;ponse trop personnelle sans cadre</li>
+        <li>Oublier l'institution et ses missions</li>
+        <li>Ne pas parler des partenaires</li>
+      </ul>
+    </div>
+    <div class="t-box">
+      <div class="t-label">&#128161; Astuce</div>
+      <p>Toujours citer : cadre institutionnel + &eacute;quipe + partenaires + continuit&eacute; du parcours.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- A.2.2 — ÉLÈVE R (Troubles du comportement)                -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="situation-section" id="sit-a22">
+  <div class="sit-header ais">
+    <span class="tag tag-ais">PARTIE A &mdash; AIS</span>
+    <h2>A.2.2 &mdash; &Eacute;l&egrave;ve R (troubles du comportement)</h2>
+    <p>Enfant pr&eacute;sentant des comportements impulsifs et perturbateurs. Difficult&eacute;s dans les transitions. Enjeu de r&eacute;gulation &eacute;motionnelle et de maintien dans le groupe.</p>
+  </div>
+  <div class="dc-tabs">
+    <div class="dc-tab dc1 active" onclick="showDC('a22','dc1')">DC1</div>
+    <div class="dc-tab dc2" onclick="showDC('a22','dc2')">DC2</div>
+    <div class="dc-tab dc3" onclick="showDC('a22','dc3')">DC3</div>
+    <div class="dc-tab dc4" onclick="showDC('a22','dc4')">DC4</div>
+  </div>
+  <div class="dc-content active" id="a22-dc1">
+    <div class="q-box"><div class="q-label"><span class="icon">&#10067;</span> Question du jury</div><div class="q-text">Comment g&eacute;rez-vous les comportements perturbateurs de cet &eacute;l&egrave;ve dans le groupe ?</div></div>
+    <div class="r-box"><div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div><div class="r-text">
+      <p>&laquo; Dans cette situation, j'ai commenc&eacute; par observer les d&eacute;clencheurs des comportements de R.</p>
+      <p>J'ai identifi&eacute; que les transitions &eacute;taient les moments les plus critiques.</p>
+      <p>J'ai pos&eacute; un cadre clair et pr&eacute;visible, en verbalisant les r&egrave;gles et en anticipant les changements d'activit&eacute;.</p>
+      <p>J'ai travaill&eacute; la verbalisation des &eacute;motions avec R, en utilisant des supports visuels.</p>
+      <p>Progressivement, R a pu mieux r&eacute;guler ses comportements dans le groupe.</p>
+      <p>Avec le recul, j'ai compris que le cadre s&eacute;curisant est un outil &eacute;ducatif, pas une contrainte. &raquo;</p>
+    </div></div>
+    <div class="a-box"><div class="a-label">&#128308; &Agrave; &eacute;viter</div><ul><li>Parler uniquement de sanction</li><li>Ne pas mentionner l'observation des d&eacute;clencheurs</li><li>Oublier le travail sur les &eacute;motions</li><li>R&eacute;duire l'enfant &agrave; son comportement</li></ul></div>
+    <div class="t-box"><div class="t-label">&#128161; Astuce</div><p>Montrez la logique : observation des d&eacute;clencheurs &rarr; cadre adapt&eacute; &rarr; verbalisation &rarr; r&eacute;gulation progressive.</p></div>
+  </div>
+  <div class="dc-content" id="a22-dc2">
+    <div class="q-box"><div class="q-label"><span class="icon">&#10067;</span> Question du jury</div><div class="q-text">Quels objectifs &eacute;ducatifs avez-vous d&eacute;finis pour cet &eacute;l&egrave;ve ?</div></div>
+    <div class="r-box"><div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div><div class="r-text">
+      <p>&laquo; &Agrave; partir de mon analyse, j'ai d&eacute;fini des objectifs &eacute;ducatifs adapt&eacute;s &agrave; R.</p>
+      <p>L'objectif principal &eacute;tait de d&eacute;velopper sa capacit&eacute; &agrave; g&eacute;rer les transitions sans d&eacute;bordement.</p>
+      <p>J'ai d&eacute;clin&eacute; cela en objectifs op&eacute;rationnels : identifier ses &eacute;motions, utiliser un outil de r&eacute;gulation, participer aux temps collectifs.</p>
+      <p>J'ai co-construit ces objectifs avec l'&eacute;quipe et la famille.</p>
+      <p>L'&eacute;valuation r&eacute;guli&egrave;re a montr&eacute; des progr&egrave;s significatifs sur les transitions. &raquo;</p>
+    </div></div>
+    <div class="a-box"><div class="a-label">&#128308; &Agrave; &eacute;viter</div><ul><li>Des objectifs vagues (&laquo; qu'il aille mieux &raquo;)</li><li>Ne pas mentionner la co-construction</li><li>Oublier l'&eacute;valuation</li></ul></div>
+    <div class="t-box"><div class="t-label">&#128161; Astuce</div><p>Structurez : diagnostic &rarr; objectif g&eacute;n&eacute;ral &rarr; objectifs op&eacute;rationnels &rarr; moyens &rarr; &eacute;valuation.</p></div>
+  </div>
+  <div class="dc-content" id="a22-dc3">
+    <div class="q-box"><div class="q-label"><span class="icon">&#10067;</span> Question du jury</div><div class="q-text">Comment rendez-vous compte de votre travail avec R &agrave; l'&eacute;quipe ?</div></div>
+    <div class="r-box"><div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div><div class="r-text">
+      <p>&laquo; Je rends compte de mon travail &agrave; travers les transmissions &eacute;crites quotidiennes et les r&eacute;unions d'&eacute;quipe.</p>
+      <p>Je r&eacute;dige des bilans p&eacute;riodiques sur l'&eacute;volution de R.</p>
+      <p>Je participe aux synth&egrave;ses avec les partenaires (&eacute;cole, famille, psychologue).</p>
+      <p>Je veille &agrave; distinguer les faits observ&eacute;s de mon analyse personnelle dans mes &eacute;crits.</p>
+      <p>Cette rigueur dans la communication garantit la coh&eacute;rence de l'accompagnement. &raquo;</p>
+    </div></div>
+    <div class="a-box"><div class="a-label">&#128308; &Agrave; &eacute;viter</div><ul><li>Confondre jugement et observation</li><li>Ne pas distinguer faits et interpr&eacute;tation</li><li>Oublier les &eacute;crits professionnels</li></ul></div>
+    <div class="t-box"><div class="t-label">&#128161; Astuce</div><p>Montrez que vous ma&icirc;trisez : &eacute;crits professionnels + analyse de pratique + synth&egrave;se.</p></div>
+  </div>
+  <div class="dc-content" id="a22-dc4">
+    <div class="q-box"><div class="q-label"><span class="icon">&#10067;</span> Question du jury</div><div class="q-text">Quels partenaires mobilisez-vous pour l'accompagnement de R ?</div></div>
+    <div class="r-box"><div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div><div class="r-text">
+      <p>&laquo; Pour l'accompagnement de R, je mobilise plusieurs partenaires dans une logique de r&eacute;seau.</p>
+      <p>En interne : l'&eacute;quipe &eacute;ducative, le psychologue, le m&eacute;decin scolaire.</p>
+      <p>En externe : la famille, l'enseignant r&eacute;f&eacute;rent, la MDPH si n&eacute;cessaire.</p>
+      <p>Cette articulation permet une compr&eacute;hension globale de la situation de R.</p>
+      <p>Je m'inscris dans une dynamique partenariale en respectant les comp&eacute;tences de chacun. &raquo;</p>
+    </div></div>
+    <div class="a-box"><div class="a-label">&#128308; &Agrave; &eacute;viter</div><ul><li>Travailler seul sans partenaires</li><li>Confondre partenariat et sous-traitance</li><li>Ne pas citer les institutions</li></ul></div>
+    <div class="t-box"><div class="t-label">&#128161; Astuce</div><p>Citez : partenaires internes + externes + logique de r&eacute;seau + comp&eacute;tences de chacun.</p></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- A.2.3 — ÉLÈVE J (Mobilité réduite)                        -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="situation-section" id="sit-a23">
+  <div class="sit-header ais">
+    <span class="tag tag-ais">PARTIE A &mdash; AIS</span>
+    <h2>A.2.3 &mdash; &Eacute;l&egrave;ve J (mobilit&eacute; r&eacute;duite)</h2>
+    <p>Enfant en situation de handicap moteur. Enjeu d'accessibilit&eacute;, d'inclusion dans les activit&eacute;s collectives et d'adaptation des pratiques.</p>
+  </div>
+  <div class="dc-tabs">
+    <div class="dc-tab dc1 active" onclick="showDC('a23','dc1')">DC1</div>
+    <div class="dc-tab dc2" onclick="showDC('a23','dc2')">DC2</div>
+    <div class="dc-tab dc3" onclick="showDC('a23','dc3')">DC3</div>
+    <div class="dc-tab dc4" onclick="showDC('a23','dc4')">DC4</div>
+  </div>
+  <div class="dc-content active" id="a23-dc1">
+    <div class="q-box"><div class="q-label"><span class="icon">&#10067;</span> Question du jury</div><div class="q-text">Comment favorisez-vous l'inclusion de cet &eacute;l&egrave;ve dans les activit&eacute;s du groupe ?</div></div>
+    <div class="r-box"><div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div><div class="r-text">
+      <p>&laquo; Dans cette situation, j'ai favoris&eacute; l'inclusion de J en adaptant l'environnement et les activit&eacute;s.</p>
+      <p>J'ai identifi&eacute; les obstacles &agrave; sa participation et propos&eacute; des am&eacute;nagements concrets.</p>
+      <p>J'ai veill&eacute; &agrave; ce que J soit acteur de sa participation, en le sollicitant sans le surprot&eacute;ger.</p>
+      <p>J'ai sensibilis&eacute; le groupe &agrave; la diff&eacute;rence pour favoriser l'accueil et la coop&eacute;ration.</p>
+      <p>Cela a permis &agrave; J de trouver sa place dans le collectif tout en respectant ses limites.</p>
+      <p>Cette exp&eacute;rience m'a confirm&eacute; que l'inclusion est une d&eacute;marche active et non passive. &raquo;</p>
+    </div></div>
+    <div class="a-box"><div class="a-label">&#128308; &Agrave; &eacute;viter</div><ul><li>Surprot&eacute;ger l'enfant</li><li>Ne pas adapter les activit&eacute;s</li><li>Oublier la dimension collective</li><li>R&eacute;duire l'enfant &agrave; son handicap</li></ul></div>
+    <div class="t-box"><div class="t-label">&#128161; Astuce</div><p>Mobilisez la Loi 2005 (droit &agrave; la compensation, accessibilit&eacute;) et montrez votre d&eacute;marche inclusive active.</p></div>
+  </div>
+  <div class="dc-content" id="a23-dc2">
+    <div class="q-box"><div class="q-label"><span class="icon">&#10067;</span> Question du jury</div><div class="q-text">Comment avez-vous adapt&eacute; le projet &eacute;ducatif aux besoins sp&eacute;cifiques de J ?</div></div>
+    <div class="r-box"><div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div><div class="r-text">
+      <p>&laquo; J'ai &eacute;valu&eacute; les besoins sp&eacute;cifiques de J en m'appuyant sur les bilans existants et mes observations.</p>
+      <p>J'ai co-construit le projet personnalis&eacute; avec l'&eacute;quipe, la famille et les partenaires m&eacute;dicaux.</p>
+      <p>Les objectifs int&egrave;grent l'autonomie dans les d&eacute;placements, la participation aux activit&eacute;s et la socialisation.</p>
+      <p>J'ai pr&eacute;vu des indicateurs d'&eacute;valuation concrets pour mesurer les progr&egrave;s.</p>
+      <p>Le projet est r&eacute;&eacute;valu&eacute; r&eacute;guli&egrave;rement et ajust&eacute; en fonction de l'&eacute;volution de J. &raquo;</p>
+    </div></div>
+    <div class="a-box"><div class="a-label">&#128308; &Agrave; &eacute;viter</div><ul><li>Un projet g&eacute;n&eacute;rique non adapt&eacute;</li><li>Oublier la famille dans la co-construction</li><li>Pas d'indicateurs d'&eacute;valuation</li></ul></div>
+    <div class="t-box"><div class="t-label">&#128161; Astuce</div><p>Montrez la co-construction : &eacute;quipe + famille + partenaires + indicateurs mesurables.</p></div>
+  </div>
+  <div class="dc-content" id="a23-dc3">
+    <div class="q-box"><div class="q-label"><span class="icon">&#10067;</span> Question du jury</div><div class="q-text">Comment articulez-vous vos &eacute;crits professionnels autour de cette situation ?</div></div>
+    <div class="r-box"><div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div><div class="r-text">
+      <p>&laquo; Je r&eacute;dige des &eacute;crits professionnels adapt&eacute;s &agrave; chaque interlocuteur et &agrave; chaque usage.</p>
+      <p>Les transmissions quotidiennes sont factuelles et cibl&eacute;es sur les &eacute;l&eacute;ments significatifs.</p>
+      <p>Les bilans &eacute;ducatifs sont structur&eacute;s : observation, analyse, &eacute;volution, perspectives.</p>
+      <p>Je respecte le cadre d&eacute;ontologique : secret professionnel, partage d'informations n&eacute;cessaires.</p>
+      <p>Mes &eacute;crits sont un outil de continuit&eacute; et de coh&eacute;rence dans l'accompagnement. &raquo;</p>
+    </div></div>
+    <div class="a-box"><div class="a-label">&#128308; &Agrave; &eacute;viter</div><ul><li>&Eacute;crits subjectifs ou jugements de valeur</li><li>Pas de structure dans les bilans</li><li>Oublier le cadre d&eacute;ontologique</li></ul></div>
+    <div class="t-box"><div class="t-label">&#128161; Astuce</div><p>Distinguez transmissions (quotidien, factuel) et bilans (&eacute;ducatif, structur&eacute;, analytique).</p></div>
+  </div>
+  <div class="dc-content" id="a23-dc4">
+    <div class="q-box"><div class="q-label"><span class="icon">&#10067;</span> Question du jury</div><div class="q-text">Comment vous situez-vous dans le r&eacute;seau de partenaires autour du handicap ?</div></div>
+    <div class="r-box"><div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div><div class="r-text">
+      <p>&laquo; Je me situe comme un acteur du r&eacute;seau en identifiant les partenaires cl&eacute;s : MDPH, &eacute;quipe m&eacute;dicale, enseignants, famille.</p>
+      <p>Je connais les missions et limites de chaque partenaire.</p>
+      <p>Je participe aux r&eacute;unions de suivi (&eacute;quipe de suivi de scolarisation, PPS).</p>
+      <p>J'inscris mon action dans le cadre de la Loi 2005 et du droit &agrave; la compensation.</p>
+      <p>Mon r&ocirc;le est d'articuler les interventions pour garantir la coh&eacute;rence du parcours de J. &raquo;</p>
+    </div></div>
+    <div class="a-box"><div class="a-label">&#128308; &Agrave; &eacute;viter</div><ul><li>M&eacute;conna&icirc;tre les dispositifs (MDPH, PPS)</li><li>Travailler en silo</li><li>Ne pas citer de cadre l&eacute;gal</li></ul></div>
+    <div class="t-box"><div class="t-label">&#128161; Astuce</div><p>Citez la Loi 2005, la MDPH, le PPS, et montrez votre connaissance du r&eacute;seau handicap.</p></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- B.2.1 — ENFANT A (Accompagnement individualisé)           -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="situation-section" id="sit-b21">
+  <div class="sit-header finc">
+    <span class="tag tag-finc">PARTIE B &mdash; FINC</span>
+    <h2>B.2.1 &mdash; Enfant A (accompagnement individualis&eacute;)</h2>
+    <p>Adolescent isol&eacute; au sein d'un centre communautaire. Non-participation aux activit&eacute;s. Enjeu d'engagement, de lien social et d'accompagnement individualis&eacute;.</p>
+  </div>
+  <div class="dc-tabs">
+    <div class="dc-tab dc1 active" onclick="showDC('b21','dc1')">DC1</div>
+    <div class="dc-tab dc2" onclick="showDC('b21','dc2')">DC2</div>
+    <div class="dc-tab dc3" onclick="showDC('b21','dc3')">DC3</div>
+    <div class="dc-tab dc4" onclick="showDC('b21','dc4')">DC4</div>
+  </div>
+  <div class="dc-content active" id="b21-dc1">
+    <div class="q-box"><div class="q-label"><span class="icon">&#10067;</span> Question du jury</div><div class="q-text">Comment &ecirc;tes-vous entr&eacute; en relation avec cet adolescent isol&eacute; ?</div></div>
+    <div class="r-box"><div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div><div class="r-text">
+      <p>&laquo; Dans cette situation, j'ai d'abord observ&eacute; A dans ses interactions (ou son absence d'interaction).</p>
+      <p>J'ai choisi une approche progressive, en &eacute;tant pr&eacute;sent sans forcer le contact.</p>
+      <p>J'ai utilis&eacute; des temps informels pour initier des &eacute;changes (activit&eacute;s, moments de pause).</p>
+      <p>J'ai respect&eacute; son rythme tout en maintenant une disponibilit&eacute; constante.</p>
+      <p>Progressivement, A a accept&eacute; ma pr&eacute;sence puis s'est engag&eacute; dans la relation.</p>
+      <p>J'ai appris que l'entr&eacute;e en relation avec un adolescent isol&eacute; demande patience et constance. &raquo;</p>
+    </div></div>
+    <div class="a-box"><div class="a-label">&#128308; &Agrave; &eacute;viter</div><ul><li>Forcer le contact</li><li>Interpr&eacute;ter l'isolement comme du rejet</li><li>Ne pas respecter le rythme</li><li>Abandonner trop vite</li></ul></div>
+    <div class="t-box"><div class="t-label">&#128161; Astuce</div><p>Montrez la progressivit&eacute; : observation &rarr; pr&eacute;sence discr&egrave;te &rarr; temps informels &rarr; engagement relationnel.</p></div>
+  </div>
+  <div class="dc-content" id="b21-dc2">
+    <div class="q-box"><div class="q-label"><span class="icon">&#10067;</span> Question du jury</div><div class="q-text">Comment avez-vous construit un projet d'accompagnement individualis&eacute; ?</div></div>
+    <div class="r-box"><div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div><div class="r-text">
+      <p>&laquo; J'ai construit le projet d'accompagnement &agrave; partir d'un diagnostic &eacute;ducatif individualis&eacute;.</p>
+      <p>J'ai identifi&eacute; les besoins de A : lien social, estime de soi, engagement dans le collectif.</p>
+      <p>J'ai d&eacute;fini des objectifs progressifs et r&eacute;alistes, en les co-construisant avec A.</p>
+      <p>J'ai propos&eacute; des activit&eacute;s adapt&eacute;es &agrave; ses centres d'int&eacute;r&ecirc;t comme levier d'engagement.</p>
+      <p>L'&eacute;valuation continue m'a permis d'ajuster le projet en fonction de son &eacute;volution. &raquo;</p>
+    </div></div>
+    <div class="a-box"><div class="a-label">&#128308; &Agrave; &eacute;viter</div><ul><li>Un projet plaqu&eacute; sans diagnostic</li><li>Ne pas impliquer le jeune</li><li>Des objectifs trop ambitieux d'embl&eacute;e</li></ul></div>
+    <div class="t-box"><div class="t-label">&#128161; Astuce</div><p>Insistez sur la co-construction avec le jeune et les objectifs progressifs.</p></div>
+  </div>
+  <div class="dc-content" id="b21-dc3">
+    <div class="q-box"><div class="q-label"><span class="icon">&#10067;</span> Question du jury</div><div class="q-text">Comment communiquez-vous autour de l'accompagnement de A ?</div></div>
+    <div class="r-box"><div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div><div class="r-text">
+      <p>&laquo; Je communique avec l'&eacute;quipe lors des r&eacute;unions de coordination et par des transmissions &eacute;crites.</p>
+      <p>Je partage mes observations et mon analyse de l'&eacute;volution de A.</p>
+      <p>J'&eacute;change r&eacute;guli&egrave;rement avec A pour recueillir son point de vue et ajuster l'accompagnement.</p>
+      <p>Je veille &agrave; adapter ma communication au public (jeune, &eacute;quipe, partenaires).</p>
+      <p>Cette communication multi-niveaux garantit la coh&eacute;rence et la continuit&eacute;. &raquo;</p>
+    </div></div>
+    <div class="a-box"><div class="a-label">&#128308; &Agrave; &eacute;viter</div><ul><li>Communiquer uniquement &agrave; l'oral</li><li>Oublier la parole du jeune</li><li>Ne pas adapter au public</li></ul></div>
+    <div class="t-box"><div class="t-label">&#128161; Astuce</div><p>Montrez la communication adapt&eacute;e : avec le jeune + avec l'&eacute;quipe + avec les partenaires.</p></div>
+  </div>
+  <div class="dc-content" id="b21-dc4">
+    <div class="q-box"><div class="q-label"><span class="icon">&#10067;</span> Question du jury</div><div class="q-text">Comment articulez-vous votre action avec le projet de l'&eacute;tablissement ?</div></div>
+    <div class="r-box"><div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div><div class="r-text">
+      <p>&laquo; J'inscris mon action dans le projet d'&eacute;tablissement du centre communautaire FINC.</p>
+      <p>Je respecte les missions de la structure : accueil, socialisation, &eacute;ducation populaire.</p>
+      <p>J'identifie les ressources du territoire pour enrichir l'accompagnement de A.</p>
+      <p>Je travaille en compl&eacute;mentarit&eacute; avec les animateurs et les partenaires locaux.</p>
+      <p>Mon action s'inscrit dans une logique d'&eacute;ducation populaire et de d&eacute;veloppement social. &raquo;</p>
+    </div></div>
+    <div class="a-box"><div class="a-label">&#128308; &Agrave; &eacute;viter</div><ul><li>Ignorer le projet d'&eacute;tablissement</li><li>Travailler de mani&egrave;re isol&eacute;e</li><li>Ne pas conna&icirc;tre les missions de la structure</li></ul></div>
+    <div class="t-box"><div class="t-label">&#128161; Astuce</div><p>Citez : projet d'&eacute;tablissement + missions + territoire + compl&eacute;mentarit&eacute;.</p></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- B.2.2 — JOURNÉE COMPLÈTE                                  -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="situation-section" id="sit-b22">
+  <div class="sit-header finc">
+    <span class="tag tag-finc">PARTIE B &mdash; FINC</span>
+    <h2>B.2.2 &mdash; Journ&eacute;e compl&egrave;te d'accompagnement</h2>
+    <p>Description d'une journ&eacute;e type au sein du FINC. Enjeu de structuration du quotidien, de rythme &eacute;ducatif et d'accompagnement au fil de la journ&eacute;e.</p>
+  </div>
+  <div class="dc-tabs">
+    <div class="dc-tab dc1 active" onclick="showDC('b22','dc1')">DC1</div>
+    <div class="dc-tab dc2" onclick="showDC('b22','dc2')">DC2</div>
+    <div class="dc-tab dc3" onclick="showDC('b22','dc3')">DC3</div>
+    <div class="dc-tab dc4" onclick="showDC('b22','dc4')">DC4</div>
+  </div>
+  <div class="dc-content active" id="b22-dc1">
+    <div class="q-box"><div class="q-label"><span class="icon">&#10067;</span> Question du jury</div><div class="q-text">Comment structurez-vous l'accompagnement &eacute;ducatif au quotidien ?</div></div>
+    <div class="r-box"><div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div><div class="r-text">
+      <p>&laquo; Dans cette situation, je structure l'accompagnement autour des temps cl&eacute;s de la journ&eacute;e.</p>
+      <p>L'accueil est un moment essentiel : j'observe l'&eacute;tat &eacute;motionnel de chaque enfant &agrave; son arriv&eacute;e.</p>
+      <p>Les activit&eacute;s sont pens&eacute;es en alternant temps collectifs et temps individuels.</p>
+      <p>Les transitions sont anticip&eacute;es et verbalis&eacute;es pour s&eacute;curiser les enfants.</p>
+      <p>Le quotidien est un support &eacute;ducatif : chaque moment est pens&eacute; comme une opportunit&eacute; d'apprentissage.</p>
+      <p>Avec le recul, le quotidien est le c&oelig;ur de l'acte &eacute;ducatif. &raquo;</p>
+    </div></div>
+    <div class="a-box"><div class="a-label">&#128308; &Agrave; &eacute;viter</div><ul><li>D&eacute;crire la journ&eacute;e comme un planning</li><li>Oublier la dimension &eacute;ducative du quotidien</li><li>Ne pas mentionner les transitions</li></ul></div>
+    <div class="t-box"><div class="t-label">&#128161; Astuce</div><p>Le quotidien n'est pas une routine : c'est un outil &eacute;ducatif. Montrez-le !</p></div>
+  </div>
+  <div class="dc-content" id="b22-dc2">
+    <div class="q-box"><div class="q-label"><span class="icon">&#10067;</span> Question du jury</div><div class="q-text">Comment articulez-vous les activit&eacute;s avec les objectifs &eacute;ducatifs ?</div></div>
+    <div class="r-box"><div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div><div class="r-text">
+      <p>&laquo; Chaque activit&eacute; est con&ccedil;ue en lien avec les objectifs du projet &eacute;ducatif.</p>
+      <p>Je d&eacute;finis des objectifs sp&eacute;cifiques pour chaque temps : socialisation, autonomie, cr&eacute;ativit&eacute;.</p>
+      <p>J'&eacute;value l'atteinte des objectifs &agrave; travers l'observation pendant et apr&egrave;s l'activit&eacute;.</p>
+      <p>J'adapte les activit&eacute;s en fonction des besoins rep&eacute;r&eacute;s et de la dynamique du groupe.</p>
+      <p>L'activit&eacute; n'est pas une fin en soi mais un m&eacute;diateur &eacute;ducatif. &raquo;</p>
+    </div></div>
+    <div class="a-box"><div class="a-label">&#128308; &Agrave; &eacute;viter</div><ul><li>Des activit&eacute;s sans objectifs</li><li>Confondre animation et &eacute;ducation</li><li>Ne pas &eacute;valuer</li></ul></div>
+    <div class="t-box"><div class="t-label">&#128161; Astuce</div><p>L'activit&eacute; est un m&eacute;diateur : objectif &rarr; activit&eacute; &rarr; observation &rarr; &eacute;valuation.</p></div>
+  </div>
+  <div class="dc-content" id="b22-dc3">
+    <div class="q-box"><div class="q-label"><span class="icon">&#10067;</span> Question du jury</div><div class="q-text">Comment assurez-vous la continuit&eacute; &eacute;ducative entre les diff&eacute;rents temps ?</div></div>
+    <div class="r-box"><div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div><div class="r-text">
+      <p>&laquo; J'assure la continuit&eacute; &eacute;ducative &agrave; travers des transmissions rigoureuses entre les temps.</p>
+      <p>J'utilise un cahier de transmission et des temps de passation entre coll&egrave;gues.</p>
+      <p>Je r&eacute;dige des notes d'observation sur les &eacute;v&eacute;nements significatifs de la journ&eacute;e.</p>
+      <p>Les r&eacute;unions d'&eacute;quipe permettent de prendre du recul et d'ajuster les pratiques.</p>
+      <p>Cette rigueur dans la communication assure la coh&eacute;rence pour l'enfant. &raquo;</p>
+    </div></div>
+    <div class="a-box"><div class="a-label">&#128308; &Agrave; &eacute;viter</div><ul><li>Pas de transmission entre les temps</li><li>Compter sur la m&eacute;moire seule</li><li>Oublier les &eacute;crits</li></ul></div>
+    <div class="t-box"><div class="t-label">&#128161; Astuce</div><p>Montrez les outils : cahier de transmission + notes + r&eacute;unions + passation.</p></div>
+  </div>
+  <div class="dc-content" id="b22-dc4">
+    <div class="q-box"><div class="q-label"><span class="icon">&#10067;</span> Question du jury</div><div class="q-text">Comment le cadre institutionnel structure-t-il votre journ&eacute;e &eacute;ducative ?</div></div>
+    <div class="r-box"><div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div><div class="r-text">
+      <p>&laquo; Le cadre institutionnel structure ma journ&eacute;e &agrave; travers le projet d'&eacute;tablissement et le r&egrave;glement.</p>
+      <p>Les horaires, les r&egrave;gles de vie et les protocoles sont des rep&egrave;res pour les enfants et pour moi.</p>
+      <p>Je m'inscris dans les orientations de la structure tout en exer&ccedil;ant ma cr&eacute;ativit&eacute; &eacute;ducative.</p>
+      <p>Les r&eacute;unions institutionnelles (conseil d'&eacute;quipe, r&eacute;union de service) organisent le travail collectif.</p>
+      <p>Le cadre n'est pas une contrainte mais un contenant &eacute;ducatif. &raquo;</p>
+    </div></div>
+    <div class="a-box"><div class="a-label">&#128308; &Agrave; &eacute;viter</div><ul><li>Voir le cadre comme une contrainte</li><li>Ne pas conna&icirc;tre le projet d'&eacute;tablissement</li><li>Oublier les instances institutionnelles</li></ul></div>
+    <div class="t-box"><div class="t-label">&#128161; Astuce</div><p>Le cadre est un contenant &eacute;ducatif. Citez : projet + r&egrave;glement + instances + r&eacute;unions.</p></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- B.2.3 — PROJET ÉDUCATIF COLLECTIF                         -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="situation-section" id="sit-b23">
+  <div class="sit-header finc">
+    <span class="tag tag-finc">PARTIE B &mdash; FINC</span>
+    <h2>B.2.3 &mdash; Projet &eacute;ducatif collectif</h2>
+    <p>Conception et mise en &oelig;uvre d'un projet &eacute;ducatif collectif au sein du FINC. Enjeu de mobilisation du groupe, de participation et de dynamique collective.</p>
+  </div>
+  <div class="dc-tabs">
+    <div class="dc-tab dc1 active" onclick="showDC('b23','dc1')">DC1</div>
+    <div class="dc-tab dc2" onclick="showDC('b23','dc2')">DC2</div>
+    <div class="dc-tab dc3" onclick="showDC('b23','dc3')">DC3</div>
+    <div class="dc-tab dc4" onclick="showDC('b23','dc4')">DC4</div>
+  </div>
+  <div class="dc-content active" id="b23-dc1">
+    <div class="q-box"><div class="q-label"><span class="icon">&#10067;</span> Question du jury</div><div class="q-text">Comment mobilisez-vous le groupe dans un projet collectif ?</div></div>
+    <div class="r-box"><div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div><div class="r-text">
+      <p>&laquo; Dans cette situation, j'ai mobilis&eacute; le groupe en partant de leurs centres d'int&eacute;r&ecirc;t.</p>
+      <p>J'ai organis&eacute; des temps de concertation pour que chacun puisse s'exprimer et proposer.</p>
+      <p>J'ai attribu&eacute; des r&ocirc;les et responsabilit&eacute;s en fonction des comp&eacute;tences de chacun.</p>
+      <p>J'ai veill&eacute; &agrave; l'inclusion de tous, y compris les plus en retrait.</p>
+      <p>Le projet collectif a &eacute;t&eacute; un levier de socialisation et de valorisation des comp&eacute;tences.</p>
+      <p>J'ai appris que la dynamique collective se construit par la participation active de chacun. &raquo;</p>
+    </div></div>
+    <div class="a-box"><div class="a-label">&#128308; &Agrave; &eacute;viter</div><ul><li>Imposer un projet sans concertation</li><li>Oublier les jeunes en retrait</li><li>Ne pas r&eacute;partir les r&ocirc;les</li></ul></div>
+    <div class="t-box"><div class="t-label">&#128161; Astuce</div><p>Montrez la d&eacute;marche participative : concertation &rarr; r&ocirc;les &rarr; inclusion &rarr; valorisation.</p></div>
+  </div>
+  <div class="dc-content" id="b23-dc2">
+    <div class="q-box"><div class="q-label"><span class="icon">&#10067;</span> Question du jury</div><div class="q-text">Comment avez-vous con&ccedil;u et &eacute;valu&eacute; ce projet collectif ?</div></div>
+    <div class="r-box"><div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div><div class="r-text">
+      <p>&laquo; J'ai con&ccedil;u le projet en suivant une m&eacute;thodologie structur&eacute;e.</p>
+      <p>Diagnostic : identification des besoins du groupe et du contexte.</p>
+      <p>Objectifs : d&eacute;velopper la coop&eacute;ration, renforcer le sentiment d'appartenance, favoriser l'expression.</p>
+      <p>Moyens : ateliers, sorties, temps de bilan collectif.</p>
+      <p>&Eacute;valuation : crit&egrave;res de participation, satisfaction, comp&eacute;tences mobilis&eacute;es.</p>
+      <p>Le bilan a montr&eacute; une am&eacute;lioration de la dynamique de groupe et de l'engagement individuel. &raquo;</p>
+    </div></div>
+    <div class="a-box"><div class="a-label">&#128308; &Agrave; &eacute;viter</div><ul><li>Pas de m&eacute;thodologie de projet</li><li>Des objectifs flous</li><li>Pas de bilan ni d'&eacute;valuation</li></ul></div>
+    <div class="t-box"><div class="t-label">&#128161; Astuce</div><p>Structurez : diagnostic &rarr; objectifs &rarr; moyens &rarr; mise en &oelig;uvre &rarr; &eacute;valuation &rarr; bilan.</p></div>
+  </div>
+  <div class="dc-content" id="b23-dc3">
+    <div class="q-box"><div class="q-label"><span class="icon">&#10067;</span> Question du jury</div><div class="q-text">Comment avez-vous communiqu&eacute; autour de ce projet collectif ?</div></div>
+    <div class="r-box"><div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div><div class="r-text">
+      <p>&laquo; J'ai communiqu&eacute; &agrave; plusieurs niveaux autour du projet.</p>
+      <p>Aupr&egrave;s du groupe : pr&eacute;sentation, concertation, bilans interm&eacute;diaires.</p>
+      <p>Aupr&egrave;s de l'&eacute;quipe : note de projet, pr&eacute;sentation en r&eacute;union, bilan &eacute;crit.</p>
+      <p>Aupr&egrave;s des partenaires et familles : information, invitation, restitution.</p>
+      <p>J'ai adapt&eacute; mon discours et mes supports &agrave; chaque interlocuteur.</p>
+      <p>Cette communication multi-niveaux a contribu&eacute; &agrave; la r&eacute;ussite du projet. &raquo;</p>
+    </div></div>
+    <div class="a-box"><div class="a-label">&#128308; &Agrave; &eacute;viter</div><ul><li>Communiquer uniquement en interne</li><li>Ne pas impliquer les familles</li><li>Pas de trace &eacute;crite du projet</li></ul></div>
+    <div class="t-box"><div class="t-label">&#128161; Astuce</div><p>Montrez les 3 niveaux : communication avec le groupe + l'&eacute;quipe + les partenaires/familles.</p></div>
+  </div>
+  <div class="dc-content" id="b23-dc4">
+    <div class="q-box"><div class="q-label"><span class="icon">&#10067;</span> Question du jury</div><div class="q-text">Comment ce projet s'inscrit-il dans les politiques &eacute;ducatives locales ?</div></div>
+    <div class="r-box"><div class="r-label">&#9989; R&eacute;ponse mod&egrave;le</div><div class="r-text">
+      <p>&laquo; Ce projet s'inscrit dans les orientations de la politique &eacute;ducative locale et du projet social du territoire.</p>
+      <p>Il r&eacute;pond aux enjeux de participation des jeunes, de coh&eacute;sion sociale et de vivre-ensemble.</p>
+      <p>J'ai identifi&eacute; les dispositifs existants (contrat de ville, sch&eacute;ma d&eacute;partemental) pour y inscrire le projet.</p>
+      <p>J'ai mobilis&eacute; des partenaires locaux (associations, collectivit&eacute;s) pour renforcer le projet.</p>
+      <p>Cette inscription territoriale donne du sens et de la l&eacute;gitimit&eacute; &agrave; l'action &eacute;ducative. &raquo;</p>
+    </div></div>
+    <div class="a-box"><div class="a-label">&#128308; &Agrave; &eacute;viter</div><ul><li>Un projet d&eacute;connect&eacute; du territoire</li><li>Ne pas conna&icirc;tre les politiques locales</li><li>Oublier les partenaires institutionnels</li></ul></div>
+    <div class="t-box"><div class="t-label">&#128161; Astuce</div><p>Citez : politique &eacute;ducative locale + projet social + dispositifs + partenaires du territoire.</p></div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<div class="footer">Pr&eacute;paration Oral VAE DEES &mdash; Situations &amp; R&eacute;f&eacute;rentiel Jury</div>
+
+<script>
+function showSituation(id){
+  document.querySelectorAll('.situation-section').forEach(function(el){ el.classList.remove('active'); });
+  document.getElementById('sit-'+id).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(function(el){ el.classList.remove('active'); });
+  event.target.classList.add('active');
+  // Reset DC tabs to DC1
+  var sit = document.getElementById('sit-'+id);
+  sit.querySelectorAll('.dc-tab').forEach(function(el,i){ if(i===0) el.classList.add('active'); else el.classList.remove('active'); });
+  sit.querySelectorAll('.dc-content').forEach(function(el,i){ if(i===0) el.classList.add('active'); else el.classList.remove('active'); });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function showDC(sitId, dc){
+  var sit = document.getElementById('sit-'+sitId);
+  sit.querySelectorAll('.dc-content').forEach(function(el){ el.classList.remove('active'); });
+  document.getElementById(sitId+'-'+dc).classList.add('active');
+  sit.querySelectorAll('.dc-tab').forEach(function(el){ el.classList.remove('active'); });
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
