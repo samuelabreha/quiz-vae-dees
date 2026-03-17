@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent P&eacute;dagogique DEES &mdash; Coach Oral VAE</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;min-height:100vh}
+.container{max-width:780px;margin:0 auto;padding:24px 16px}
+.back-link{display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;color:#0d9488;text-decoration:none;font-size:.9rem}
+.back-link:hover{text-decoration:underline}
+h1{font-size:1.5rem;color:#1a1a2e;margin-bottom:4px;text-align:center}
+.subtitle{font-size:.9rem;color:#666;margin-bottom:24px;text-align:center}
+.hidden{display:none}
+
+/* Welcome */
+.welcome-card{background:#fff;border-radius:16px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,.06);border-top:4px solid #0d9488}
+.welcome-card h2{margin:10px 0 8px;font-size:1.2rem;color:#1a1a2e}
+.welcome-card p{color:#666;font-size:.88rem;margin-bottom:5px;line-height:1.6}
+.badge-teal{display:inline-block;padding:5px 16px;border-radius:20px;font-size:.75rem;font-weight:700;color:#fff;background:#0d9488}
+.identity-box{margin:16px 0;padding:14px 16px;background:#f0fdfa;border-radius:10px;border-left:4px solid #0d9488;text-align:left}
+.identity-box p{font-size:.84rem;color:#333;line-height:1.65;margin-bottom:4px}
+.identity-box strong{color:#0d9488}
+
+/* Mode cards */
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0 16px}
+@media(max-width:520px){.mode-grid{grid-template-columns:1fr}}
+.mode-card{background:#f0fdfa;border:2px solid #ccfbf1;border-radius:14px;padding:18px 14px;cursor:pointer;transition:all .2s;text-align:left}
+.mode-card:hover{border-color:#0d9488;box-shadow:0 4px 16px rgba(13,148,136,.12)}
+.mode-card h3{font-size:.9rem;color:#1a1a2e;margin-bottom:4px}
+.mode-card p{font-size:.78rem;color:#666;line-height:1.5}
+.mode-icon{font-size:1.4rem;margin-bottom:6px}
+
+/* Exercise area */
+.ex-area{background:#fff;border-radius:16px;padding:26px;box-shadow:0 2px 16px rgba(0,0,0,.06);margin-bottom:16px}
+.ex-title{font-size:1.05rem;color:#0d9488;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.ex-instr{font-size:.87rem;color:#333;line-height:1.7;margin-bottom:14px;padding:14px;background:#f0fdfa;border-radius:10px;border-left:4px solid #0d9488}
+.ex-instr strong{color:#0d9488}
+
+/* Steps / template */
+.tpl-block{background:#fff;border:2px solid #e5e7eb;border-radius:12px;padding:18px;margin-bottom:14px}
+.tpl-block h4{font-size:.82rem;color:#0d9488;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.tpl-step{display:flex;gap:10px;margin-bottom:12px;align-items:flex-start}
+.sn{width:26px;height:26px;min-width:26px;border-radius:50%;background:#0d9488;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;margin-top:2px}
+.sc{flex:1}
+.sc h5{font-size:.83rem;color:#1a1a2e;margin-bottom:3px}
+.sc p{font-size:.78rem;color:#666;line-height:1.5}
+
+/* Textarea */
+.ta{width:100%;min-height:80px;padding:12px;border:2px solid #e5e7eb;border-radius:10px;font-family:inherit;font-size:.87rem;line-height:1.6;resize:vertical;transition:border-color .2s}
+.ta:focus{outline:none;border-color:#0d9488}
+.ta::placeholder{color:#bbb}
+
+/* Scenario card */
+.sc-card{background:#fafafa;border:2px solid #e5e7eb;border-radius:12px;padding:16px;margin-bottom:12px;cursor:pointer;transition:all .15s}
+.sc-card:hover{border-color:#0d9488}
+.sc-card.selected{border-color:#0d9488;background:#f0fdfa}
+.sc-card h4{font-size:.88rem;color:#1a1a2e;margin-bottom:4px}
+.sc-card p{font-size:.84rem;color:#555;line-height:1.5}
+.sc-badge{display:inline-block;padding:3px 10px;border-radius:8px;font-size:.7rem;font-weight:700;color:#fff;margin-bottom:6px}
+
+/* Two-column table */
+.trad-table{width:100%;border-collapse:collapse;margin:12px 0}
+.trad-table th{font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;padding:10px 12px;text-align:left;border-bottom:2px solid #0d9488}
+.trad-table th:first-child{color:#dc2626;background:#fef2f2;border-radius:8px 0 0 0}
+.trad-table th:last-child{color:#059669;background:#f0fdf4;border-radius:0 8px 0 0}
+.trad-table td{padding:10px 12px;font-size:.84rem;line-height:1.55;vertical-align:top;border-bottom:1px solid #f0f0f0}
+.trad-table tr:last-child td{border-bottom:none}
+.trad-table td:first-child{color:#666;background:#fafafa}
+.trad-table td:last-child{color:#065f46;background:#f9fefb;font-weight:500}
+.trad-table .dc-ref{font-size:.72rem;font-weight:700;color:#0d9488;display:block;margin-top:4px}
+
+/* Timer */
+.oral-timer{background:#f0fdfa;border-radius:12px;padding:14px;margin-bottom:14px;text-align:center}
+.time-display{font-size:2rem;font-weight:800;color:#0d9488;margin:6px 0}
+.time-label{font-size:.8rem;color:#666}
+.timer-buttons{display:flex;gap:10px;justify-content:center;margin-top:10px}
+.btn-timer{padding:8px 18px;border-radius:10px;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;border:2px solid #0d9488}
+.btn-timer.start{background:#0d9488;color:#fff}
+.btn-timer.start:hover{background:#0f766e}
+.btn-timer.reset{background:#fff;color:#0d9488}
+.btn-timer.reset:hover{background:#f0fdfa}
+
+/* Feedback */
+.fb-box{padding:14px 16px;border-radius:12px;margin-top:12px;border-left:4px solid}
+.fb-box.tip{background:#f0fdfa;border-color:#0d9488}
+.fb-box.warn{background:#fffbeb;border-color:#d97706}
+.fb-box.err{background:#fef2f2;border-color:#dc2626}
+.fb-box.ok{background:#f0fdf4;border-color:#059669}
+.fb-box h4{font-size:.82rem;margin-bottom:5px}
+.fb-box p,.fb-box li{font-size:.82rem;line-height:1.6;color:#555}
+.fb-box ul{padding-left:16px;margin:4px 0}
+
+/* Buttons */
+.btn-a{padding:11px 26px;background:#0d9488;color:#fff;border:none;border-radius:12px;font-size:.92rem;cursor:pointer;transition:background .2s;font-weight:600;text-decoration:none;display:inline-block}
+.btn-a:hover{background:#0f766e}
+.btn-o{padding:10px 20px;border:2px solid #0d9488;color:#0d9488;background:#fff;border-radius:10px;font-size:.87rem;cursor:pointer;transition:all .2s;font-weight:600;text-decoration:none;display:inline-block}
+.btn-o:hover{background:#f0fdfa}
+.btn-row{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+
+/* Ref cards */
+.ref-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+@media(max-width:520px){.ref-grid{grid-template-columns:1fr}}
+.ref-card{background:#fff;border:2px solid #e5e7eb;border-radius:12px;padding:14px}
+.ref-card h4{font-size:.82rem;color:#1a1a2e;margin-bottom:6px}
+.ref-card ul{padding-left:16px;margin:0}
+.ref-card li{font-size:.78rem;color:#555;line-height:1.5;margin-bottom:2px}
+.dc-tag{font-weight:700;font-size:.72rem;padding:2px 8px;border-radius:6px;color:#fff;display:inline-block;margin-bottom:5px}
+
+/* Coach steps */
+.coach-step{background:#fff;border:2px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:14px;transition:border-color .2s}
+.coach-step.active{border-color:#0d9488;box-shadow:0 2px 12px rgba(13,148,136,.1)}
+.coach-step.done{border-color:#059669;background:#f0fdf4}
+.coach-step .step-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.coach-step .step-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#fff;background:#0d9488}
+.coach-step.done .step-num{background:#059669}
+.coach-step .step-title{font-size:.95rem;color:#1a1a2e;font-weight:600}
+.coach-step .step-body{font-size:.85rem;color:#555;line-height:1.6;margin-bottom:12px}
+.coach-tip{margin-top:10px;padding:12px 14px;background:#fffbeb;border-radius:10px;border-left:3px solid #d97706;font-size:.82rem;color:#555;line-height:1.55}
+.coach-tip strong{color:#d97706}
+
+/* Feedback analysis */
+.analysis-result{margin-top:16px}
+.analysis-item{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:.84rem}
+.analysis-item:last-child{border-bottom:none}
+.analysis-icon{font-size:1rem;min-width:20px}
+.analysis-text{color:#333;line-height:1.5}
+
+/* Collapsible sections */
+.collapsible-header{cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#f0fdfa;border-radius:10px;margin-bottom:8px;transition:background .15s}
+.collapsible-header:hover{background:#ccfbf1}
+.collapsible-header h4{font-size:.88rem;color:#1a1a2e;font-weight:600}
+.collapsible-header .arrow{transition:transform .2s;color:#0d9488;font-weight:700}
+.collapsible-header.open .arrow{transform:rotate(90deg)}
+.collapsible-body{padding:0 16px 12px;font-size:.84rem;color:#555;line-height:1.65}
+.collapsible-body.closed{display:none}
+
+/* Coach Interactif */
+.ci-chat{display:flex;flex-direction:column;gap:12px;margin-bottom:14px}
+.ci-bubble{padding:14px 18px;border-radius:14px;font-size:.87rem;line-height:1.65;max-width:94%}
+.ci-agent{background:#f0fdfa;border:2px solid #ccfbf1;border-bottom-left-radius:4px;align-self:flex-start;color:#333}
+.ci-agent strong{color:#0d9488}
+.ci-agent .ci-q{font-weight:600;color:#1a1a2e;font-size:.92rem;display:block;margin-top:6px}
+.ci-user{background:#fff;border:2px solid #e5e7eb;border-bottom-right-radius:4px;align-self:flex-end;color:#1a1a2e;font-style:italic}
+.ci-step-bar{display:flex;gap:6px;margin-bottom:14px;justify-content:center;flex-wrap:wrap}
+.ci-dot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;border:2px solid #e5e7eb;color:#999;transition:all .2s}
+.ci-dot.active{border-color:#0d9488;background:#0d9488;color:#fff}
+.ci-dot.done{border-color:#059669;background:#059669;color:#fff}
+.ci-input-area{margin-top:10px}
+.ci-input-area textarea{width:100%;min-height:90px;padding:14px;border:2px solid #0d9488;border-radius:12px;font-family:inherit;font-size:.9rem;line-height:1.6;resize:vertical;transition:border-color .2s,box-shadow .2s}
+.ci-input-area textarea:focus{outline:none;border-color:#047857;box-shadow:0 0 0 3px rgba(13,148,136,.1)}
+.ci-input-area textarea::placeholder{color:#aaa}
+.ci-feedback{margin-top:10px;padding:12px 16px;border-radius:10px;font-size:.84rem;line-height:1.6}
+.ci-feedback.good{background:#f0fdf4;border-left:4px solid #059669;color:#065f46}
+.ci-feedback.improve{background:#fffbeb;border-left:4px solid #d97706;color:#92400e}
+.ci-summary{background:#f0fdfa;border:2px solid #0d9488;border-radius:14px;padding:20px;margin-top:16px}
+.ci-summary h4{color:#0d9488;font-size:.9rem;margin-bottom:12px}
+.ci-summary .ci-line{padding:8px 0;border-bottom:1px solid #e5e7eb;font-size:.84rem;line-height:1.6}
+.ci-summary .ci-line:last-child{border-bottom:none}
+.ci-summary .ci-label{font-weight:700;color:#0d9488;display:block;font-size:.76rem;text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px}
+
+/* Hint system */
+.ci-hint-bar{display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}
+.btn-hint{padding:7px 16px;border:2px solid #0d9488;color:#0d9488;background:#fff;border-radius:10px;font-size:.82rem;cursor:pointer;transition:all .2s;font-weight:600}
+.btn-hint:hover{background:#f0fdfa}
+.btn-hint:disabled{opacity:.4;cursor:default}
+.btn-hint.used{background:#f0fdfa;border-color:#ccfbf1;color:#999}
+.ci-hint-bubble{background:#fffbeb;border:2px solid #fde68a;border-radius:12px;padding:12px 16px;font-size:.84rem;line-height:1.6;color:#92400e;margin-top:6px;border-left:4px solid #f59e0b}
+.ci-hint-bubble strong{color:#d97706}
+.ci-hint-counter{font-size:.76rem;color:#999;font-weight:600}
+.ci-relance{background:#fff7ed;border:2px solid #fed7aa;border-radius:12px;padding:14px 16px;font-size:.85rem;line-height:1.65;color:#9a3412;margin-top:8px}
+.ci-relance strong{color:#ea580c}
+.ci-quiz-link{display:inline-flex;align-items:center;gap:5px;padding:5px 14px;background:#f0fdfa;border:2px solid #0d9488;border-radius:8px;font-size:.78rem;font-weight:600;color:#0d9488;text-decoration:none;margin:4px 2px;transition:all .2s}
+.ci-quiz-link:hover{background:#0d9488;color:#fff}
+
+/* Coach IA Live */
+.cia-typing{display:flex;gap:5px;padding:10px 18px;align-self:flex-start}
+.cia-typing span{width:8px;height:8px;border-radius:50%;background:#0d9488;animation:ciaBounce .6s infinite alternate}
+.cia-typing span:nth-child(2){animation-delay:.2s}
+.cia-typing span:nth-child(3){animation-delay:.4s}
+@keyframes ciaBounce{to{opacity:.3;transform:translateY(-4px)}}
+.cia-status{font-size:.76rem;padding:4px 12px;border-radius:8px;display:inline-flex;align-items:center;gap:5px;margin-bottom:12px}
+.cia-status.online{background:#f0fdf4;color:#059669}
+.cia-status.offline{background:#fef2f2;color:#dc2626}
+.cia-status .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.cia-status.online .dot{background:#059669}
+.cia-status.offline .dot{background:#dc2626}
+.badge-beta{font-size:.65rem;padding:2px 7px;background:#d97706;color:#fff;border-radius:6px;vertical-align:super;margin-left:4px}
+</style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" class="back-link">&larr; Retour &agrave; l'accueil</a>
+<h1>Agent P&eacute;dagogique DEES</h1>
+<p class="subtitle">Coach de pr&eacute;paration &agrave; l'oral VAE</p>
+
+<!-- ======================== WELCOME ======================== -->
+<div id="welcomeScreen">
+<div class="welcome-card">
+  <span class="badge-teal">Pr&eacute;parateur Expert</span>
+  <h2>Coach Oral VAE DEES</h2>
+
+  <div class="identity-box">
+    <p><strong>Je suis votre pr&eacute;parateur sp&eacute;cialis&eacute;</strong> pour l'oral VAE DEES. Je connais les attendus du jury, les r&eacute;flexes professionnels du travail social en France, et le r&eacute;f&eacute;rentiel DEES.</p>
+    <p>Mon r&ocirc;le : <strong>transformer vos exp&eacute;riences d'AIS et de moniteur</strong> en r&eacute;ponses orales qui donnent au jury l'image d'un &eacute;ducateur sp&eacute;cialis&eacute; avec les bons automatismes professionnels.</p>
+    <p>Je ne suis pas le jury &mdash; je suis <strong>celui qui vous pr&eacute;pare &agrave; convaincre le jury</strong>.</p>
+    <p style="margin-top:8px;font-size:.8rem;color:#0d9488;font-weight:600">Logique de travail : question &rarr; comp&eacute;tence (DC) &rarr; situation &rarr; analyse &rarr; loi/th&eacute;orie &rarr; posture professionnelle</p>
+  </div>
+
+  <p style="font-size:.85rem;color:#0d9488;font-weight:600;margin:12px 0 4px">Choisissez votre mode d'entra&icirc;nement :</p>
+</div>
+
+<div class="mode-grid">
+  <div class="mode-card" onclick="launchMode('coach')">
+    <div class="mode-icon">&#127891;</div>
+    <h3>Coach Guid&eacute;</h3>
+    <p>S&eacute;ance de r&eacute;vision compl&egrave;te : micro-quiz &rarr; r&eacute;flexion &rarr; structuration. L'agent vous guide &eacute;tape par &eacute;tape.</p>
+  </div>
+  <div class="mode-card" onclick="launchMode('structuration')">
+    <div class="mode-icon">&#128221;</div>
+    <h3>Structuration Orale</h3>
+    <p>Template 9 &eacute;tapes complet avec feedback automatique r&eacute;cit/analyse.</p>
+  </div>
+  <div class="mode-card" onclick="launchMode('traduction')">
+    <div class="mode-icon">&#128260;</div>
+    <h3>Traduction AIS &rarr; ES</h3>
+    <p>Transformez votre vocabulaire AIS/moniteur en langage d'&eacute;ducateur sp&eacute;cialis&eacute;.</p>
+  </div>
+  <div class="mode-card" onclick="launchMode('jury')">
+    <div class="mode-icon">&#128101;</div>
+    <h3>Simulation Jury</h3>
+    <p>10 questions jury al&eacute;atoires avec timer et pistes de r&eacute;ponse.</p>
+  </div>
+  <div class="mode-card" onclick="launchMode('fiches')">
+    <div class="mode-icon">&#128218;</div>
+    <h3>Fiches R&eacute;flexe</h3>
+    <p>Organigramme, S.C.A.R.P., DC, lois, th&eacute;ories, indicateurs oraux.</p>
+  </div>
+  <div class="mode-card" onclick="launchMode('chrono')">
+    <div class="mode-icon">&#9201;</div>
+    <h3>Chrono Oral</h3>
+    <p>Passage oral chronom&eacute;tr&eacute; avec guide de structuration.</p>
+  </div>
+  <div class="mode-card" onclick="launchMode('interactif')" style="border:2px solid #0d9488;background:#f0fdfa">
+    <div class="mode-icon">&#128172;</div>
+    <h3>Coach Interactif</h3>
+    <p>L'agent vous pose des questions &eacute;tape par &eacute;tape et vous aide &agrave; formuler comme un ES.</p>
+  </div>
+  <div class="mode-card" onclick="launchMode('coachLive')" style="border:2px solid #059669;background:#f0fdf4">
+    <div class="mode-icon">&#129302;</div>
+    <h3>Coach IA Live (<span class="badge-beta">beta</span>)</h3>
+    <p>Conversation libre avec une IA coach. Elle comprend vos r&eacute;ponses et vous aide en temps r&eacute;el.</p>
+  </div>
+</div>
+</div>
+
+<!-- ======================== MODE 1: COACH GUIDE ======================== -->
+<div id="modeCoach" class="hidden">
+<div class="ex-area">
+  <div class="ex-title">&#127891; S&eacute;ance de R&eacute;vision Guid&eacute;e</div>
+  <div class="ex-instr">
+    <strong>Objectif :</strong> parcours complet en 7 &eacute;tapes. Suivez l'ordre propos&eacute; pour activer progressivement tous les r&eacute;flexes.<br>
+    <strong>Dur&eacute;e :</strong> 25 &agrave; 40 minutes selon votre rythme.
+  </div>
+
+  <div id="coachSteps">
+  <!-- Step 1 -->
+  <div class="coach-step active" id="cs1">
+    <div class="step-header"><div class="step-num">1</div><div class="step-title">&Eacute;chauffement &mdash; Identifier les DC</div></div>
+    <div class="step-body">Lancez le Micro-Quiz DC Express pour activer le r&eacute;flexe d'identification des domaines de comp&eacute;tences. Le jury attend que vous rattachiez chaque situation &agrave; un DC en quelques secondes.</div>
+    <a href="micro_quiz_dc.html" class="btn-a" target="_blank">Lancer le quiz DC &rarr;</a>
+    <div class="coach-tip"><strong>Rappel du coach :</strong> Rep&eacute;rez le verbe d'action dominant &mdash; observer/accompagner (DC1), concevoir/&eacute;valuer (DC2), transmettre/r&eacute;diger (DC3), mobiliser/coop&eacute;rer (DC4). C'est votre boussole pour chaque question du jury.</div>
+    <div class="btn-row"><button class="btn-o" onclick="advanceCoach(2)">&Eacute;tape suivante &rarr;</button></div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="coach-step" id="cs2">
+    <div class="step-header"><div class="step-num">2</div><div class="step-title">Ancrage juridique &mdash; Conna&icirc;tre les lois</div></div>
+    <div class="step-body">V&eacute;rifiez que vous pouvez relier chaque loi &agrave; une situation de votre livret. Le jury attend du <strong>droit appliqu&eacute;</strong>, pas une r&eacute;citation.</div>
+    <a href="micro_quiz_lois.html" class="btn-a" target="_blank">Lancer le quiz Lois &rarr;</a>
+    <div class="coach-tip"><strong>Rappel du coach :</strong> Trois lois suffisent pour 90% des questions : <em>2002-2</em> (droits usagers/participation), <em>2005</em> (inclusion/handicap), <em>2007</em> (protection enfance). Reliez toujours &agrave; N., R. ou Amir.</div>
+    <div class="btn-row"><button class="btn-o" onclick="advanceCoach(3)">&Eacute;tape suivante &rarr;</button></div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="coach-step" id="cs3">
+    <div class="step-header"><div class="step-num">3</div><div class="step-title">Exercice de structuration rapide</div></div>
+    <div class="step-body">Choisissez une situation et structurez une r&eacute;ponse orale en 3 points essentiels. Pas besoin d'&ecirc;tre exhaustif &mdash; l'objectif est la <strong>vitesse du r&eacute;flexe</strong>.</div>
+    <div style="margin:12px 0">
+      <select id="coachScenario" style="width:100%;padding:10px;border:2px solid #e5e7eb;border-radius:10px;font-size:.9rem">
+        <option value="">Choisissez une situation...</option>
+        <option value="0">N. (Perthes) &mdash; fatigue et retrait</option>
+        <option value="1">R. (Vergers) &mdash; impulsivit&eacute; et transitions</option>
+        <option value="2">Amir (FINC) &mdash; isolement et inclusion</option>
+      </select>
+    </div>
+    <textarea class="ta" id="coachQuick" placeholder="DC dominant + loi + action cl&eacute; en 3-4 phrases..." rows="4"></textarea>
+    <div class="coach-tip"><strong>V&eacute;rification :</strong> votre r&eacute;ponse contient-elle 1) un DC identifi&eacute;, 2) une r&eacute;f&eacute;rence l&eacute;gale, 3) un verbe d'action professionnel ? Si oui, vous avez le r&eacute;flexe. Sinon, retravaillez la formulation &mdash; utilisez le mode Traduction AIS &rarr; ES si besoin.</div>
+    <div class="btn-row"><button class="btn-o" onclick="advanceCoach(4)">&Eacute;tape suivante &rarr;</button></div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="coach-step" id="cs4">
+    <div class="step-header"><div class="step-num">4</div><div class="step-title">Posture et r&eacute;flexivit&eacute;</div></div>
+    <div class="step-body">Travaillez la diff&eacute;rence entre raconter et d&eacute;montrer. Le jury &eacute;value vos <strong>comp&eacute;tences</strong>, pas vos souvenirs.</div>
+    <a href="micro_quiz_posture.html" class="btn-a" target="_blank">Lancer le quiz Posture &rarr;</a>
+    <div class="coach-tip"><strong>Rappel du coach :</strong> Formule magique &agrave; l'oral : <em>&laquo; J'ai observ&eacute; que... j'ai mis en place... ce qui a permis... &raquo;</em>. Si vous dites <em>&laquo; j'ai fait &raquo;</em> sans expliquer pourquoi et quel effet, vous restez dans le r&eacute;cit. Ajoutez toujours le <strong>pourquoi</strong> et le <strong>r&eacute;sultat</strong>.</div>
+    <div class="btn-row"><button class="btn-o" onclick="advanceCoach(5)">&Eacute;tape suivante &rarr;</button></div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="coach-step" id="cs5">
+    <div class="step-header"><div class="step-num">5</div><div class="step-title">Situations terrain</div></div>
+    <div class="step-body">Entra&icirc;nez le lien rapide : situation &rarr; comp&eacute;tence &rarr; loi &rarr; th&eacute;orie &rarr; posture. L'oral DEES exige de passer du <strong>singulier au transf&eacute;rable</strong>.</div>
+    <a href="micro_quiz_situations.html" class="btn-a" target="_blank">Lancer le quiz Situations &rarr;</a>
+    <div class="coach-tip"><strong>Rappel du coach :</strong> Chaque situation de N., R. ou Amir est un <strong>support</strong>, pas le sujet. Le sujet = votre comp&eacute;tence professionnelle. Partez du cas concret, puis g&eacute;n&eacute;ralisez : <em>&laquo; Cette exp&eacute;rience m'a permis de d&eacute;velopper une comp&eacute;tence transf&eacute;rable dans tout accompagnement &eacute;ducatif. &raquo;</em></div>
+    <div class="btn-row"><button class="btn-o" onclick="advanceCoach(6)">&Eacute;tape suivante &rarr;</button></div>
+  </div>
+
+  <!-- Step 6 -->
+  <div class="coach-step" id="cs6">
+    <div class="step-header"><div class="step-num">6</div><div class="step-title">Simulation jury chronom&eacute;tr&eacute;e</div></div>
+    <div class="step-body">Passez en mode oral r&eacute;el : une question al&eacute;atoire, 3 minutes, r&eacute;pondez &agrave; voix haute en suivant la structure d'entonnoir.</div>
+    <button class="btn-a" onclick="launchMode('jury')">Lancer la simulation jury &rarr;</button>
+    <div class="coach-tip"><strong>Rappel du coach :</strong> Structure d'entonnoir = g&eacute;n&eacute;ral &rarr; cadre &rarr; cas concret &rarr; analyse &rarr; recul. Utilisez la m&eacute;thode S.C.A.R.P. : Situation &rarr; Contexte/Cadre &rarr; Actions &rarr; R&eacute;flexivit&eacute; &rarr; Projection.</div>
+    <div class="btn-row"><button class="btn-o" onclick="advanceCoach(7)">&Eacute;tape suivante &rarr;</button></div>
+  </div>
+
+  <!-- Step 7 -->
+  <div class="coach-step" id="cs7">
+    <div class="step-header"><div class="step-num">7</div><div class="step-title">Bilan de s&eacute;ance</div></div>
+    <div class="step-body">F&eacute;licitations ! Vous avez compl&eacute;t&eacute; une s&eacute;ance compl&egrave;te. V&eacute;rifiez vos acquis :</div>
+    <div class="tpl-block">
+      <h4>Checklist de la s&eacute;ance</h4>
+      <div style="font-size:.85rem;color:#333;line-height:2">
+        <label><input type="checkbox"> J'identifie le DC en moins de 3 secondes</label><br>
+        <label><input type="checkbox"> Je sais relier 2002-2 / 2005 / 2007 &agrave; mes situations</label><br>
+        <label><input type="checkbox"> Je structure avec DC &rarr; cadre &rarr; situation &rarr; actions &rarr; analyse</label><br>
+        <label><input type="checkbox"> J'utilise des verbes d'action pro (observer, ajuster, &eacute;valuer...)</label><br>
+        <label><input type="checkbox"> Je cite au moins une r&eacute;f&eacute;rence th&eacute;orique</label><br>
+        <label><input type="checkbox"> Je passe du r&eacute;cit &agrave; l'analyse (pourquoi + effet)</label><br>
+        <label><input type="checkbox"> Je g&eacute;n&eacute;ralise vers une comp&eacute;tence transf&eacute;rable</label><br>
+        <label><input type="checkbox"> Je parle en &eacute;ducateur sp&eacute;cialis&eacute;, pas en AIS/moniteur</label>
+      </div>
+    </div>
+    <div class="fb-box tip">
+      <h4 style="color:#0d9488">&#128161; Prochaine s&eacute;ance</h4>
+      <p>Concentrez-vous sur les points non coch&eacute;s. Conseil : commencez par le mode <strong>Traduction AIS &rarr; ES</strong> si vous avez du mal &agrave; reformuler, ou par le mode <strong>Structuration Orale</strong> si votre fil de r&eacute;ponse manque de rigueur.</p>
+    </div>
+    <div class="btn-row">
+      <button class="btn-o" onclick="resetCoach()">&#128260; Recommencer la s&eacute;ance</button>
+      <button class="btn-o" onclick="showWelcome()">Retour aux modes</button>
+    </div>
+  </div>
+  </div>
+</div>
+</div>
+
+<!-- ======================== MODE 2: STRUCTURATION ORALE ======================== -->
+<div id="modeStructuration" class="hidden">
+<div class="ex-area">
+  <div class="ex-title">&#128221; Structuration Orale Compl&egrave;te</div>
+  <div class="ex-instr">
+    <strong>Objectif :</strong> Structurez une r&eacute;ponse orale en 9 &eacute;tapes couvrant tous les attendus du jury.<br>
+    <strong>R&egrave;gle d'or :</strong> Vous d&eacute;montrez une comp&eacute;tence, vous ne racontez pas un souvenir.
+  </div>
+
+  <h4 style="font-size:.88rem;color:#1a1a2e;margin-bottom:10px">Choisissez votre situation :</h4>
+  <div class="sc-card" onclick="selectStruct(0)" id="ss0">
+    <span class="sc-badge" style="background:#e10600">DC1 / DC2</span>
+    <h4>N. (Perthes) &mdash; Fatigue et retrait</h4>
+    <p>N. est fatigu&eacute;e, douloureuse, en retrait dans le groupe.</p>
+  </div>
+  <div class="sc-card" onclick="selectStruct(1)" id="ss1">
+    <span class="sc-badge" style="background:#e10600">DC1 / DC2</span>
+    <h4>R. (Vergers) &mdash; Impulsivit&eacute; et transitions</h4>
+    <p>R. passe rapidement &agrave; l'acte dans les transitions de groupe.</p>
+  </div>
+  <div class="sc-card" onclick="selectStruct(2)" id="ss2">
+    <span class="sc-badge" style="background:#2563eb">DC1 / DC4</span>
+    <h4>Amir (FINC) &mdash; Isolement et inclusion</h4>
+    <p>Amir reste isol&eacute; &agrave; la maison de quartier.</p>
+  </div>
+
+  <div id="structForm" class="hidden">
+  <div class="tpl-block">
+    <h4>9 &eacute;tapes de la r&eacute;ponse orale DEES</h4>
+
+    <div class="tpl-step"><div class="sn">1</div><div class="sc">
+      <h5>DC dominant + comp&eacute;tence</h5>
+      <p>Identifiez le DC principal et la comp&eacute;tence mobilis&eacute;e.</p>
+      <textarea class="ta struct-ta" placeholder="Ex : DC1 - relation &eacute;ducative sp&eacute;cialis&eacute;e, observation fine, adaptation &agrave; la singularit&eacute;..." rows="2"></textarea>
+    </div></div>
+
+    <div class="tpl-step"><div class="sn">2</div><div class="sc">
+      <h5>Situation concr&egrave;te (observation)</h5>
+      <p>D&eacute;crivez les faits observ&eacute;s. Utilisez &laquo; j'ai observ&eacute; que... &raquo;</p>
+      <textarea class="ta struct-ta" placeholder="Ex : Lors d'un temps de groupe, j'observe que N. se met en retrait, change de posture, baisse sa participation..." rows="3"></textarea>
+    </div></div>
+
+    <div class="tpl-step"><div class="sn">3</div><div class="sc">
+      <h5>Analyse &eacute;ducative</h5>
+      <p>Grille BIO/PSYCHO/SOCIO. Que comprenez-vous de cette situation ?</p>
+      <textarea class="ta struct-ta" placeholder="Ex : Bio : douleur li&eacute;e &agrave; Perthes, fatigue physique. Psycho : v&eacute;cu de diff&eacute;rence, besoin de s&eacute;curit&eacute;. Socio : regard des pairs, risque d'isolement..." rows="3"></textarea>
+    </div></div>
+
+    <div class="tpl-step"><div class="sn">4</div><div class="sc">
+      <h5>Choix professionnels</h5>
+      <p>Pourquoi avez-vous agi ainsi ? Quels objectifs &eacute;ducatifs ?</p>
+      <textarea class="ta struct-ta" placeholder="Ex : J'ai choisi une approche non intrusive pour respecter son rythme, avec l'objectif de maintenir son autonomie et sa participation..." rows="2"></textarea>
+    </div></div>
+
+    <div class="tpl-step"><div class="sn">5</div><div class="sc">
+      <h5>Actions mises en &oelig;uvre</h5>
+      <p>Verbes d'action : j'ai mis en place, j'ai propos&eacute;, j'ai ajust&eacute;...</p>
+      <textarea class="ta struct-ta" placeholder="Ex : J'ai am&eacute;nag&eacute; son espace, anticip&eacute; les pauses, propos&eacute; des jeux calmes adapt&eacute;s, ajust&eacute; mon rythme au sien..." rows="3"></textarea>
+    </div></div>
+
+    <div class="tpl-step"><div class="sn">6</div><div class="sc">
+      <h5>Posture &eacute;ducative</h5>
+      <p>Quelle posture avez-vous adopt&eacute;e ? (contenante, non punitive, &eacute;tayante...)</p>
+      <textarea class="ta struct-ta" placeholder="Ex : Posture de pr&eacute;sence stable et s&eacute;curisante, observation sans intrusion, &eacute;tayage progressif vers l'autonomie..." rows="2"></textarea>
+    </div></div>
+
+    <div class="tpl-step"><div class="sn">7</div><div class="sc">
+      <h5>Travail en r&eacute;seau + r&eacute;f&eacute;rences l&eacute;gales</h5>
+      <p>Partenaires mobilis&eacute;s + lois qui ancrent votre action.</p>
+      <textarea class="ta struct-ta" placeholder="Ex : Coordination avec l'enseignante, transmissions &agrave; la famille, lien avec la coordinatrice AIS. Loi 2005 (inclusion), loi 2002-2 (droits usagers)..." rows="3"></textarea>
+    </div></div>
+
+    <div class="tpl-step"><div class="sn">8</div><div class="sc">
+      <h5>Appui th&eacute;orique</h5>
+      <p>Au moins une r&eacute;f&eacute;rence th&eacute;orique reli&eacute;e &agrave; votre pratique.</p>
+      <textarea class="ta struct-ta" placeholder="Ex : Winnicott (holding) : ma pr&eacute;sence stable a jou&eacute; le r&ocirc;le d'environnement suffisamment bon, permettant &agrave; N. de se sentir en s&eacute;curit&eacute;..." rows="2"></textarea>
+    </div></div>
+
+    <div class="tpl-step"><div class="sn">9</div><div class="sc">
+      <h5>Effets observ&eacute;s + g&eacute;n&eacute;ralisation</h5>
+      <p>Qu'a produit votre action ? Quel principe transf&eacute;rable ?</p>
+      <textarea class="ta struct-ta" placeholder="Ex : N. a progressivement verbalis&eacute; sa douleur au lieu de se replier. Cette exp&eacute;rience montre que l'adaptation du rythme est une comp&eacute;tence transf&eacute;rable &agrave; tout accompagnement..." rows="3"></textarea>
+    </div></div>
+  </div>
+
+  <div id="structCoachTip" class="fb-box tip">
+    <h4 style="color:#0d9488">&#128161; Conseil du coach</h4>
+    <p id="structTipText">S&eacute;lectionnez une situation pour voir le conseil adapt&eacute;.</p>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-a" onclick="analyzeStructure()">&#128269; Analyser ma r&eacute;ponse</button>
+    <button class="btn-o" onclick="clearStruct()">Effacer tout</button>
+    <button class="btn-o" onclick="showWelcome()">Retour aux modes</button>
+  </div>
+
+  <div id="structAnalysis" class="analysis-result hidden"></div>
+  </div>
+</div>
+</div>
+
+<!-- ======================== MODE 3: TRADUCTION AIS → ES ======================== -->
+<div id="modeTraduction" class="hidden">
+<div class="ex-area">
+  <div class="ex-title">&#128260; Traduction AIS / Moniteur &rarr; &Eacute;ducateur Sp&eacute;cialis&eacute;</div>
+  <div class="ex-instr">
+    <strong>Objectif :</strong> Votre exp&eacute;rience d'AIS et de moniteur est <strong>l&eacute;gitime</strong>. Mais le jury attend le <strong>vocabulaire et les r&eacute;flexes d'un &eacute;ducateur sp&eacute;cialis&eacute;</strong>. Cette section vous montre comment reformuler.<br>
+    <strong>Principe cl&eacute; :</strong> Vous ne changez pas ce que vous avez fait &mdash; vous changez <strong>comment vous le dites</strong>.
+  </div>
+
+  <h4 style="font-size:.9rem;color:#1a1a2e;margin:16px 0 10px">Reformulations essentielles</h4>
+
+  <table class="trad-table">
+  <thead>
+    <tr><th>&#10060; Langage AIS / Moniteur</th><th>&#9989; Reformulation &Eacute;ducateur Sp&eacute;cialis&eacute;</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>&laquo; J'ai surveill&eacute; un groupe d'enfants &raquo;</td>
+      <td>&laquo; J'ai assur&eacute; un accompagnement &eacute;ducatif au quotidien visant &agrave; s&eacute;curiser le cadre et soutenir les interactions sociales &raquo;<span class="dc-ref">DC1 &mdash; Relation &eacute;ducative</span></td>
+    </tr>
+    <tr>
+      <td>&laquo; J'ai aid&eacute; l'enfant &agrave; faire ses devoirs &raquo;</td>
+      <td>&laquo; J'ai mis en place un &eacute;tayage adapt&eacute; dans les apprentissages, en ajustant le niveau de soutien &agrave; la zone proximale de d&eacute;veloppement de l'enfant &raquo;<span class="dc-ref">DC1/DC2 &mdash; Vygotski (ZPD)</span></td>
+    </tr>
+    <tr>
+      <td>&laquo; J'ai calm&eacute; un enfant en crise &raquo;</td>
+      <td>&laquo; Face &agrave; un passage &agrave; l'acte, j'ai adopt&eacute; une posture contenante et non punitive, visant la r&eacute;gulation &eacute;motionnelle, puis j'ai propos&eacute; un temps de verbalisation &raquo;<span class="dc-ref">DC1 &mdash; Posture contenante</span></td>
+    </tr>
+    <tr>
+      <td>&laquo; J'ai parl&eacute; avec les parents &raquo;</td>
+      <td>&laquo; J'ai assur&eacute; une transmission cibl&eacute;e &agrave; la famille, dans le respect du secret professionnel et du cadre de la loi 2002-2, en adaptant mon discours au contexte familial &raquo;<span class="dc-ref">DC3 &mdash; Communication professionnelle</span></td>
+    </tr>
+    <tr>
+      <td>&laquo; J'ai organis&eacute; une activit&eacute; sportive &raquo;</td>
+      <td>&laquo; J'ai con&ccedil;u et conduit une m&eacute;diation &eacute;ducative par le sport, avec des objectifs travaill&eacute;s : coop&eacute;ration, respect des r&egrave;gles, gestion de la frustration &raquo;<span class="dc-ref">DC2 &mdash; Projet &eacute;ducatif</span></td>
+    </tr>
+    <tr>
+      <td>&laquo; J'ai fait un rapport &raquo;</td>
+      <td>&laquo; J'ai r&eacute;dig&eacute; un &eacute;crit professionnel en distinguant faits, observations et analyse, adapt&eacute; au destinataire &raquo;<span class="dc-ref">DC3 &mdash; &Eacute;crits professionnels</span></td>
+    </tr>
+    <tr>
+      <td>&laquo; J'ai travaill&eacute; avec d'autres professionnels &raquo;</td>
+      <td>&laquo; J'ai mobilis&eacute; un travail partenarial (enseignante, soins, famille, coordinatrice AIS), avec des transmissions cibl&eacute;es et &eacute;thiques dans le cadre du secret partag&eacute; &raquo;<span class="dc-ref">DC4 &mdash; Partenariat / r&eacute;seau</span></td>
+    </tr>
+    <tr>
+      <td>&laquo; J'ai remarqu&eacute; qu'il allait pas bien &raquo;</td>
+      <td>&laquo; J'ai observ&eacute; des signaux de mal-&ecirc;tre (retrait, changement de posture, baisse de participation) que j'ai analys&eacute;s au regard de la situation globale de l'enfant &raquo;<span class="dc-ref">DC1 &mdash; Observation fine</span></td>
+    </tr>
+    <tr>
+      <td>&laquo; Il ne voulait pas jouer avec les autres &raquo;</td>
+      <td>&laquo; J'ai observ&eacute; un retrait syst&eacute;matique lors des temps collectifs. Cette observation m'a conduit &agrave; formuler un diagnostic socio-&eacute;ducatif et &agrave; proposer une entr&eacute;e progressive dans le groupe par des m&eacute;diations adapt&eacute;es &raquo;<span class="dc-ref">DC1/DC2 &mdash; Diagnostic + projet</span></td>
+    </tr>
+    <tr>
+      <td>&laquo; J'ai fait des jeux adapt&eacute;s &raquo;</td>
+      <td>&laquo; J'ai con&ccedil;u des m&eacute;diations ludiques ajust&eacute;es aux capacit&eacute;s et au rythme de l'enfant, en lien avec les objectifs du projet personnalis&eacute; &raquo;<span class="dc-ref">DC2 &mdash; Loi 2002-2</span></td>
+    </tr>
+  </tbody>
+  </table>
+
+  <div class="tpl-block" style="margin-top:16px">
+    <h4>Exercice de reformulation</h4>
+    <p style="font-size:.84rem;color:#555;margin-bottom:10px">Prenez une phrase de votre v&eacute;cu AIS/moniteur et reformulez-la en langage ES :</p>
+    <textarea class="ta" id="tradInput" placeholder="Votre phrase AIS/moniteur (ex : 'j'ai g&eacute;r&eacute; un conflit entre deux enfants')..." rows="2"></textarea>
+    <div style="text-align:center;margin:10px 0;font-size:1.2rem;color:#0d9488">&#8595;</div>
+    <textarea class="ta" id="tradOutput" placeholder="Votre reformulation ES (DC + verbe pro + cadre + analyse)..." rows="3"></textarea>
+    <button class="btn-a" onclick="checkTrad()" style="margin-top:10px">&#128269; V&eacute;rifier ma reformulation</button>
+    <div id="tradFeedback" class="hidden"></div>
+  </div>
+
+  <div class="fb-box tip">
+    <h4 style="color:#0d9488">&#128161; Les 4 r&egrave;gles de reformulation</h4>
+    <ul>
+      <li><strong>Remplacez &laquo; faire &raquo;</strong> par un verbe professionnel (observer, concevoir, ajuster, transmettre, coordonner, &eacute;valuer)</li>
+      <li><strong>Ajoutez le DC</strong> : votre action rel&egrave;ve de quelle comp&eacute;tence ?</li>
+      <li><strong>Ajoutez le pourquoi</strong> : dans quel objectif &eacute;ducatif ?</li>
+      <li><strong>Ajoutez le cadre</strong> : quelle loi ou quel principe professionnel ancre votre action ?</li>
+    </ul>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-o" onclick="showWelcome()">Retour aux modes</button>
+  </div>
+</div>
+</div>
+
+<!-- ======================== MODE 4: SIMULATION JURY ======================== -->
+<div id="modeJury" class="hidden">
+<div class="ex-area">
+  <div class="ex-title">&#128101; Simulation Jury</div>
+  <div class="ex-instr">
+    <strong>Objectif :</strong> R&eacute;pondez &agrave; voix haute en 2-3 minutes. Suivez la m&eacute;thode <strong>S.C.A.R.P.</strong><br>
+    <strong>S</strong>ituation &rarr; <strong>C</strong>ontexte/Cadre &rarr; <strong>A</strong>ctions &rarr; <strong>R</strong>&eacute;flexivit&eacute; &rarr; <strong>P</strong>rojection
+  </div>
+
+  <div class="oral-timer">
+    <div class="time-label">Temps de r&eacute;ponse</div>
+    <div class="time-display" id="juryTimer">03:00</div>
+    <div class="timer-buttons">
+      <button class="btn-timer start" id="juryTimerBtn" onclick="toggleJuryTimer()">D&eacute;marrer</button>
+      <button class="btn-timer reset" onclick="resetJuryTimer()">R&eacute;initialiser</button>
+    </div>
+  </div>
+
+  <div class="sc-card" style="text-align:center;cursor:default">
+    <p style="font-size:.82rem;color:#999;margin-bottom:8px">Question du jury :</p>
+    <p id="juryQText" style="font-size:1.05rem;color:#1a1a2e;font-weight:600;line-height:1.6">Cliquez sur &laquo; Nouvelle question &raquo; pour commencer</p>
+  </div>
+
+  <div id="juryHints" class="hidden">
+    <div class="fb-box tip">
+      <h4 style="color:#0d9488">&#128161; Pistes de r&eacute;ponse</h4>
+      <p id="juryHintText"></p>
+    </div>
+  </div>
+
+  <div id="juryPostFeedback" class="hidden">
+    <div class="fb-box warn">
+      <h4 style="color:#d97706">&#9888; V&eacute;rification apr&egrave;s r&eacute;ponse</h4>
+      <p>Avez-vous mentionn&eacute; dans votre r&eacute;ponse orale :</p>
+      <ul>
+        <li>&#9744; Le DC dominant ?</li>
+        <li>&#9744; Une situation concr&egrave;te (N., R. ou Amir) ?</li>
+        <li>&#9744; Une loi (2002-2, 2005, 2007) ?</li>
+        <li>&#9744; Une r&eacute;f&eacute;rence th&eacute;orique ?</li>
+        <li>&#9744; L'effet observ&eacute; / l'analyse (pas juste le r&eacute;cit) ?</li>
+        <li>&#9744; Une posture professionnelle nomm&eacute;e ?</li>
+      </ul>
+      <p style="margin-top:8px"><strong>Si vous avez moins de 4 &#9745;, retravaillez cette question.</strong></p>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-a" onclick="newJuryQuestion()">Nouvelle question</button>
+    <button class="btn-o" onclick="toggleJuryHints()">Voir les pistes</button>
+    <button class="btn-o" onclick="showJuryFeedback()">Checklist post-r&eacute;ponse</button>
+    <button class="btn-o" onclick="showWelcome()">Retour aux modes</button>
+  </div>
+</div>
+</div>
+
+<!-- ======================== MODE 5: FICHES REFLEXE ======================== -->
+<div id="modeFiches" class="hidden">
+<div class="ex-area">
+  <div class="ex-title">&#128218; Fiches R&eacute;flexe</div>
+  <div class="ex-instr">
+    <strong>R&eacute;f&eacute;rences compl&egrave;tes</strong> pour structurer vos r&eacute;ponses : organigramme, m&eacute;thodes, DC, lois, th&eacute;ories, indicateurs oraux.
+  </div>
+
+  <!-- Organigramme -->
+  <div class="collapsible-header" onclick="toggleSection(this)">
+    <h4>&#128203; Organigramme de r&eacute;ponse (13 points)</h4>
+    <span class="arrow">&#9654;</span>
+  </div>
+  <div class="collapsible-body closed">
+    <ol style="padding-left:20px;font-size:.84rem;color:#333;line-height:1.8">
+      <li><strong>Identifier la comp&eacute;tence</strong> imm&eacute;diatement (F1 relation, F2 accompagnement, F3 conception, F4 veille)</li>
+      <li><strong>Prendre en compte les 4 DC</strong> comme grille de lecture</li>
+      <li><strong>Partir de la situation singuli&egrave;re</strong> : besoins, capacit&eacute;s, rythme, environnement</li>
+      <li><strong>G&eacute;n&eacute;raliser la posture professionnelle</strong> : relier au r&eacute;f&eacute;rentiel</li>
+      <li><strong>Universel &#8596; Singulier</strong> : chaque relation est unique mais ancr&eacute;e dans un cadre</li>
+      <li><strong>Inclure les lois</strong> : 2002-2, 2005 en priorit&eacute;</li>
+      <li><strong>Mettre en avant la professionnalisation</strong> : objectifs, outils, m&eacute;thodes, choix</li>
+      <li><strong>Comp&eacute;tences, pas anecdotes</strong> : les situations sont le support, pas le sujet</li>
+      <li><strong>Montrer ce qu'on a compris</strong> de la relation &eacute;ducative</li>
+      <li><strong>Approfondir et d&eacute;montrer</strong> : &laquo; J'ai mis en place&hellip; &raquo; pas &laquo; Je fais&hellip; &raquo;</li>
+      <li><strong>Int&eacute;grer de la th&eacute;orie</strong> : au moins une r&eacute;f&eacute;rence (Winnicott, Vygotski, Rogers&hellip;)</li>
+      <li><strong>Utiliser le vocabulaire du r&eacute;f&eacute;rentiel</strong></li>
+      <li><strong>Technicien du projet</strong> : conception &rarr; mise en &oelig;uvre &rarr; coordination &rarr; &eacute;valuation &rarr; &eacute;crits</li>
+    </ol>
+  </div>
+
+  <!-- SCARP -->
+  <div class="collapsible-header" onclick="toggleSection(this)">
+    <h4>&#128736; M&eacute;thode S.C.A.R.P.</h4>
+    <span class="arrow">&#9654;</span>
+  </div>
+  <div class="collapsible-body closed">
+    <div style="font-size:.84rem;color:#333;line-height:1.8">
+      <p><strong style="color:#0d9488">S &mdash; Situation</strong> professionnelle v&eacute;cue : exemple concret du terrain</p>
+      <p><strong style="color:#0d9488">C &mdash; Contexte et cadre</strong> : projet personnalis&eacute;, projet d'&eacute;tablissement, cadre l&eacute;gal (loi 2002-2&hellip;)</p>
+      <p><strong style="color:#0d9488">A &mdash; Actions &eacute;ducatives</strong> men&eacute;es : outils, accompagnement, travail d'&eacute;quipe</p>
+      <p><strong style="color:#0d9488">R &mdash; R&eacute;flexivit&eacute;</strong> : analyse de la pratique, ajustements professionnels</p>
+      <p><strong style="color:#0d9488">P &mdash; Projection</strong> / professionnalisation : &eacute;volution de la posture, am&eacute;lioration</p>
+    </div>
+  </div>
+
+  <!-- BIO PSYCHO SOCIO -->
+  <div class="collapsible-header" onclick="toggleSection(this)">
+    <h4>&#128300; Grille BIO / PSYCHO / SOCIO</h4>
+    <span class="arrow">&#9654;</span>
+  </div>
+  <div class="collapsible-body closed">
+    <div class="ref-grid">
+      <div class="ref-card" style="border-color:#dc2626">
+        <h4 style="color:#dc2626">Biologique</h4>
+        <ul><li>Sant&eacute;, corps, impact physique</li><li>Ex : douleur de N. (Perthes), fatigue</li></ul>
+      </div>
+      <div class="ref-card" style="border-color:#7c3aed">
+        <h4 style="color:#7c3aed">Psychologique</h4>
+        <ul><li>&Eacute;motions, v&eacute;cu, d&eacute;veloppement psychique</li><li>Ex : impulsivit&eacute; de R., confiance d'Amir</li></ul>
+      </div>
+      <div class="ref-card" style="border-color:#2563eb">
+        <h4 style="color:#2563eb">Sociologique</h4>
+        <ul><li>Place dans le groupe, relations sociales</li><li>Ex : isolement d'Amir, regard des pairs sur N.</li></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Indicateurs oraux -->
+  <div class="collapsible-header" onclick="toggleSection(this)">
+    <h4>&#127919; 10 Indicateurs oraux de pr&eacute;paration</h4>
+    <span class="arrow">&#9654;</span>
+  </div>
+  <div class="collapsible-body closed">
+    <ol style="padding-left:20px;font-size:.84rem;color:#333;line-height:1.9">
+      <li><strong>Identifier le DC d&egrave;s la question</strong> &mdash; r&eacute;flexe en 1 seconde</li>
+      <li><strong>Distinguer universel / sp&eacute;cifique</strong> &mdash; structure pro + adaptation singuli&egrave;re</li>
+      <li><strong>Mobiliser les lois</strong> &mdash; droit appliqu&eacute;, pas r&eacute;citation</li>
+      <li><strong>Comp&eacute;tences, pas anecdotes</strong> &mdash; la situation est le support, la comp&eacute;tence est le sujet</li>
+      <li><strong>La relation &eacute;ducative comme outil</strong> &mdash; construction dans le temps, l'observation, l'ajustement</li>
+      <li><strong>D&eacute;montrer, pas affirmer</strong> &mdash; &laquo; J'ai observ&eacute; que&hellip; j'ai mis en place&hellip; ce qui a permis&hellip; &raquo;</li>
+      <li><strong>Int&eacute;grer de la th&eacute;orie</strong> &mdash; au moins une r&eacute;f&eacute;rence reli&eacute;e &agrave; la pratique</li>
+      <li><strong>Technicien du projet</strong> &mdash; 5 &eacute;tapes : diagnostic, objectifs, mise en &oelig;uvre, coordination, &eacute;valuation</li>
+      <li><strong>Ma&icirc;triser les lois + situations</strong> &mdash; associer chaque loi &agrave; un cas concret du livret</li>
+      <li><strong>L'accompagnement est un processus</strong> &mdash; &eacute;valuation continue, pas un bilan ponctuel</li>
+    </ol>
+  </div>
+
+  <!-- DC -->
+  <div class="collapsible-header open" onclick="toggleSection(this)">
+    <h4>&#128204; Domaines de Comp&eacute;tences (DC)</h4>
+    <span class="arrow" style="transform:rotate(90deg)">&#9654;</span>
+  </div>
+  <div class="collapsible-body">
+    <div class="ref-grid">
+      <div class="ref-card"><span class="dc-tag" style="background:#e10600">DC1</span><h4>Relation &eacute;ducative</h4><ul><li>Observation fine</li><li>Adaptation &agrave; la singularit&eacute;</li><li>Accompagnement au quotidien</li><li>Posture contenante</li></ul></div>
+      <div class="ref-card"><span class="dc-tag" style="background:#2563eb">DC2</span><h4>Projet &eacute;ducatif</h4><ul><li>Conception / co-construction</li><li>Mise en &oelig;uvre / coordination</li><li>&Eacute;valuation / r&eacute;ajustement</li><li>Consentement de la personne</li></ul></div>
+      <div class="ref-card"><span class="dc-tag" style="background:#7c3aed">DC3</span><h4>Communication pro</h4><ul><li>&Eacute;crits professionnels</li><li>Transmissions cibl&eacute;es</li><li>Adaptation au destinataire</li><li>Secret partag&eacute;</li></ul></div>
+      <div class="ref-card"><span class="dc-tag" style="background:#d97706">DC4</span><h4>Dynamiques institutionnelles</h4><ul><li>Partenariat / r&eacute;seau</li><li>Veille professionnelle</li><li>R&eacute;flexivit&eacute; / auto-analyse</li><li>Politiques publiques</li></ul></div>
+    </div>
+  </div>
+
+  <!-- Lois -->
+  <div class="collapsible-header" onclick="toggleSection(this)">
+    <h4>&#9878; Lois Essentielles</h4>
+    <span class="arrow">&#9654;</span>
+  </div>
+  <div class="collapsible-body closed">
+    <div class="ref-grid">
+      <div class="ref-card"><h4>Loi 2002-2</h4><ul><li>Droits des usagers, participation</li><li>Projet personnalis&eacute;</li><li>Livret d'accueil, CVS, contrat</li></ul></div>
+      <div class="ref-card"><h4>Loi 2005</h4><ul><li>Inclusion, compensation</li><li>Accessibilit&eacute;, MDPH</li><li>&Eacute;galit&eacute; des droits et des chances</li></ul></div>
+      <div class="ref-card"><h4>Loi 2007</h4><ul><li>Protection de l'enfance</li><li>Pr&eacute;vention, signalement</li><li>Int&eacute;r&ecirc;t sup&eacute;rieur de l'enfant</li></ul></div>
+      <div class="ref-card"><h4>CIDE + Secret</h4><ul><li>CIDE : droits de l'enfant</li><li>Art. 226-13 : secret pro</li><li>L.226-2-2 CASF : secret partag&eacute;</li></ul></div>
+    </div>
+  </div>
+
+  <!-- Theories -->
+  <div class="collapsible-header" onclick="toggleSection(this)">
+    <h4>&#128214; Th&eacute;ories Cl&eacute;s</h4>
+    <span class="arrow">&#9654;</span>
+  </div>
+  <div class="collapsible-body closed">
+    <div class="ref-grid">
+      <div class="ref-card"><h4>Winnicott</h4><ul><li>Holding (soutien, contenance)</li><li>Environnement suffisamment bon</li><li>Objet transitionnel</li></ul></div>
+      <div class="ref-card"><h4>Vygotski</h4><ul><li>ZPD (zone proximale)</li><li>&Eacute;tayage progressif</li><li>M&eacute;diation par les pairs</li></ul></div>
+      <div class="ref-card"><h4>Rogers</h4><ul><li>Regard positif inconditionnel</li><li>Empathie</li><li>Non-directivit&eacute;</li></ul></div>
+      <div class="ref-card"><h4>Maela Paul</h4><ul><li>Postures d'accompagnement</li><li>Ni faire &agrave; la place, ni laisser seul</li><li>Cheminement &agrave; c&ocirc;t&eacute; de</li></ul></div>
+    </div>
+  </div>
+
+  <div class="btn-row" style="margin-top:20px">
+    <button class="btn-o" onclick="showWelcome()">Retour aux modes</button>
+  </div>
+</div>
+</div>
+
+<!-- ======================== MODE 6: CHRONO ORAL ======================== -->
+<div id="modeChrono" class="hidden">
+<div class="ex-area">
+  <div class="ex-title">&#9201; Chrono Oral</div>
+  <div class="ex-instr">
+    <strong>Simulez un passage oral chronom&eacute;tr&eacute;.</strong> R&eacute;pondez &agrave; voix haute en suivant la structure S.C.A.R.P. affich&eacute;e.
+  </div>
+
+  <div class="oral-timer">
+    <div class="time-label">S&eacute;lectionnez la dur&eacute;e</div>
+    <div style="display:flex;gap:10px;justify-content:center;margin:10px 0">
+      <button class="btn-timer reset" onclick="setChronoDuration(120)" id="chrono2">2 min</button>
+      <button class="btn-timer start" onclick="setChronoDuration(180)" id="chrono3">3 min</button>
+      <button class="btn-timer reset" onclick="setChronoDuration(300)" id="chrono5">5 min</button>
+    </div>
+    <div class="time-display" id="chronoDisplay">03:00</div>
+    <div class="timer-buttons">
+      <button class="btn-timer start" id="chronoBtn" onclick="toggleChrono()">D&eacute;marrer</button>
+      <button class="btn-timer reset" onclick="resetChrono()">R&eacute;initialiser</button>
+    </div>
+  </div>
+
+  <div class="tpl-block">
+    <h4>Guide S.C.A.R.P. (pendant l'oral)</h4>
+    <div class="tpl-step"><div class="sn">S</div><div class="sc"><h5>Situation (15s)</h5><p>Situation concr&egrave;te v&eacute;cue (N., R. ou Amir)</p></div></div>
+    <div class="tpl-step"><div class="sn">C</div><div class="sc"><h5>Contexte / Cadre (20s)</h5><p>DC dominant + loi + cadre institutionnel</p></div></div>
+    <div class="tpl-step"><div class="sn">A</div><div class="sc"><h5>Actions &eacute;ducatives (40s)</h5><p>Verbes pro : observer, ajuster, concevoir, coordonner, &eacute;valuer</p></div></div>
+    <div class="tpl-step"><div class="sn">R</div><div class="sc"><h5>R&eacute;flexivit&eacute; (30s)</h5><p>Analyse + th&eacute;orie + posture + effets observ&eacute;s</p></div></div>
+    <div class="tpl-step"><div class="sn">P</div><div class="sc"><h5>Projection (20s)</h5><p>G&eacute;n&eacute;ralisation + comp&eacute;tence transf&eacute;rable</p></div></div>
+  </div>
+
+  <div class="fb-box warn">
+    <h4 style="color:#d97706">&#9888; Vigilance r&eacute;cit vs analyse</h4>
+    <p>Si vous vous entendez <strong>raconter</strong> (&laquo; il &eacute;tait&hellip; on a fait&hellip; c'&eacute;tait&hellip; &raquo;), arr&ecirc;tez-vous et reformulez : <strong>&laquo; J'ai observ&eacute; que&hellip; j'ai mis en place&hellip; ce qui a permis&hellip; &raquo;</strong></p>
+    <p style="margin-top:6px">Pr&eacute;cisez toujours : <strong>pourquoi</strong> j'ai agi ainsi, <strong>ce que j'ai observ&eacute;</strong>, <strong>l'effet</strong> chez la personne, <strong>comment j'ajuste</strong> mon accompagnement.</p>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-o" onclick="showWelcome()">Retour aux modes</button>
+  </div>
+</div>
+</div>
+
+<!-- ======================== MODE 7: COACH INTERACTIF ======================== -->
+<div id="modeInteractif" class="hidden">
+<div class="ex-area">
+  <div class="ex-title">&#128172; Coach Interactif</div>
+  <div class="ex-instr">
+    <strong>Objectif :</strong> Je vais vous poser des questions une par une pour construire ensemble votre r&eacute;ponse orale. R&eacute;pondez comme &agrave; l'oral &mdash; je vous guiderai si votre r&eacute;ponse reste trop descriptive.<br>
+    <strong>Principe :</strong> Vous parlez &agrave; partir de vos exp&eacute;riences d'AIS/moniteur, et je vous aide &agrave; les formuler comme un &eacute;ducateur sp&eacute;cialis&eacute;.
+  </div>
+
+  <!-- Situation selector (shown at start) -->
+  <div id="ciStart">
+    <div class="ci-bubble ci-agent">
+      <strong>Coach :</strong> Avant de commencer, choisissez la situation sur laquelle vous souhaitez travailler.
+      <span class="ci-q">Vous pouvez aussi d&eacute;crire librement une situation de votre v&eacute;cu.</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin:12px 0">
+      <div class="sc-card" onclick="ciPickScenario(0)" id="cis0">
+        <span class="sc-badge" style="background:#e10600">AIS</span>
+        <h4>N. (Perthes) &mdash; Fatigue et retrait</h4>
+      </div>
+      <div class="sc-card" onclick="ciPickScenario(1)" id="cis1">
+        <span class="sc-badge" style="background:#e10600">AIS</span>
+        <h4>R. (Vergers) &mdash; Impulsivit&eacute; et transitions</h4>
+      </div>
+      <div class="sc-card" onclick="ciPickScenario(2)" id="cis2">
+        <span class="sc-badge" style="background:#2563eb">Moniteur / FINC</span>
+        <h4>Amir &mdash; Isolement et inclusion</h4>
+      </div>
+      <div class="sc-card" onclick="ciPickScenario(3)" id="cis3">
+        <span class="sc-badge" style="background:#d97706">Libre</span>
+        <h4>Autre situation de mon v&eacute;cu</h4>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step progress bar -->
+  <div id="ciProgress" class="ci-step-bar hidden">
+    <div class="ci-dot" id="cid1">1</div>
+    <div class="ci-dot" id="cid2">2</div>
+    <div class="ci-dot" id="cid3">3</div>
+    <div class="ci-dot" id="cid4">4</div>
+    <div class="ci-dot" id="cid5">5</div>
+    <div class="ci-dot" id="cid6">6</div>
+    <div class="ci-dot" id="cid7">7</div>
+    <div class="ci-dot" id="cid8">8</div>
+  </div>
+
+  <!-- Chat area -->
+  <div id="ciChatArea" class="ci-chat hidden"></div>
+
+  <!-- Input area -->
+  <div id="ciInputArea" class="ci-input-area hidden">
+    <textarea id="ciUserInput" placeholder="Tapez votre r&eacute;ponse ici... ou demandez un indice si vous bloquez." rows="4"></textarea>
+    <div class="ci-hint-bar">
+      <button class="btn-hint" id="ciHintBtn" onclick="ciRequestHint()">&#128161; Besoin d'un indice</button>
+      <span class="ci-hint-counter" id="ciHintCounter"></span>
+    </div>
+    <div id="ciHintArea"></div>
+    <div class="btn-row" style="margin-top:8px">
+      <button class="btn-a" onclick="ciSubmit()">Valider ma r&eacute;ponse</button>
+      <button class="btn-o" onclick="ciSkip()">Passer &rarr;</button>
+    </div>
+  </div>
+
+  <!-- Feedback area (inserted dynamically) -->
+  <div id="ciFeedbackArea"></div>
+
+  <!-- Summary (shown at end) -->
+  <div id="ciSummary" class="hidden"></div>
+
+  <div class="btn-row" style="margin-top:16px">
+    <button class="btn-o" id="ciRestartBtn" onclick="ciRestart()" style="display:none">&#128260; Recommencer</button>
+    <button class="btn-o" onclick="showWelcome()">Retour aux modes</button>
+  </div>
+</div>
+</div>
+
+<!-- ======================== MODE 8: COACH IA LIVE ======================== -->
+<div id="modeCoachLive" class="hidden">
+<div class="ex-area">
+  <div class="ex-title">&#129302; Coach IA Live (<span class="badge-beta">beta</span>)</div>
+  <div id="ciaStatus"></div>
+  <div class="ex-instr">
+    <strong>Conversation libre</strong> avec un coach IA sp&eacute;cialis&eacute; VAE DEES.<br>
+    D&eacute;crivez vos situations (N., R., Amir ou autre), posez vos questions, et l'IA vous aide &agrave; reformuler comme un &eacute;ducateur sp&eacute;cialis&eacute; en temps r&eacute;el.<br>
+    <strong>Vos &eacute;changes restent dans votre navigateur</strong> &mdash; rien n'est stock&eacute;.
+  </div>
+
+  <div id="ciaChatArea" class="ci-chat"></div>
+
+  <div id="ciaInputArea" class="ci-input-area">
+    <textarea id="ciaUserInput" placeholder="D&eacute;crivez une situation, posez une question, ou demandez de l'aide pour formuler une r&eacute;ponse..." rows="3"></textarea>
+    <div class="btn-row" style="margin-top:8px;justify-content:flex-start">
+      <button class="btn-a" id="ciaSendBtn" onclick="ciaSend()">Envoyer</button>
+      <button class="btn-o" onclick="ciaClear()">Nouvelle conversation</button>
+    </div>
+  </div>
+
+  <div id="ciaOfflineFallback" class="hidden" style="margin-top:12px;padding:14px 18px;background:#fffbeb;border-radius:12px;border-left:4px solid #d97706">
+    <p style="font-size:.85rem;color:#92400e;line-height:1.6"><strong>&#9888; Coach IA non disponible</strong><br>Le serveur IA n'est pas accessible. V&eacute;rifiez que le serveur tourne avec <code>GEMINI_API_KEY</code> dans .env.<br>En attendant, vous pouvez utiliser le <a href="javascript:void(0)" onclick="launchMode('interactif')" style="color:#0d9488;font-weight:600">Coach Interactif (hors ligne)</a> qui fonctionne sans connexion.</p>
+  </div>
+
+  <div class="btn-row" style="margin-top:16px">
+    <button class="btn-o" onclick="showWelcome()">Retour aux modes</button>
+  </div>
+</div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+/* ====== NAVIGATION ====== */
+var allModes=['welcomeScreen','modeCoach','modeStructuration','modeTraduction','modeJury','modeFiches','modeChrono','modeInteractif','modeCoachLive'];
+
+function showWelcome(){
+  allModes.forEach(function(id){document.getElementById(id).classList.add('hidden')});
+  document.getElementById('welcomeScreen').classList.remove('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function launchMode(mode){
+  allModes.forEach(function(id){document.getElementById(id).classList.add('hidden')});
+  var map={coach:'modeCoach',structuration:'modeStructuration',traduction:'modeTraduction',jury:'modeJury',fiches:'modeFiches',chrono:'modeChrono',interactif:'modeInteractif',coachLive:'modeCoachLive'};
+  document.getElementById(map[mode]).classList.remove('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(mode==='coachLive'){ciaCheckHealth();if(ciaMessages.length===0)ciaClear();}
+}
+
+/* ====== COLLAPSIBLE SECTIONS ====== */
+function toggleSection(el){
+  el.classList.toggle('open');
+  var body=el.nextElementSibling;
+  body.classList.toggle('closed');
+  var arrow=el.querySelector('.arrow');
+  if(el.classList.contains('open')){arrow.style.transform='rotate(90deg)'}
+  else{arrow.style.transform='rotate(0deg)'}
+}
+
+/* ====== COACH GUIDE ====== */
+var currentCoachStep=1;
+
+function advanceCoach(step){
+  document.getElementById('cs'+(step-1)).classList.remove('active');
+  document.getElementById('cs'+(step-1)).classList.add('done');
+  document.getElementById('cs'+step).classList.add('active');
+  document.getElementById('cs'+step).scrollIntoView({behavior:'smooth',block:'start'});
+  currentCoachStep=step;
+}
+
+function resetCoach(){
+  for(var i=1;i<=7;i++){
+    var el=document.getElementById('cs'+i);
+    el.classList.remove('active','done');
+  }
+  document.getElementById('cs1').classList.add('active');
+  currentCoachStep=1;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ====== STRUCTURATION ORALE ====== */
+var structTips=[
+  "Pour N. (Perthes) : DC1 domine. Observation fine des signaux de douleur, posture de holding (Winnicott), loi 2005 (inclusion/handicap). Montrez comment votre pr\u00e9sence stable et l\u2019ajustement du rythme ont permis \u00e0 N. de retrouver un espace s\u00e9curisant. N\u2019oubliez pas le travail en r\u00e9seau : enseignante, famille, coordinatrice AIS.",
+  "Pour R. (Vergers) : DC1 + DC2. Rep\u00e9rer les d\u00e9clencheurs, poser un cadre clair, fractionner les consignes, travailler l\u2019apr\u00e8s-crise. Vygotski (\u00e9tayage), loi 2007 (protection). Montrez votre logique : observation \u2192 diagnostic \u2192 action ajust\u00e9e \u2192 \u00e9valuation.",
+  "Pour Amir (FINC) : DC1 + DC4. Observer ses int\u00e9r\u00eats, proposer un r\u00f4le valorisant, entr\u00e9e progressive dans le collectif. Loi 2005 (participation/inclusion), Vygotski (m\u00e9diation par les pairs). Montrez le travail partenarial avec l\u2019\u00e9quipe de la maison de quartier."
+];
+
+function selectStruct(idx){
+  document.querySelectorAll('#modeStructuration .sc-card').forEach(function(c){c.classList.remove('selected')});
+  document.getElementById('ss'+idx).classList.add('selected');
+  document.getElementById('structForm').classList.remove('hidden');
+  document.getElementById('structTipText').textContent=structTips[idx];
+  document.getElementById('structAnalysis').classList.add('hidden');
+}
+
+function clearStruct(){
+  document.querySelectorAll('.struct-ta').forEach(function(t){t.value=''});
+  document.getElementById('structAnalysis').classList.add('hidden');
+}
+
+function analyzeStructure(){
+  var texts=[];
+  document.querySelectorAll('.struct-ta').forEach(function(t){texts.push(t.value)});
+  var all=texts.join(' ').toLowerCase();
+  var items=[];
+
+  // Check DC
+  if(/dc[1-4]/i.test(all)){items.push({icon:'\u2705',text:'DC identifi\u00e9 \u2014 bien !'})}
+  else{items.push({icon:'\u26a0\ufe0f',text:'DC manquant \u2014 identifiez le domaine de comp\u00e9tence dominant (DC1, DC2, DC3 ou DC4).'})}
+
+  // Check situation
+  if(all.length>50&&/observ|situation|lors|contexte/i.test(all)){items.push({icon:'\u2705',text:'Situation concr\u00e8te pr\u00e9sente.'})}
+  else{items.push({icon:'\u26a0\ufe0f',text:'Ajoutez une situation concr\u00e8te : \u00ab Lors de\u2026 j\u2019ai observ\u00e9 que\u2026 \u00bb'})}
+
+  // Check analyse vs r\u00e9cit
+  var recitWords=(all.match(/j'ai fait|j'ai vu|il \u00e9tait|elle \u00e9tait|on a fait|c'\u00e9tait|il y avait/gi)||[]).length;
+  var analyseWords=(all.match(/j'ai observ\u00e9|j'ai mis en place|ce qui a permis|j'ai ajust\u00e9|l'effet|cela a produit|j'ai analys\u00e9|j'ai \u00e9valu\u00e9|j'ai con\u00e7u/gi)||[]).length;
+  if(recitWords>analyseWords&&recitWords>0){
+    items.push({icon:'\ud83d\udea8',text:'ATTENTION R\u00c9CIT : vous d\u00e9crivez l\u2019action mais vous ne l\u2019analysez pas encore. Pr\u00e9cisez : pourquoi avez-vous agi ainsi ? Qu\u2019avez-vous observ\u00e9 ? Quel effet chez la personne ? Comment ajustez-vous ?'});
+  }else if(analyseWords>0){
+    items.push({icon:'\u2705',text:'Posture analytique d\u00e9tect\u00e9e \u2014 vous \u00eates dans la d\u00e9monstration de comp\u00e9tence.'});
+  }else{
+    items.push({icon:'\u26a0\ufe0f',text:'Ajoutez de l\u2019analyse : utilisez \u00ab j\u2019ai observ\u00e9 que\u2026 j\u2019ai mis en place\u2026 ce qui a permis\u2026 \u00bb'});
+  }
+
+  // Check choix pro
+  if(/choix|objectif|j'ai choisi|j'ai d\u00e9cid\u00e9|dans l'objectif|visant \u00e0/i.test(all)){items.push({icon:'\u2705',text:'Choix professionnels justifi\u00e9s.'})}
+  else{items.push({icon:'\u26a0\ufe0f',text:'Choix professionnels manquants \u2014 expliquez POURQUOI vous avez agi ainsi, quel objectif \u00e9ducatif.'})}
+
+  // Check posture
+  if(/posture|contenan|s\u00e9curisan|\u00e9tayage|non punitiv|holding|pr\u00e9sence stable/i.test(all)){items.push({icon:'\u2705',text:'Posture \u00e9ducative nomm\u00e9e.'})}
+  else{items.push({icon:'\u26a0\ufe0f',text:'Posture \u00e9ducative manquante \u2014 nommez votre posture (contenante, \u00e9tayante, s\u00e9curisante, non punitive\u2026).'})}
+
+  // Check r\u00e9seau
+  if(/r\u00e9seau|partenari|coordinat|enseignant|famille|transmis|\u00e9quipe/i.test(all)){items.push({icon:'\u2705',text:'Travail en r\u00e9seau mentionn\u00e9.'})}
+  else{items.push({icon:'\u26a0\ufe0f',text:'Travail en r\u00e9seau absent \u2014 mentionnez les partenaires mobilis\u00e9s (enseignante, famille, coordinatrice, soins\u2026).'})}
+
+  // Check loi
+  if(/loi|2002|2005|2007|cide|casf|226-13|secret/i.test(all)){items.push({icon:'\u2705',text:'R\u00e9f\u00e9rence l\u00e9gale pr\u00e9sente.'})}
+  else{items.push({icon:'\u26a0\ufe0f',text:'R\u00e9f\u00e9rence l\u00e9gale manquante \u2014 ancrez votre action dans un cadre (loi 2002-2, 2005, 2007, CIDE).'})}
+
+  // Check th\u00e9orie
+  if(/winnicott|vygotski|rogers|rouzel|maela|boutinet|freire|mauss|zpd|holding|\u00e9tayage|zone proximale/i.test(all)){items.push({icon:'\u2705',text:'R\u00e9f\u00e9rence th\u00e9orique pr\u00e9sente.'})}
+  else{items.push({icon:'\u26a0\ufe0f',text:'R\u00e9f\u00e9rence th\u00e9orique manquante \u2014 reliez votre pratique \u00e0 au moins un auteur (Winnicott, Vygotski, Rogers\u2026).'})}
+
+  // Check effets
+  if(/effet|permis|produit|\u00e9volution|progr\u00e8s|am\u00e9lioration|r\u00e9sultat|transf\u00e9rable|g\u00e9n\u00e9ralis/i.test(all)){items.push({icon:'\u2705',text:'Effets observ\u00e9s / g\u00e9n\u00e9ralisation pr\u00e9sents.'})}
+  else{items.push({icon:'\u26a0\ufe0f',text:'Effets manquants \u2014 d\u00e9crivez ce que votre action a produit et quel principe transf\u00e9rable vous en tirez.'})}
+
+  var html='<div class="tpl-block" style="margin-top:16px"><h4>R\u00e9sultat de l\u2019analyse</h4>';
+  var okCount=0;
+  for(var i=0;i<items.length;i++){
+    html+='<div class="analysis-item"><span class="analysis-icon">'+items[i].icon+'</span><span class="analysis-text">'+items[i].text+'</span></div>';
+    if(items[i].icon==='\u2705')okCount++;
+  }
+  var total=items.length;
+  var pct=Math.round(okCount/total*100);
+  html+='<div style="margin-top:12px;padding:10px;background:'+(pct>=70?'#f0fdf4':'#fffbeb')+';border-radius:8px;text-align:center;font-weight:700;color:'+(pct>=70?'#059669':'#d97706')+';font-size:.9rem">Score : '+okCount+'/'+total+' \u00e9l\u00e9ments ('+pct+'%)</div>';
+  if(pct<70){html+='<p style="font-size:.82rem;color:#d97706;margin-top:8px;text-align:center">Retravaillez les \u00e9l\u00e9ments marqu\u00e9s \u26a0\ufe0f avant de passer \u00e0 la simulation jury.</p>'}
+  else{html+='<p style="font-size:.82rem;color:#059669;margin-top:8px;text-align:center">Bonne structuration ! Passez en mode Chrono ou Simulation Jury pour valider \u00e0 l\u2019oral.</p>'}
+  html+='</div>';
+  var el=document.getElementById('structAnalysis');
+  el.innerHTML=html;
+  el.classList.remove('hidden');
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ====== TRADUCTION FEEDBACK ====== */
+function checkTrad(){
+  var output=document.getElementById('tradOutput').value.toLowerCase();
+  var items=[];
+  if(/dc[1-4]/i.test(output)){items.push({icon:'\u2705',txt:'DC identifi\u00e9'})}else{items.push({icon:'\u274c',txt:'Ajoutez le DC (DC1, DC2, DC3 ou DC4)'})}
+  if(/observ|ajust|con\u00e7u|coordonn|\u00e9valu|transmis|mis en place|accompagn/i.test(output)){items.push({icon:'\u2705',txt:'Verbe professionnel utilis\u00e9'})}else{items.push({icon:'\u274c',txt:'Remplacez les verbes courants par des verbes pro (observer, ajuster, concevoir, coordonner\u2026)'})}
+  if(/objectif|visant|dans le but|afin de|pour favoriser|pour permettre/i.test(output)){items.push({icon:'\u2705',txt:'Objectif \u00e9ducatif pr\u00e9sent'})}else{items.push({icon:'\u274c',txt:'Ajoutez le POURQUOI : dans quel objectif \u00e9ducatif ?'})}
+  if(/loi|2002|2005|cadre|secret|institutionnel|r\u00e9f\u00e9rentiel/i.test(output)){items.push({icon:'\u2705',txt:'Cadre l\u00e9gal/institutionnel'})}else{items.push({icon:'\u26a0\ufe0f',txt:'Bonus : ajoutez une r\u00e9f\u00e9rence l\u00e9gale ou institutionnelle'})}
+  var html='<div class="fb-box '+(items.filter(function(i){return i.icon==='\u2705'}).length>=3?'ok':'warn')+'" style="margin-top:12px"><h4 style="color:'+(items.filter(function(i){return i.icon==='\u2705'}).length>=3?'#059669':'#d97706')+'">R\u00e9sultat</h4><ul style="list-style:none;padding:0">';
+  for(var i=0;i<items.length;i++){html+='<li>'+items[i].icon+' '+items[i].txt+'</li>'}
+  html+='</ul></div>';
+  var el=document.getElementById('tradFeedback');
+  el.innerHTML=html;el.classList.remove('hidden');
+}
+
+/* ====== JURY ====== */
+var juryQuestions=[
+  {q:"Comment avez-vous accompagn\u00e9 R. dans la r\u00e9gulation de ses passages \u00e0 l\u2019acte ?",hint:"DC1/DC2. Observation des d\u00e9clencheurs, cadre contenant non punitif, fractionnement des consignes, \u00e9tayage progressif (Vygotski), travail de l\u2019apr\u00e8s-crise. Formule : \u00ab J\u2019ai observ\u00e9 que\u2026 j\u2019ai mis en place\u2026 ce qui a permis\u2026 \u00bb"},
+  {q:"Quelle diff\u00e9rence faites-vous entre accompagnement et prise en charge ?",hint:"Accompagnement = \u00ab faire avec \u00bb (Maela Paul), respecter l\u2019autonomie. Prise en charge = \u00ab faire pour \u00bb, risque d\u2019assistanat. Illustrez avec N. ou Amir."},
+  {q:"Comment garantissez-vous la participation de la personne \u00e0 son projet ?",hint:"DC2 + loi 2002-2. Co-construction des objectifs, recueil du consentement. Ex : projet de N. construit AVEC elle et sa famille."},
+  {q:"Donnez un exemple de travail en partenariat autour d\u2019un jeune.",hint:"DC4. Partenaires : enseignante, soins, famille, coordinatrice AIS. Secret partag\u00e9 (art. 226-13). Transmissions cibl\u00e9es. Ex : coordination autour de N."},
+  {q:"Comment avez-vous adapt\u00e9 votre posture face \u00e0 un enfant en situation de handicap ?",hint:"DC1 + loi 2005. Observation fine, ajustement du rythme, am\u00e9nagement de l\u2019environnement. Winnicott (holding). Ex : pauses pr\u00e9ventives pour N."},
+  {q:"Qu\u2019est-ce qu\u2019un \u00e9crit professionnel adapt\u00e9 ?",hint:"DC3. Distinguer faits/observations/analyse. Adapter au destinataire (juge, famille, \u00e9quipe). Secret professionnel. Fiches d\u2019observation AIS."},
+  {q:"Comment g\u00e9rez-vous un conflit entre un jeune et un membre de l\u2019\u00e9quipe ?",hint:"DC1 (m\u00e9diation) + DC4 (dynamique institutionnelle). Posture de tiers, \u00e9coute des deux parties, recadrage. R\u00e9flexivit\u00e9."},
+  {q:"Que signifie pour vous \u00ab \u00eatre \u00e9ducateur sp\u00e9cialis\u00e9 \u00bb ?",hint:"Synth\u00e8se des 4 DC. Posture professionnelle, engagement \u00e9thique, r\u00e9flexivit\u00e9. Ne pas \u00eatre dans l\u2019affectif mais dans le professionnel. Ex : \u00ab Mon exp\u00e9rience d\u2019AIS m\u2019a appris\u2026 \u00bb"},
+  {q:"Comment avez-vous favoris\u00e9 l\u2019inclusion d\u2019Amir dans le collectif ?",hint:"DC1 + loi 2005. Observation des int\u00e9r\u00eats, entr\u00e9e progressive, r\u00f4le valorisant. Vygotski (m\u00e9diation par les pairs). Diagnostic socio-\u00e9ducatif."},
+  {q:"Comment articulez-vous th\u00e9orie et pratique dans votre quotidien professionnel ?",hint:"DC4. Exemples concrets : Winnicott \u2192 holding avec N., Vygotski \u2192 \u00e9tayage avec R., Rogers \u2192 regard non jugeant. La th\u00e9orie \u00e9claire la pratique."}
+];
+
+var currentJuryIdx=-1;
+var juryTimerSec=180;var juryTimerRunning=false;var juryTimerInterval=null;
+
+function newJuryQuestion(){
+  var idx;
+  do{idx=Math.floor(Math.random()*juryQuestions.length)}while(idx===currentJuryIdx&&juryQuestions.length>1);
+  currentJuryIdx=idx;
+  document.getElementById('juryQText').textContent=juryQuestions[idx].q;
+  document.getElementById('juryHints').classList.add('hidden');
+  document.getElementById('juryPostFeedback').classList.add('hidden');
+  resetJuryTimer();
+}
+
+function toggleJuryHints(){
+  if(currentJuryIdx<0)return;
+  document.getElementById('juryHints').classList.toggle('hidden');
+  document.getElementById('juryHintText').textContent=juryQuestions[currentJuryIdx].hint;
+}
+
+function showJuryFeedback(){
+  document.getElementById('juryPostFeedback').classList.toggle('hidden');
+}
+
+function toggleJuryTimer(){
+  if(juryTimerRunning){clearInterval(juryTimerInterval);juryTimerRunning=false;document.getElementById('juryTimerBtn').textContent='Reprendre'}
+  else{juryTimerRunning=true;document.getElementById('juryTimerBtn').textContent='Pause';
+    juryTimerInterval=setInterval(function(){juryTimerSec--;if(juryTimerSec<=0){clearInterval(juryTimerInterval);juryTimerRunning=false;juryTimerSec=0;document.getElementById('juryTimerBtn').textContent='Termin\u00e9';document.getElementById('juryTimer').style.color='#dc2626'}updateJuryTimer()},1000)}
+}
+
+function resetJuryTimer(){clearInterval(juryTimerInterval);juryTimerRunning=false;juryTimerSec=180;document.getElementById('juryTimerBtn').textContent='D\u00e9marrer';document.getElementById('juryTimer').style.color='#0d9488';updateJuryTimer()}
+
+function updateJuryTimer(){var m=Math.floor(juryTimerSec/60),s=juryTimerSec%60;document.getElementById('juryTimer').textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s}
+
+/* ====== CHRONO ====== */
+var chronoDuration=180;var chronoRemaining=180;var chronoRunning=false;var chronoInterval=null;
+
+function setChronoDuration(sec){
+  chronoDuration=sec;chronoRemaining=sec;chronoRunning=false;clearInterval(chronoInterval);
+  document.getElementById('chronoBtn').textContent='D\u00e9marrer';document.getElementById('chronoDisplay').style.color='#0d9488';updateChrono();
+  ['chrono2','chrono3','chrono5'].forEach(function(id){document.getElementById(id).className='btn-timer reset'});
+  var map={120:'chrono2',180:'chrono3',300:'chrono5'};if(map[sec])document.getElementById(map[sec]).className='btn-timer start';
+}
+
+function toggleChrono(){
+  if(chronoRunning){clearInterval(chronoInterval);chronoRunning=false;document.getElementById('chronoBtn').textContent='Reprendre'}
+  else{chronoRunning=true;document.getElementById('chronoBtn').textContent='Pause';
+    chronoInterval=setInterval(function(){chronoRemaining--;if(chronoRemaining<=0){clearInterval(chronoInterval);chronoRunning=false;chronoRemaining=0;document.getElementById('chronoBtn').textContent='Termin\u00e9';document.getElementById('chronoDisplay').style.color='#dc2626'}else if(chronoRemaining<=30){document.getElementById('chronoDisplay').style.color='#d97706'}updateChrono()},1000)}
+}
+
+function resetChrono(){clearInterval(chronoInterval);chronoRunning=false;chronoRemaining=chronoDuration;document.getElementById('chronoBtn').textContent='D\u00e9marrer';document.getElementById('chronoDisplay').style.color='#0d9488';updateChrono()}
+
+function updateChrono(){var m=Math.floor(chronoRemaining/60),s=chronoRemaining%60;document.getElementById('chronoDisplay').textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s}
+
+/* ====== COACH INTERACTIF ====== */
+var ciCurrentStep=0;
+var ciAnswers=[];
+var ciScenario='';
+var ciScenarioLabel='';
+var ciHintLevel=0;
+var ciHintsUsed=[];
+
+var ciScenarios=[
+  {label:'N. (Perthes \u2013 AIS)',ctx:'N. est une fillette de 8 ans atteinte de la maladie de Perthes, fatigu\u00e9e, douloureuse, en retrait dans le groupe. Vous l\u2019accompagnez en inclusion scolaire.',tips:{dc:'Pensez \u00e0 DC1 (observation, relation \u00e9ducative) et DC2 (projet).',obs:'Que voyez-vous physiquement et \u00e9motionnellement chez N. ? Fatigue, douleur, isolement\u2026',obj:'Quel objectif adapt\u00e9 \u00e0 son rythme ? Maintenir le lien, favoriser la participation\u2026',act:'Ajustement du cadre, m\u00e9diation, activit\u00e9s adapt\u00e9es\u2026',post:'Pr\u00e9sence stable, s\u00e9curisante, non intrusive (Winnicott : holding)',res:'Enseignant, famille, m\u00e9decin scolaire, \u00e9quipe \u00e9ducative\u2026',ref:'Loi 2005, CIDE art.3, Winnicott (holding/handling)',eff:'Retour progressif dans le groupe, signes de mieux-\u00eatre, participation adapt\u00e9e\u2026'}},
+  {label:'R. (Vergers \u2013 AIS)',ctx:'R. est un gar\u00e7on impulsif qui passe rapidement \u00e0 l\u2019acte dans les transitions de groupe. Vous l\u2019accompagnez en contexte AIS.',tips:{dc:'DC1 (relation \u00e9ducative, contenance) + DC2 (conception du projet).',obs:'Moments de d\u00e9clenchement, signaux pr\u00e9curseurs, r\u00e9actions dans les transitions\u2026',obj:'R\u00e9duire les passages \u00e0 l\u2019acte, travailler la r\u00e9gulation \u00e9motionnelle\u2026',act:'Cadre clair, consignes fractionn\u00e9es, analyse post-crise, ritualisation\u2026',post:'Contenante, non punitive, explicative (Rouzel : la pratique \u00e9ducative)',res:'\u00c9quipe \u00e9ducative, psychologue, famille, enseignant\u2026',ref:'Loi 2002-2, Loi 2007, Rouzel, Vygotski (ZPD)',eff:'Diminution de la fr\u00e9quence des crises, meilleure anticipation, verbalisation\u2026'}},
+  {label:'Amir (FINC \u2013 Moniteur)',ctx:'Amir est un adolescent isol\u00e9 \u00e0 la maison de quartier. Il reste en retrait et ne participe pas aux activit\u00e9s collectives. Vous l\u2019accompagnez en contexte de pr\u00e9vention.',tips:{dc:'DC1 (relation, m\u00e9diation) + DC2 (projet d\u2019inclusion progressive).',obs:'Isolement, absence d\u2019interactions, int\u00e9r\u00eats non exprim\u00e9s\u2026',obj:'Favoriser l\u2019inclusion sans contrainte, cr\u00e9er un lien de confiance\u2026',act:'Observer ses int\u00e9r\u00eats, proposer un r\u00f4le valorisant, entr\u00e9e progressive\u2026',post:'M\u00e9diation, accompagnement par les pairs (Vygotski), aller-vers',res:'Animateurs, \u00e9ducateurs de rue, famille, partenaires locaux\u2026',ref:'Loi 2005 (participation/inclusion), Maela Paul (\u00e9tayage), Vygotski',eff:'Participation progressive, interaction avec les pairs, investissement dans une activit\u00e9\u2026'}},
+  {label:'Situation libre',ctx:'Choisissez votre propre situation professionnelle (stage, exp\u00e9rience AIS, moniteur, b\u00e9n\u00e9volat\u2026).',tips:{dc:'Identifiez le DC dominant de votre situation (DC1 \u00e0 DC4).',obs:'Quels \u00e9l\u00e9ments observables concrets avez-vous rep\u00e9r\u00e9s ?',obj:'Quel objectif \u00e9ducatif avez-vous formul\u00e9 ?',act:'Quelles actions concr\u00e8tes avez-vous mises en place ?',post:'Quelle posture professionnelle avez-vous adopt\u00e9e ?',ref:'Quelle r\u00e9f\u00e9rence juridique ou th\u00e9orique ancre votre action ?',res:'Avec quels partenaires avez-vous travaill\u00e9 ?',eff:'Quels effets avez-vous observ\u00e9s ?'}}
+];
+
+var ciSteps=[
+  {key:'dc', label:'DC / Comp\u00e9tence', q:'Quelle comp\u00e9tence du r\u00e9f\u00e9rentiel (DC1, DC2, DC3, DC4) mobilisez-vous dans cette situation et pourquoi ?',
+   checkWords:['dc1','dc2','dc3','dc4','relation','projet','communication','dynamique','institutionnel','observation','diagnostic','coordination'],
+   warnWords:['je fais','on fait','c\'est bien','c\'est normal','il faut'],
+   feedbackGood:'Vous identifiez clairement le DC et le reliez \u00e0 votre action \u2014 c\u2019est ce qu\u2019attend le jury.',
+   feedbackImprove:'Nommez explicitement le DC (DC1, DC2\u2026) et expliquez <strong>pourquoi</strong> il est mobilis\u00e9 dans cette situation.',
+   hints:[
+     '\u00cates-vous surtout dans la <strong>relation \u00e9ducative</strong>, le <strong>projet</strong>, le <strong>travail en \u00e9quipe</strong> ou les <strong>dynamiques institutionnelles</strong> ?',
+     'Ici, on est surtout dans <strong>la relation avec la personne accompagn\u00e9e</strong> et/ou <strong>la conception d\u2019un projet \u00e9ducatif</strong>.',
+     'Cela renvoie au <strong>DC1</strong> (relation \u00e9ducative, observation, accompagnement) et souvent aussi au <strong>DC2</strong> (projet \u00e9ducatif).'
+   ],
+   quizLinks:[{label:'Micro-Quiz DC',url:'micro_quiz_dc.html'},{label:'Fiche DC (Agent)',url:'#',mode:'fiches'}]},
+  {key:'obs', label:'Observation', q:'Qu\u2019avez-vous observ\u00e9 concr\u00e8tement chez la personne accompagn\u00e9e ? (Signes physiques, \u00e9motionnels, comportementaux)',
+   checkWords:['observ','remarqu','constat','signal','signe','comportement','retrait','agitation','fatigue','isol','repli','pleur','regard','tension','verbal','non-verbal'],
+   warnWords:['il est triste','elle est m\u00e9chante','c\'est dur','il a un probl\u00e8me'],
+   feedbackGood:'Bonne observation factuelle et clinique \u2014 vous d\u00e9crivez des signes concrets.',
+   feedbackImprove:'Passez du jugement (\u00ab il est triste \u00bb) \u00e0 l\u2019observation (\u00ab j\u2019observe un retrait, un regard fuyant, une absence de verbalisation \u00bb).',
+   hints:[
+     'Pensez aux <strong>5 sens</strong> : que voyez-vous ? Qu\u2019entendez-vous ? Quelle attitude corporelle ?',
+     'Cherchez des <strong>signes concrets</strong> : retrait, silence, agitation, regard fuyant, pleurs, tension corporelle\u2026',
+     'Formulez avec \u00ab <strong>J\u2019observe que\u2026</strong> \u00bb suivi d\u2019un fait pr\u00e9cis. Exemple : \u00ab J\u2019observe un retrait du groupe et une absence de verbalisation. \u00bb'
+   ],
+   quizLinks:[{label:'Micro-Quiz Situations',url:'micro_quiz_situations.html'}]},
+  {key:'obj', label:'Objectif \u00e9ducatif', q:'Quel objectif \u00e9ducatif avez-vous formul\u00e9 ou co-construit ? (Objectif concret, mesurable, adapt\u00e9 au rythme de la personne)',
+   checkWords:['objectif','favoris','maintenir','d\u00e9velopp','renforc','autonomi','inclusion','participation','lien','s\u00e9curis','co-constru','adapt','progressi'],
+   warnWords:['pour son bien','pour qu\'il aille mieux','pour r\u00e9gler le probl\u00e8me'],
+   feedbackGood:'Objectif clair et centr\u00e9 sur la personne \u2014 c\u2019est une formulation professionnelle.',
+   feedbackImprove:'Formulez un objectif concret et centr\u00e9 sur la personne : \u00ab Favoriser la participation progressive de\u2026 par\u2026 \u00bb',
+   hints:[
+     'Un objectif \u00e9ducatif commence souvent par un <strong>verbe d\u2019action</strong> : favoriser, maintenir, d\u00e9velopper, renforcer, s\u00e9curiser\u2026',
+     'Pensez \u00e0 ce que vous voulez <strong>pour la personne</strong>, pas pour vous. Quel changement concret visez-vous ?',
+     'Essayez cette formule : \u00ab <strong>Favoriser [quoi] de [qui] par [quel moyen]</strong> \u00bb. Exemple : \u00ab Favoriser la participation progressive de N. par des activit\u00e9s adapt\u00e9es \u00e0 son rythme. \u00bb'
+   ],
+   quizLinks:[{label:'Micro-Quiz Situations',url:'micro_quiz_situations.html'}]},
+  {key:'act', label:'Action \u00e9ducative', q:'Quelle(s) action(s) concr\u00e8te(s) avez-vous mises en place pour atteindre cet objectif ?',
+   checkWords:['mis en place','propos','am\u00e9nag','adapt','organis','m\u00e9di','rituel','cadre','atelier','entretien','activit','accompagn','soutien','\u00e9tayage','outil'],
+   warnWords:['j\'ai essay\u00e9','j\'ai fait de mon mieux','on a g\u00e9r\u00e9'],
+   feedbackGood:'Actions concr\u00e8tes et professionnelles \u2014 vous montrez votre savoir-faire.',
+   feedbackImprove:'D\u00e9crivez des actions pr\u00e9cises : \u00ab J\u2019ai mis en place un rituel de\u2026 \u00bb, \u00ab J\u2019ai am\u00e9nag\u00e9 l\u2019espace pour\u2026 \u00bb',
+   hints:[
+     'Pensez \u00e0 ce que vous avez <strong>fait concr\u00e8tement</strong> : un am\u00e9nagement, un atelier, un entretien, un rituel\u2026',
+     'Utilisez des <strong>verbes d\u2019action professionnels</strong> : j\u2019ai mis en place, j\u2019ai am\u00e9nag\u00e9, j\u2019ai propos\u00e9, j\u2019ai organis\u00e9\u2026',
+     'Exemple : \u00ab <strong>J\u2019ai mis en place un temps d\u2019accueil individualis\u00e9</strong> pour permettre \u00e0 N. d\u2019arriver \u00e0 son rythme et de se poser avant le groupe. \u00bb'
+   ],
+   quizLinks:[{label:'Micro-Quiz Posture',url:'micro_quiz_posture.html'},{label:'Micro-Quiz Situations',url:'micro_quiz_situations.html'}]},
+  {key:'post', label:'Posture \u00e9ducative', q:'Quelle posture professionnelle avez-vous adopt\u00e9e ? Comment vous \u00eates-vous positionn\u00e9(e) dans la relation \u00e9ducative ?',
+   checkWords:['posture','contena','s\u00e9curis','\u00e9coute','empathi','bienveill','non-jugement','pr\u00e9sence','stable','ajust','\u00e9tayage','distance','proximit\u00e9','holding','cadre'],
+   warnWords:['j\'\u00e9tais gentil','j\'ai \u00e9t\u00e9 patient','c\'\u00e9tait naturel'],
+   feedbackGood:'Vous nommez votre posture avec un vocabulaire professionnel \u2014 c\u2019est le langage ES.',
+   feedbackImprove:'Nommez votre posture avec des termes professionnels : contenance, \u00e9tayage, \u00e9coute active, pr\u00e9sence s\u00e9curisante\u2026',
+   hints:[
+     '\u00c9tiez-vous plut\u00f4t dans l\u2019<strong>\u00e9coute</strong>, la <strong>contenance</strong>, l\u2019<strong>accompagnement</strong>, ou la <strong>m\u00e9diation</strong> ?',
+     'Pensez aux mots-cl\u00e9s ES : <strong>pr\u00e9sence stable</strong>, <strong>\u00e9tayage</strong>, <strong>\u00e9coute active</strong>, <strong>bienveillance exigeante</strong>, <strong>non-jugement</strong>\u2026',
+     'Exemple : \u00ab J\u2019ai adopt\u00e9 une <strong>posture contenante et s\u00e9curisante</strong> (au sens de Winnicott : holding), en restant pr\u00e9sent sans \u00eatre intrusif. \u00bb'
+   ],
+   quizLinks:[{label:'Micro-Quiz Posture',url:'micro_quiz_posture.html'},{label:'Fiche Posture (Agent)',url:'#',mode:'fiches'}]},
+  {key:'res', label:'Travail en r\u00e9seau', q:'Avec quels professionnels ou partenaires avez-vous travaill\u00e9 ? Comment avez-vous coordonn\u00e9 l\u2019accompagnement ?',
+   checkWords:['r\u00e9seau','partenair','coordin','\u00e9quipe','transmis','r\u00e9union','synth\u00e8se','famille','enseignant','m\u00e9decin','psychologue','\u00e9ducateur','partag','pluridisciplin','institution','secret'],
+   warnWords:['j\'ai tout fait seul','je me suis d\u00e9brouill\u00e9'],
+   feedbackGood:'Vous montrez un travail en \u00e9quipe et une coordination professionnelle \u2014 c\u2019est DC3.',
+   feedbackImprove:'Nommez les partenaires concrets (enseignant, psychologue, famille\u2026) et le type de coordination (r\u00e9union, transmission, secret partag\u00e9\u2026).',
+   hints:[
+     'Avec <strong>qui</strong> avez-vous \u00e9chang\u00e9 dans cette situation ? Famille ? Enseignant ? Psychologue ? M\u00e9decin ? \u00c9quipe \u00e9ducative ?',
+     'Comment avez-vous <strong>transmis les informations</strong> ? R\u00e9union d\u2019\u00e9quipe, cahier de liaison, synth\u00e8se, \u00e9change informel ?',
+     'Pensez au <strong>secret partag\u00e9</strong> (art. 226-13 + L.226-2-2 CASF) : vous transmettez le <strong>strict n\u00e9cessaire</strong>, factuel, utile \u00e0 l\u2019accompagnement.'
+   ],
+   quizLinks:[{label:'Micro-Quiz Situations',url:'micro_quiz_situations.html'}]},
+  {key:'ref', label:'R\u00e9f\u00e9rence l\u00e9gale / th\u00e9orique', q:'Quelle r\u00e9f\u00e9rence l\u00e9gale ou th\u00e9orique ancre votre action ? (Loi, auteur, concept)',
+   checkWords:['loi','2002','2005','2007','casf','cide','code','winnicott','vygotski','rogers','rouzel','maela','paul','holding','zpd','empowerment','consentement','secret','participation','inclusion'],
+   warnWords:['c\'est la loi','il y a des r\u00e8gles','je sais pas trop'],
+   feedbackGood:'Vous ancrez votre pratique dans un cadre l\u00e9gal ou th\u00e9orique \u2014 c\u2019est la marque d\u2019un ES r\u00e9flexif.',
+   feedbackImprove:'Citez au moins une r\u00e9f\u00e9rence pr\u00e9cise : \u00ab Loi 2002-2 (droit des usagers) \u00bb, \u00ab Winnicott (holding) \u00bb, \u00ab Vygotski (ZPD) \u00bb\u2026',
+   hints:[
+     'Pensez-vous plut\u00f4t \u00e0 une <strong>loi</strong> (cadre juridique) ou \u00e0 un <strong>auteur/concept</strong> (th\u00e9orie \u00e9ducative) ?',
+     '<strong>Lois cl\u00e9s :</strong> Loi 2002-2 (droits des usagers), Loi 2005 (handicap/inclusion), Loi 2007 (protection de l\u2019enfance), CIDE (int\u00e9r\u00eat sup\u00e9rieur de l\u2019enfant).<br><strong>Auteurs cl\u00e9s :</strong> Winnicott, Vygotski, Rogers, Rouzel, Maela Paul.',
+     'Exemple : \u00ab Je m\u2019appuie sur la <strong>loi 2005</strong> (droit \u00e0 la participation et \u00e0 l\u2019inclusion) et sur <strong>Vygotski</strong> (zone proximale de d\u00e9veloppement) pour adapter mon accompagnement. \u00bb'
+   ],
+   quizLinks:[{label:'Micro-Quiz Lois',url:'micro_quiz_lois.html'},{label:'Fiche Lois (Agent)',url:'#',mode:'fiches'}]},
+  {key:'eff', label:'Effets observ\u00e9s', q:'Quels effets concrets avez-vous observ\u00e9s suite \u00e0 votre action ? (Sur la personne, le groupe, votre pratique)',
+   checkWords:['effet','r\u00e9sultat','observ','am\u00e9lior','progress','chang','\u00e9volu','diminution','augmentation','retour','particip','verbalis','lien','confiance','mieux'],
+   warnWords:['\u00e7a a march\u00e9','c\'\u00e9tait bien','il allait mieux'],
+   feedbackGood:'Vous d\u00e9crivez des effets observables \u2014 le jury voit que vous \u00e9valuez votre pratique.',
+   feedbackImprove:'D\u00e9crivez des effets concrets et observables : \u00ab J\u2019ai observ\u00e9 un retour progressif dans le groupe \u00bb, \u00ab La fr\u00e9quence des crises a diminu\u00e9 \u00bb\u2026',
+   hints:[
+     'Qu\u2019est-ce qui a <strong>chang\u00e9</strong> chez la personne apr\u00e8s votre action ? M\u00eame un petit changement compte.',
+     'Pensez en termes <strong>observables</strong> : comportement, verbalisation, participation, lien avec les autres, \u00e9volution du rythme\u2026',
+     'Exemple : \u00ab <strong>J\u2019ai observ\u00e9 un retour progressif de N. dans le groupe</strong>, elle a commenc\u00e9 \u00e0 verbaliser ses besoins et \u00e0 accepter les interactions avec ses pairs. \u00bb'
+   ],
+   quizLinks:[{label:'Micro-Quiz Situations',url:'micro_quiz_situations.html'}]}
+];
+
+function ciPickScenario(idx){
+  var sc=ciScenarios[idx];
+  ciScenario=idx;ciScenarioLabel=sc.label;
+  ciCurrentStep=0;ciAnswers=[];ciHintLevel=0;ciHintsUsed=[];
+  document.getElementById('ciStart').classList.add('hidden');
+  document.getElementById('ciProgress').classList.remove('hidden');
+  document.getElementById('ciChatArea').classList.remove('hidden');
+  document.getElementById('ciInputArea').classList.remove('hidden');
+  document.getElementById('ciChatArea').innerHTML='';
+  document.getElementById('ciFeedbackArea').innerHTML='';
+  document.getElementById('ciHintArea').innerHTML='';
+  document.getElementById('ciSummary').classList.add('hidden');
+  ciUpdateDots();
+  ciAddBubble('agent','Parfait ! Travaillons sur : <strong>'+sc.label+'</strong>');
+  ciAddBubble('agent','<em>'+sc.ctx+'</em>');
+  ciAddBubble('agent','\ud83d\ude4c <strong>Pas de panique si vous bloquez !</strong> Utilisez le bouton \u00ab \ud83d\udca1 Besoin d\u2019un indice \u00bb pour recevoir jusqu\u2019\u00e0 3 indices progressifs par \u00e9tape.');
+  setTimeout(function(){ciAskCurrent()},500);
+}
+
+function ciUpdateDots(){
+  for(var i=0;i<ciSteps.length;i++){
+    var dot=document.getElementById('cid'+(i+1));
+    if(!dot)continue;
+    dot.className='ci-dot';
+    if(i<ciCurrentStep)dot.classList.add('done');
+    else if(i===ciCurrentStep)dot.classList.add('active');
+  }
+}
+
+function ciAskCurrent(){
+  var step=ciSteps[ciCurrentStep];
+  ciHintLevel=0;
+  ciAddBubble('agent','<span class="ci-q"><strong>\u00c9tape '+(ciCurrentStep+1)+'/'+ciSteps.length+' \u2014 '+step.label+'</strong></span>');
+  ciAddBubble('agent',step.q);
+  document.getElementById('ciUserInput').value='';
+  document.getElementById('ciUserInput').focus();
+  document.getElementById('ciInputArea').classList.remove('hidden');
+  document.getElementById('ciFeedbackArea').innerHTML='';
+  document.getElementById('ciHintArea').innerHTML='';
+  document.getElementById('ciHintBtn').disabled=false;
+  document.getElementById('ciHintBtn').className='btn-hint';
+  ciUpdateHintCounter();
+}
+
+function ciSubmit(){
+  var txt=document.getElementById('ciUserInput').value.trim();
+  if(!txt){alert('Veuillez \u00e9crire une r\u00e9ponse avant de valider.');return}
+  /* Relance if answer is too short (less than 15 words) */
+  var wordCount=txt.split(/\s+/).length;
+  if(wordCount<15 && !ciAnswers[ciCurrentStep]){
+    ciAddBubble('user',txt);
+    var relanceHtml='<div class="ci-relance"><strong>\ud83d\ude4f Votre r\u00e9ponse est un bon d\u00e9but !</strong> Pouvez-vous la d\u00e9velopper un peu ?';
+    relanceHtml+='<br>Essayez d\u2019ajouter : <strong>un verbe d\u2019action</strong>, <strong>un \u00e9l\u00e9ment concret</strong> ou <strong>une r\u00e9f\u00e9rence</strong>.';
+    if(ciHintLevel<3){relanceHtml+='<br>Vous pouvez aussi demander un <strong>indice</strong> pour vous aider.';}
+    relanceHtml+='</div>';
+    document.getElementById('ciFeedbackArea').innerHTML=relanceHtml;
+    document.getElementById('ciFeedbackArea').scrollIntoView({behavior:'smooth',block:'nearest'});
+    ciAnswers[ciCurrentStep]=txt;
+    document.getElementById('ciUserInput').value='';
+    document.getElementById('ciUserInput').focus();
+    return;
+  }
+  /* If re-submitting after relance, concatenate */
+  if(ciAnswers[ciCurrentStep] && ciAnswers[ciCurrentStep]!=='(pass\u00e9)'){
+    txt=ciAnswers[ciCurrentStep]+' '+txt;
+  }
+  ciAddBubble('user',txt);
+  ciAnswers[ciCurrentStep]=txt;
+  document.getElementById('ciInputArea').classList.add('hidden');
+  document.getElementById('ciHintArea').innerHTML='';
+  var result=ciAnalyze(txt,ciCurrentStep);
+  result.hintsUsed=ciHintLevel;
+  ciShowFeedback(result);
+}
+
+function ciSkip(){
+  ciAnswers[ciCurrentStep]='(pass\u00e9)';
+  ciAddBubble('user','<em>(question pass\u00e9e)</em>');
+  document.getElementById('ciInputArea').classList.add('hidden');
+  ciShowFeedback({quality:'skip'});
+}
+
+function ciAnalyze(text,stepIdx){
+  var step=ciSteps[stepIdx];
+  var lower=text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  var matchCount=0;var warnCount=0;
+  step.checkWords.forEach(function(w){
+    var wn=w.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    if(lower.indexOf(wn)!==-1)matchCount++;
+  });
+  step.warnWords.forEach(function(w){
+    var wn=w.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    if(lower.indexOf(wn)!==-1)warnCount++;
+  });
+  if(matchCount>=2 && warnCount===0)return{quality:'good',matches:matchCount};
+  if(matchCount>=1 && warnCount<=1)return{quality:'moyen',matches:matchCount,warns:warnCount};
+  return{quality:'improve',matches:matchCount,warns:warnCount};
+}
+
+function ciShowFeedback(result){
+  var step=ciSteps[ciCurrentStep];
+  var html='<div class="ci-feedback">';
+  if(result.quality==='good'){
+    html+='<div style="color:#059669;font-weight:700;margin-bottom:6px">\u2705 Tr\u00e8s bien !</div>';
+    html+='<p>'+step.feedbackGood+'</p>';
+  } else if(result.quality==='moyen'){
+    html+='<div style="color:#d97706;font-weight:700;margin-bottom:6px">\u26a0\ufe0f Pas mal, mais am\u00e9liorable</div>';
+    html+='<p>'+step.feedbackImprove+'</p>';
+  } else if(result.quality==='skip'){
+    html+='<div style="color:#999;font-weight:700;margin-bottom:6px">\u23e9 Question pass\u00e9e</div>';
+    html+='<p>Vous pourrez y revenir en recomman\u00e7ant la session.</p>';
+  } else {
+    html+='<div style="color:#dc2626;font-weight:700;margin-bottom:6px">\ud83d\udcdd \u00c0 retravailler</div>';
+    html+='<p>'+step.feedbackImprove+'</p>';
+  }
+  /* Add quiz links for revision */
+  if(step.quizLinks && step.quizLinks.length>0 && result.quality!=='good'){
+    html+='<div style="margin-top:10px;font-size:.8rem;color:#666">\ud83d\udcda <strong>Pour r\u00e9viser cette \u00e9tape :</strong></div><div style="margin-top:4px">';
+    step.quizLinks.forEach(function(link){
+      if(link.mode){
+        html+='<a href="javascript:void(0)" class="ci-quiz-link" onclick="ciGoToMode(\''+link.mode+'\')">'+link.label+'</a>';
+      } else {
+        html+='<a href="'+link.url+'" class="ci-quiz-link" target="_blank">'+link.label+' \u2197</a>';
+      }
+    });
+    html+='</div>';
+  }
+  if(result.hintsUsed && result.hintsUsed>0){
+    html+='<p style="font-size:.78rem;color:#999;margin-top:6px">\ud83d\udca1 Indices utilis\u00e9s : '+result.hintsUsed+'/3</p>';
+  }
+  html+='<button class="btn-a" onclick="ciNextStep()" style="margin-top:10px">\u00c9tape suivante \u2192</button>';
+  html+='</div>';
+  document.getElementById('ciFeedbackArea').innerHTML=html;
+  document.getElementById('ciFeedbackArea').scrollIntoView({behavior:'smooth',block:'nearest'});
+  ciHintsUsed[ciCurrentStep]=ciHintLevel;
+}
+
+function ciNextStep(){
+  ciCurrentStep++;
+  document.getElementById('ciFeedbackArea').innerHTML='';
+  if(ciCurrentStep>=ciSteps.length){ciShowSummary();return}
+  ciUpdateDots();
+  ciAskCurrent();
+}
+
+function ciAddBubble(who,content){
+  var div=document.createElement('div');
+  div.className='ci-bubble ci-'+who;
+  div.innerHTML=content;
+  document.getElementById('ciChatArea').appendChild(div);
+  div.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function ciShowSummary(){
+  document.getElementById('ciInputArea').classList.add('hidden');
+  document.getElementById('ciProgress').classList.add('hidden');
+  document.getElementById('ciChatArea').classList.add('hidden');
+  document.getElementById('ciFeedbackArea').innerHTML='';
+  var sumDiv=document.getElementById('ciSummary');
+  sumDiv.classList.remove('hidden');
+  var html='<h3 style="color:#0d9488;margin-bottom:14px">\ud83c\udfaf Synth\u00e8se de votre r\u00e9ponse orale \u2014 '+ciScenarioLabel+'</h3>';
+  html+='<p style="font-size:.85rem;color:#666;margin-bottom:16px">Voici votre r\u00e9ponse assembl\u00e9e, structur\u00e9e comme \u00e0 l\u2019oral du jury :</p>';
+  html+='<div style="background:#f0fdfa;border-radius:12px;padding:18px;border-left:4px solid #0d9488">';
+  for(var i=0;i<ciSteps.length;i++){
+    var ans=ciAnswers[i]||'(non r\u00e9pondu)';
+    html+='<div style="margin-bottom:14px">';
+    html+='<div style="font-size:.78rem;color:#0d9488;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">'+(i+1)+'. '+ciSteps[i].label+'</div>';
+    if(ans==='(pass\u00e9)' || ans==='(non r\u00e9pondu)'){
+      html+='<p style="font-size:.85rem;color:#999;font-style:italic">'+ans+'</p>';
+    } else {
+      html+='<p style="font-size:.88rem;color:#333;line-height:1.65">'+ans.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</p>';
+    }
+    html+='</div>';
+  }
+  html+='</div>';
+  /* Score global */
+  var filled=0;var goodCount=0;
+  for(var j=0;j<ciSteps.length;j++){
+    var a=ciAnswers[j];
+    if(a && a!=='(pass\u00e9)'){
+      filled++;
+      var res=ciAnalyze(a,j);
+      if(res.quality==='good')goodCount++;
+    }
+  }
+  html+='<div style="margin-top:18px;padding:14px;background:#fffbeb;border-radius:10px;border-left:4px solid #d97706">';
+  html+='<strong style="color:#d97706">\ud83d\udcca Bilan :</strong> '+filled+'/'+ciSteps.length+' \u00e9tapes compl\u00e9t\u00e9es, '+goodCount+' r\u00e9ponses au niveau professionnel.';
+  if(goodCount>=6){
+    html+='<p style="margin-top:6px;color:#059669;font-weight:600">Excellent ! Vous structurez votre r\u00e9ponse comme un ES. Continuez \u00e0 vous entra\u00eener \u00e0 voix haute.</p>';
+  } else if(goodCount>=4){
+    html+='<p style="margin-top:6px;color:#d97706">Bonne base ! Retravaillez les \u00e9tapes marqu\u00e9es \u00ab \u00e0 retravailler \u00bb pour gagner en pr\u00e9cision professionnelle.</p>';
+  } else {
+    html+='<p style="margin-top:6px;color:#dc2626">Il reste du travail. Reprenez chaque \u00e9tape en utilisant le vocabulaire ES (DC, observation, posture, r\u00e9f\u00e9rences\u2026).</p>';
+  }
+  html+='</div>';
+  /* Suggest targeted revision based on weak steps */
+  var weakSteps=[];
+  for(var w=0;w<ciSteps.length;w++){
+    var wa=ciAnswers[w];
+    if(!wa || wa==='(pass\u00e9)'){weakSteps.push(w);continue;}
+    var wr=ciAnalyze(wa,w);
+    if(wr.quality!=='good')weakSteps.push(w);
+  }
+  if(weakSteps.length>0){
+    html+='<div style="margin-top:18px;padding:14px;background:#f0fdfa;border-radius:10px;border-left:4px solid #0d9488">';
+    html+='<strong style="color:#0d9488">\ud83d\udcda R\u00e9vision cibl\u00e9e sugg\u00e9r\u00e9e :</strong>';
+    html+='<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px">';
+    var addedLinks={};
+    weakSteps.forEach(function(wi){
+      var links=ciSteps[wi].quizLinks||[];
+      links.forEach(function(link){
+        if(addedLinks[link.label])return;
+        addedLinks[link.label]=true;
+        if(link.mode){
+          html+='<a href="javascript:void(0)" class="ci-quiz-link" onclick="ciGoToMode(\''+link.mode+'\')">'+link.label+'</a>';
+        } else {
+          html+='<a href="'+link.url+'" class="ci-quiz-link" target="_blank">'+link.label+' \u2197</a>';
+        }
+      });
+    });
+    html+='</div></div>';
+  }
+  html+='<p style="margin-top:16px;font-size:.84rem;color:#666">\ud83d\udca1 <strong>Conseil :</strong> Relisez votre synth\u00e8se \u00e0 voix haute en 3 \u00e0 5 minutes, comme devant le jury. Puis recommencez avec un autre sc\u00e9nario.</p>';
+  sumDiv.innerHTML=html;
+  document.getElementById('ciRestartBtn').style.display='inline-block';
+  sumDiv.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ====== HINT SYSTEM ====== */
+function ciRequestHint(){
+  var step=ciSteps[ciCurrentStep];
+  if(!step.hints || ciHintLevel>=3){return}
+  var hint=step.hints[ciHintLevel];
+  ciHintLevel++;
+  var hintArea=document.getElementById('ciHintArea');
+  var hintHtml='<div class="ci-hint-bubble">';
+  hintHtml+='<strong>\ud83d\udca1 Indice '+ciHintLevel+'/3 :</strong> '+hint;
+  hintHtml+='</div>';
+  hintArea.innerHTML+=hintHtml;
+  hintArea.scrollIntoView({behavior:'smooth',block:'nearest'});
+  ciAddBubble('agent','<em>\ud83d\udca1 Indice '+ciHintLevel+'/3 : '+hint+'</em>');
+  ciUpdateHintCounter();
+  if(ciHintLevel>=3){
+    document.getElementById('ciHintBtn').disabled=true;
+    document.getElementById('ciHintBtn').className='btn-hint used';
+    document.getElementById('ciHintBtn').textContent='\u2705 3/3 indices utilis\u00e9s';
+  }
+}
+
+function ciUpdateHintCounter(){
+  var el=document.getElementById('ciHintCounter');
+  if(ciHintLevel===0){el.textContent='3 indices disponibles';}
+  else if(ciHintLevel<3){el.textContent=(3-ciHintLevel)+' indice'+(3-ciHintLevel>1?'s':'')+' restant'+(3-ciHintLevel>1?'s':'');}
+  else{el.textContent='Tous les indices utilis\u00e9s';}
+}
+
+function ciGoToMode(mode){
+  if(mode==='fiches'){launchMode('fiches');}
+  else if(mode==='jury'){launchMode('jury');}
+  else{launchMode(mode);}
+}
+
+function ciRestart(){
+  ciCurrentStep=0;ciAnswers=[];ciScenario='';ciScenarioLabel='';ciHintLevel=0;ciHintsUsed=[];
+  document.getElementById('ciRestartBtn').style.display='none';
+  document.getElementById('ciStart').classList.remove('hidden');
+  document.getElementById('ciHintArea').innerHTML='';
+  document.getElementById('ciProgress').classList.add('hidden');
+  document.getElementById('ciChatArea').classList.add('hidden');
+  document.getElementById('ciChatArea').innerHTML='';
+  document.getElementById('ciInputArea').classList.add('hidden');
+  document.getElementById('ciFeedbackArea').innerHTML='';
+  document.getElementById('ciSummary').classList.add('hidden');
+  for(var i=1;i<=8;i++){var d=document.getElementById('cid'+i);if(d)d.className='ci-dot'}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ====== COACH IA LIVE ====== */
+var ciaMessages=[];
+var ciaReady=false;
+
+async function ciaCheckHealth(){
+  var statusEl=document.getElementById('ciaStatus');
+  var fallback=document.getElementById('ciaOfflineFallback');
+  try{
+    var resp=await fetch('/api/coach/health');
+    var data=await resp.json();
+    if(data.ok){
+      statusEl.innerHTML='<span class="cia-status online"><span class="dot"></span> Coach IA connect\u00e9</span>';
+      fallback.classList.add('hidden');
+      ciaReady=true;
+    } else {throw new Error('no key');}
+  }catch(e){
+    statusEl.innerHTML='<span class="cia-status offline"><span class="dot"></span> Coach IA hors ligne</span>';
+    fallback.classList.remove('hidden');
+    ciaReady=false;
+  }
+}
+
+async function ciaSend(){
+  var input=document.getElementById('ciaUserInput');
+  var txt=input.value.trim();
+  if(!txt)return;
+  if(!ciaReady){alert('Le coach IA n\u2019est pas disponible. V\u00e9rifiez que le serveur tourne avec GEMINI_API_KEY dans .env.');return;}
+
+  ciaAddBubble('user',txt);
+  ciaMessages.push({role:'user',content:txt});
+  input.value='';input.focus();
+
+  var btn=document.getElementById('ciaSendBtn');
+  btn.disabled=true;btn.textContent='En cours...';
+
+  var chatArea=document.getElementById('ciaChatArea');
+  var typingDiv=document.createElement('div');
+  typingDiv.className='cia-typing';
+  typingDiv.innerHTML='<span></span><span></span><span></span>';
+  chatArea.appendChild(typingDiv);
+  typingDiv.scrollIntoView({behavior:'smooth',block:'nearest'});
+
+  var agentDiv=document.createElement('div');
+  agentDiv.className='ci-bubble ci-agent';
+  agentDiv.innerHTML='';
+  var fullText='';
+
+  try{
+    var resp=await fetch('/api/coach',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({messages:ciaMessages})
+    });
+
+    if(!resp.ok){
+      var err=await resp.json().catch(function(){return{error:'Erreur serveur'};});
+      throw new Error(err.error||'Erreur '+resp.status);
+    }
+
+    if(typingDiv.parentNode)typingDiv.remove();
+    chatArea.appendChild(agentDiv);
+
+    var reader=resp.body.getReader();
+    var decoder=new TextDecoder();
+    var buffer='';
+
+    while(true){
+      var result=await reader.read();
+      if(result.done)break;
+      buffer+=decoder.decode(result.value,{stream:true});
+
+      var lines=buffer.split('\n');
+      buffer=lines.pop();
+
+      for(var i=0;i<lines.length;i++){
+        var line=lines[i].trim();
+        if(!line.startsWith('data: '))continue;
+        var payload=line.substring(6);
+        if(payload==='[DONE]')continue;
+        try{
+          var chunk=JSON.parse(payload);
+          if(chunk.text){
+            fullText+=chunk.text;
+            agentDiv.innerHTML=ciaFormatMarkdown(fullText);
+            agentDiv.scrollIntoView({behavior:'smooth',block:'nearest'});
+          }
+          if(chunk.error){
+            fullText+='\n\u26a0\ufe0f Erreur : '+chunk.error;
+            agentDiv.innerHTML=ciaFormatMarkdown(fullText);
+          }
+        }catch(e){}
+      }
+    }
+
+    if(fullText){ciaMessages.push({role:'assistant',content:fullText});}
+
+  }catch(e){
+    if(typingDiv.parentNode)typingDiv.remove();
+    ciaAddBubble('agent','\u26a0\ufe0f '+e.message+'<br><a href="javascript:void(0)" onclick="launchMode(\'interactif\')" style="color:#0d9488;font-weight:600">Basculer vers le Coach Interactif (hors ligne)</a>');
+  }
+
+  btn.disabled=false;btn.textContent='Envoyer';
+}
+
+function ciaAddBubble(who,content){
+  var div=document.createElement('div');
+  div.className='ci-bubble ci-'+who;
+  div.innerHTML=content;
+  document.getElementById('ciaChatArea').appendChild(div);
+  div.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function ciaFormatMarkdown(text){
+  return text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\n/g,'<br>');
+}
+
+function ciaClear(){
+  ciaMessages=[];
+  document.getElementById('ciaChatArea').innerHTML='';
+  ciaAddBubble('agent','Bienvenue ! Je suis votre coach de pr\u00e9paration \u00e0 l\u2019oral VAE DEES. \ud83c\udf93<br><br>Vous pouvez :<br>\u2022 D\u00e9crire une situation de votre v\u00e9cu (N., R., Amir, ou autre)<br>\u2022 Me poser une question sur le r\u00e9f\u00e9rentiel DEES<br>\u2022 Me demander de reformuler une phrase en langage ES<br>\u2022 Travailler la m\u00e9thodologie S.C.A.R.P.<br><br>Par quoi souhaitez-vous commencer ?');
+}
+
+/* Enter = envoyer, Shift+Enter = nouvelle ligne */
+document.addEventListener('DOMContentLoaded',function(){
+  var el=document.getElementById('ciaUserInput');
+  if(el){el.addEventListener('keydown',function(e){
+    if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();ciaSend();}
+  });}
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz – Architecture d’une réponse complète</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;min-height:100vh}
+.container{max-width:720px;margin:0 auto;padding:24px 16px}
+.back-link{display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;color:#2563eb;text-decoration:none;font-size:.9rem}
+.back-link:hover{text-decoration:underline}
+h1{font-size:1.5rem;color:#1a1a2e;margin-bottom:4px;text-align:center}
+.subtitle{font-size:.92rem;color:#666;margin-bottom:10px;text-align:center}
+.desc{font-size:.9rem;color:#444;margin:0 auto 22px;max-width:680px;text-align:center;line-height:1.6}
+.seq-wrap{text-align:center;margin-bottom:18px}
+.seq{display:inline-block;padding:10px 14px;border-radius:12px;background:#eff6ff;border:1px solid rgba(37,99,235,.18);color:#1e3a8a;font-weight:800;font-size:.85rem;line-height:1.5}
+.hidden{display:none}
+.welcome-card{background:#fff;border-radius:16px;padding:32px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.06);border-top:4px solid #2563eb}
+.welcome-card h2{margin:12px 0 8px;font-size:1.25rem;color:#1a1a2e}
+.welcome-card p{color:#666;font-size:.9rem;margin-bottom:6px;line-height:1.5}
+.badge-blue{display:inline-block;padding:5px 16px;border-radius:20px;font-size:.75rem;font-weight:800;color:#fff;background:#2563eb}
+.info-row{display:flex;justify-content:center;gap:18px;margin:16px 0;font-size:.85rem;color:#666;flex-wrap:wrap}
+.info-row span{display:flex;align-items:center;gap:4px}
+.btn-start{display:inline-block;margin-top:18px;padding:14px 36px;background:#2563eb;color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:800;cursor:pointer;transition:background .2s}
+.btn-start:hover{background:#1d4ed8}
+.progress-bar{height:6px;background:#e5e7eb;border-radius:3px;margin-bottom:8px;overflow:hidden}
+.progress-fill{height:100%;background:#2563eb;border-radius:3px;transition:width .3s}
+.progress-text{font-size:.8rem;color:#999;margin-bottom:16px;text-align:right}
+.timer{font-size:.8rem;color:#2563eb;text-align:center;margin-bottom:12px;font-weight:800}
+.q-card{background:#fff;border-radius:16px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,.06)}
+.q-number{font-size:.8rem;color:#2563eb;font-weight:900;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.q-label{display:inline-block;padding:3px 10px;border-radius:8px;font-size:.75rem;font-weight:900;color:#fff;background:#2563eb;margin-bottom:12px}
+.q-text{font-size:1.03rem;color:#1a1a2e;line-height:1.7;margin-bottom:16px;white-space:pre-line}
+.options{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.opt{padding:14px 18px;border:2px solid #e5e7eb;border-radius:12px;cursor:pointer;font-size:.95rem;color:#333;transition:all .15s;background:#fff}
+.opt:hover:not(.disabled){border-color:#2563eb;background:#eff6ff}
+.opt.correct{border-color:#059669;background:#d1fae5;color:#065f46;font-weight:800}
+.opt.wrong{border-color:#dc2626;background:#fef2f2;color:#dc2626}
+.opt.disabled{cursor:default}
+.opt.disabled:not(.correct):not(.wrong){opacity:.6}
+.answer-section{display:none;margin-top:18px;padding:18px 18px;background:#fff7ed;border-radius:12px;border-left:4px solid #ea580c}
+.answer-section h3{font-size:.9rem;color:#ea580c;margin-bottom:10px;font-weight:900}
+.answer-section p{font-size:.9rem;color:#333;line-height:1.7;margin-bottom:6px}
+.answer-section strong{color:#9a3412}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:12px}
+.btn-nav{padding:10px 22px;border:2px solid #2563eb;color:#2563eb;background:#fff;border-radius:10px;font-size:.9rem;cursor:pointer;transition:all .2s;font-weight:900}
+.btn-nav:hover{background:#eff6ff}
+.btn-nav.primary{background:#2563eb;color:#fff;border-color:#2563eb}
+.btn-nav.primary:hover{background:#1d4ed8}
+.result-card{background:#fff;border-radius:16px;padding:36px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.06);border-top:4px solid #2563eb}
+.score-big{font-size:2.8rem;font-weight:900;color:#2563eb;margin:16px 0 8px}
+.score-label{font-size:1rem;color:#666;margin-bottom:20px}
+.autocheck{margin-top:20px;padding:16px 20px;background:#f0fdf4;border-radius:12px;border-left:4px solid #059669;text-align:left}
+.autocheck h3{font-size:.85rem;color:#059669;margin-bottom:8px}
+.autocheck p{font-size:.85rem;color:#555;line-height:1.6}
+.btn-row{display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="container">
+<a href="quiz_prioritaires.html" class="back-link">&larr; Retour aux quiz prioritaires</a>
+<h1>Quiz – Architecture d’une réponse complète</h1>
+<p class="subtitle">Automatiser la construction d’une réponse orale complète et cohérente devant le jury.</p>
+<p class="desc">Ce quiz entraîne à structurer une réponse orale devant le jury VAE DEES en suivant l’architecture professionnelle suivante : <strong>1. Situer / contextualiser</strong>, <strong>2. Décrire les faits</strong>, <strong>3. Analyser</strong>, <strong>4. Poser des objectifs</strong>, <strong>5. Mettre en œuvre / agir</strong>, <strong>6. Évaluer</strong>, <strong>7. Posture professionnelle (réflexivité)</strong>.</p>
+<div class="seq-wrap"><span class="seq">Situer → Décrire → Analyser → Objectifs → Agir → Évaluer → Posture</span></div>
+
+<div id="welcomeScreen">
+<div class="welcome-card">
+  <span class="badge-blue">Quiz Prioritaire</span>
+  <h2>Architecture — 7 étapes</h2>
+  <p>Exercices : <strong>reconnaissance</strong>, <strong>ordre</strong>, <strong>application à une situation</strong>.</p>
+  <div class="info-row">
+    <span>&#128221; 22 questions</span>
+    <span>&#9201; 7-10 min</span>
+    <span>&#127919; Réponse complète</span>
+  </div>
+  <p style="font-size:.85rem;color:#2563eb;font-weight:900;margin-top:10px">Réponds à voix haute avant de cliquer. Objectif : automatisme.</p>
+  <button class="btn-start" onclick="startQuiz()">Commencer le quiz</button>
+</div>
+</div>
+
+<div id="quizArea" class="hidden">
+  <div class="timer" id="timer">00:00</div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-text" id="progressText">1 / 22</div>
+  <div class="q-card" id="questionCard"></div>
+  <div class="nav-row">
+    <button class="btn-nav" onclick="prevQ()">&larr; Précédente</button>
+    <button class="btn-nav primary" onclick="nextQ()">Suivante &rarr;</button>
+  </div>
+</div>
+
+<div id="resultScreen" class="hidden">
+<div class="result-card">
+  <span class="badge-blue">Terminé !</span>
+  <div class="score-big" id="scoreDisplay">0 / 0</div>
+  <div class="score-label">questions QCM correctes</div>
+  <div class="autocheck">
+    <h3>&#9989; Auto-check (oral)</h3>
+    <p>Si tu peux dérouler la séquence <strong>Situer → Décrire → Analyser → Objectifs → Agir → Évaluer → Posture</strong> sans hésiter, tu as l’architecture en tête.</p>
+    <p style="margin-top:8px">En simulation : si tu bloques, repars de <strong>Décrire les faits</strong> (concret) puis remonte vers l’<strong>analyse</strong> et les <strong>objectifs</strong>.</p>
+  </div>
+  <div class="btn-row">
+    <button class="btn-nav" onclick="resetQuiz()">&#128260; Recommencer</button>
+    <a href="quiz_prioritaires.html" class="btn-nav primary" style="text-decoration:none">Retour prioritaire</a>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+var questions = [
+  { label: "Reconnaissance", q: "Quelle étape consiste à situer le cadre (institution, dispositif, public, rôle) avant de répondre ?", type: "qcm", options: ["Situer / contextualiser","Décrire les faits","Analyser","Évaluer"], correct: 0, explanation: "<strong>Situer / contextualiser</strong> : tu annonces le cadre, le public, ta place, le moment." },
+  { label: "Reconnaissance", q: "Quelle étape consiste à donner des éléments concrets, observables et datés (qui fait quoi, quand) ?", type: "qcm", options: ["Décrire les faits","Analyser","Poser des objectifs","Posture"], correct: 0, explanation: "<strong>Décrire les faits</strong> : concret, observable, acteurs, éléments factuels." },
+  { label: "Reconnaissance", q: "Quelle étape consiste à identifier causes, facteurs, hypothèses et repères éducatifs ?", type: "qcm", options: ["Situer","Décrire","Analyser","Agir"], correct: 2, explanation: "<strong>Analyser</strong> : hypothèses, lecture éducative, repères théoriques/légaux." },
+  { label: "Reconnaissance", q: "Quelle étape consiste à formuler une intention éducative et des objectifs opérationnels ?", type: "qcm", options: ["Poser des objectifs","Évaluer","Posture","Décrire"], correct: 0, explanation: "<strong>Poser des objectifs</strong> : objectif général + objectifs opérationnels + critères de réussite." },
+  { label: "Reconnaissance", q: "Quelle étape consiste à décrire les actions éducatives mises en place (individuel/collectif) et la mise en œuvre ?", type: "qcm", options: ["Mettre en œuvre / agir","Analyser","Évaluer","Situer"], correct: 0, explanation: "<strong>Mettre en œuvre / agir</strong> : actions concrètes, cadre, régulation, coordination." },
+  { label: "Reconnaissance", q: "Quelle étape consiste à décrire les effets observés, les limites et les réajustements ?", type: "qcm", options: ["Évaluer","Posture","Objectifs","Décrire"], correct: 0, explanation: "<strong>Évaluer</strong> : effets, ajustements, points de vigilance." },
+  { label: "Reconnaissance", q: "Quelle étape met en avant ton positionnement, ton éthique et ce que tu ferais autrement ?", type: "qcm", options: ["Posture professionnelle (réflexivité)","Analyser","Situer","Agir"], correct: 0, explanation: "<strong>Posture (réflexivité)</strong> : positionnement, apprentissages, limites, perspectives." },
+
+  { label: "Ordre", q: "Quelle est la bonne séquence de départ (3 premières étapes) ?", type: "qcm", options: ["Décrire → Situer → Analyser","Situer → Décrire → Analyser","Analyser → Situer → Décrire","Situer → Analyser → Décrire"], correct: 1, explanation: "On commence par <strong>Situer</strong>, puis <strong>Décrire</strong>, puis <strong>Analyser</strong>." },
+  { label: "Ordre", q: "Quelle est la bonne séquence (4 premières étapes) ?", type: "qcm", options: ["Situer → Décrire → Analyser → Objectifs","Décrire → Situer → Objectifs → Analyser","Analyser → Situer → Agir → Évaluer","Situer → Analyser → Décrire → Objectifs"], correct: 0, explanation: "Le cœur : <strong>Situer → Décrire → Analyser → Objectifs</strong>." },
+  { label: "Ordre", q: "Qu’est-ce qui vient juste après Analyser ?", type: "qcm", options: ["Poser des objectifs","Mettre en œuvre / agir","Évaluer","Posture"], correct: 0, explanation: "Après <strong>Analyser</strong>, tu poses des <strong>objectifs</strong> (cohérence)." },
+  { label: "Ordre", q: "Qu’est-ce qui vient juste après Poser des objectifs ?", type: "qcm", options: ["Mettre en œuvre / agir","Évaluer","Posture","Décrire"], correct: 0, explanation: "Après les <strong>objectifs</strong>, tu passes à l’<strong>agir</strong> (mise en œuvre)." },
+  { label: "Ordre", q: "Qu’est-ce qui vient juste après Mettre en œuvre / agir ?", type: "qcm", options: ["Évaluer","Analyser","Situer","Objectifs"], correct: 0, explanation: "Après l’<strong>agir</strong>, tu fais l’<strong>évaluation</strong> (effets + ajustements)." },
+  { label: "Ordre", q: "Quelle est la bonne séquence complète ?", type: "qcm", options: ["Situer → Décrire → Analyser → Objectifs → Agir → Évaluer → Posture","Situer → Analyser → Décrire → Objectifs → Agir → Évaluer → Posture","Décrire → Situer → Analyser → Objectifs → Agir → Posture → Évaluer","Situer → Décrire → Objectifs → Analyser → Agir → Évaluer → Posture"], correct: 0, explanation: "La séquence complète : <strong>Situer → Décrire → Analyser → Objectifs → Agir → Évaluer → Posture</strong>." },
+  { label: "Ordre", q: "Si tu dois faire une réponse très courte, quelle combinaison est la plus pertinente ?", type: "qcm", options: ["Situer + Décrire + 1 analyse + 1 action + 1 effet","Décrire uniquement","Analyser uniquement","Posture uniquement"], correct: 0, explanation: "En court : <strong>cadre + faits + analyse + action + effet</strong> montrent une logique pro (même en version réduite)." },
+
+  { label: "Application", q: "Situation : Un adolescent se met régulièrement en retrait du groupe.\nQuelle étape consiste à comprendre les causes possibles de ce comportement ?", type: "qcm", options: ["Décrire les faits","Analyser","Poser des objectifs","Évaluer"], correct: 1, explanation: "Comprendre les causes/facteurs = <strong>Analyser</strong>." },
+  { label: "Application", q: "Situation : Tu observes que le retrait est surtout présent lors des activités sportives, et tu notes les moments précis.\nQuelle étape travailles-tu ?", type: "qcm", options: ["Décrire les faits","Évaluer","Posture","Objectifs"], correct: 0, explanation: "Observer/consigner des éléments concrets = <strong>Décrire les faits</strong>." },
+  { label: "Application", q: "Situation : Tu annonces que tu veux soutenir la participation progressive sans contrainte.\nQuelle étape travailles-tu ?", type: "qcm", options: ["Objectifs","Agir","Situer","Évaluer"], correct: 0, explanation: "Formuler l’intention éducative = <strong>Poser des objectifs</strong>." },
+  { label: "Application", q: "Situation : Tu mets en place un rôle valorisant et un binôme pair pour favoriser l’entrée dans le groupe.\nQuelle étape travailles-tu ?", type: "qcm", options: ["Agir","Analyser","Posture","Situer"], correct: 0, explanation: "Mise en place d’actions concrètes = <strong>Mettre en œuvre / agir</strong>." },
+  { label: "Application", q: "Situation : Après 2 semaines, l’adolescent participe davantage mais reste fragile dans certaines transitions.\nQuelle étape travailles-tu ?", type: "qcm", options: ["Évaluer","Situer","Décrire","Objectifs"], correct: 0, explanation: "Effets observés + ajustements = <strong>Évaluer</strong>." },
+  { label: "Application", q: "Situation : Tu expliques que tu as ajusté ton positionnement (moins directif, plus étayage progressif).\nQuelle étape travailles-tu ?", type: "qcm", options: ["Posture","Analyser","Décrire","Agir"], correct: 0, explanation: "Ajustement de positionnement + apprentissage = <strong>Posture réflexive</strong>." },
+  { label: "Application", q: "Situation : Tu réponds au jury sans préciser le cadre (institution, rôle, public).\nQuelle étape manque en premier ?", type: "qcm", options: ["Situer / contextualiser","Évaluer","Agir","Posture"], correct: 0, explanation: "Sans <strong>Situer</strong>, la réponse manque de cadre et le jury ne peut pas te situer professionnellement." },
+  { label: "Application", q: "Situation : Tu donnes beaucoup de théories mais aucun fait concret.\nQuelle étape est la plus insuffisante ?", type: "qcm", options: ["Décrire les faits","Évaluer","Posture","Objectifs"], correct: 0, explanation: "Sans <strong>faits concrets</strong>, l’analyse est fragile : il faut d’abord <strong>décrire</strong>." },
+  { label: "Application", q: "Situation : Tu décris les faits, mais tu passes directement aux actions sans comprendre l’enjeu.\nQuelle étape as-tu sautée ?", type: "qcm", options: ["Analyser","Situer","Évaluer","Posture"], correct: 0, explanation: "Il manque l’<strong>analyse</strong> : hypothèses, besoins, enjeux éducatifs." }
+];
+
+var currentIndex = 0;
+var answered = false;
+var score = 0;
+var totalQcm = 0;
+var timerInterval = null;
+var seconds = 0;
+
+function startQuiz() {
+  currentIndex = 0;
+  answered = false;
+  score = 0;
+  totalQcm = questions.length;
+  seconds = 0;
+  document.getElementById('welcomeScreen').classList.add('hidden');
+  document.getElementById('quizArea').classList.remove('hidden');
+  document.getElementById('resultScreen').classList.add('hidden');
+  timerInterval = setInterval(function() {
+    seconds++;
+    var m = Math.floor(seconds / 60);
+    var s = seconds % 60;
+    document.getElementById('timer').textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  }, 1000);
+  renderQuestion();
+}
+
+function renderQuestion() {
+  answered = false;
+  var q = questions[currentIndex];
+  var html = '';
+  html += '<div class="q-number">Question ' + (currentIndex + 1) + ' / ' + questions.length + '</div>';
+  html += '<div class="q-label">' + q.label + '</div>';
+  html += '<div class="q-text">' + q.q + '</div>';
+  html += '<div class="options">';
+  for (var i = 0; i < q.options.length; i++) {
+    html += '<div class="opt" id="opt' + i + '" onclick="selectOption(' + i + ')">' + q.options[i] + '</div>';
+  }
+  html += '</div>';
+  html += '<div class="answer-section" id="answerSection">';
+  html += '<h3>Explication</h3><p>' + q.explanation + '</p>';
+  html += '</div>';
+
+  document.getElementById('questionCard').innerHTML = html;
+  document.getElementById('progressFill').style.width = ((currentIndex + 1) / questions.length * 100) + '%';
+  document.getElementById('progressText').textContent = (currentIndex + 1) + ' / ' + questions.length;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function selectOption(i) {
+  if (answered) return;
+  answered = true;
+  var q = questions[currentIndex];
+  var opts = document.querySelectorAll('.opt');
+  for (var j = 0; j < opts.length; j++) {
+    opts[j].classList.add('disabled');
+    if (j === q.correct) opts[j].classList.add('correct');
+  }
+  if (i !== q.correct) {
+    document.getElementById('opt' + i).classList.add('wrong');
+  } else {
+    score++;
+  }
+  document.getElementById('answerSection').style.display = 'block';
+  setTimeout(function() {
+    document.getElementById('answerSection').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+  }, 150);
+}
+
+function prevQ() {
+  if (currentIndex === 0) {
+    clearInterval(timerInterval);
+    document.getElementById('quizArea').classList.add('hidden');
+    document.getElementById('welcomeScreen').classList.remove('hidden');
+    return;
+  }
+  currentIndex--;
+  renderQuestion();
+}
+
+function nextQ() {
+  if (currentIndex >= questions.length - 1) {
+    showResults();
+    return;
+  }
+  currentIndex++;
+  renderQuestion();
+}
+
+function showResults() {
+  clearInterval(timerInterval);
+  document.getElementById('quizArea').classList.add('hidden');
+  document.getElementById('resultScreen').classList.remove('hidden');
+  document.getElementById('scoreDisplay').textContent = score + ' / ' + totalQcm;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function resetQuiz() {
+  document.getElementById('resultScreen').classList.add('hidden');
+  startQuiz();
+}
+</script>
+</body>
+</html>

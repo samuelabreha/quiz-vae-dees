@@ -1,0 +1,14 @@
+{
+  "name": "quiz-vae-dees",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@google/genai": "^1.30.0"
+  }
+}

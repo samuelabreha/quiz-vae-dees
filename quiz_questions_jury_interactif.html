@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz – Questions du jury (Interactif) — VAE DEES</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;min-height:100vh;margin:0}
+.container{max-width:980px;margin:0 auto;padding:36px 18px;min-height:100vh}
+.back-link{display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;color:#0d9488;text-decoration:none;font-size:.9rem}
+.back-link:hover{text-decoration:underline}
+h1{font-size:1.7rem;color:#111827;margin-bottom:6px;text-align:center}
+.subtitle{font-size:.98rem;color:#6b7280;margin-bottom:12px;text-align:center}
+.desc{font-size:.95rem;color:#374151;margin:0 auto 22px;max-width:860px;text-align:center;line-height:1.7}
+.row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:0 auto 16px}
+.hidden{display:none}
+.welcome-card{background:#fff;border-radius:18px;padding:34px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.08);border-top:6px solid #0d9488}
+.welcome-card h2{margin:12px 0 8px;font-size:1.25rem;color:#1a1a2e}
+.welcome-card p{color:#666;font-size:.9rem;margin-bottom:6px;line-height:1.5}
+.badge{display:inline-block;padding:5px 16px;border-radius:20px;font-size:.75rem;font-weight:800;color:#fff;background:#0d9488}
+.info-row{display:flex;justify-content:center;gap:18px;margin:16px 0;font-size:.85rem;color:#666;flex-wrap:wrap}
+.info-row span{display:flex;justify-content:center;gap:4px}
+.btn-start{display:inline-block;margin-top:18px;padding:14px 36px;background:#0d9488;color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:800;cursor:pointer;transition:background .2s}
+.btn-start:hover{background:#0f766e}
+.progress-bar{height:6px;background:#e5e7eb;border-radius:3px;margin-bottom:8px;overflow:hidden}
+.progress-fill{height:100%;background:#0d9488;border-radius:3px;transition:width .3s}
+.progress-text{font-size:.8rem;color:#999;margin-bottom:16px;text-align:right}
+.timer{font-size:.85rem;color:#0d9488;text-align:center;margin-bottom:12px;font-weight:900}
+.q-card{background:#fff;border-radius:18px;padding:30px;box-shadow:0 10px 30px rgba(0,0,0,.08);border-top:6px solid #0d9488}
+.q-number{font-size:.8rem;color:#0d9488;font-weight:900;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.q-text{font-size:1.06rem;color:#111827;line-height:1.75;margin-bottom:16px;white-space:pre-line}
+.hint{font-size:.95rem;color:#374151;line-height:1.75;margin-bottom:16px}
+.btn-reveal{display:inline-block;padding:12px 28px;background:#0d9488;color:#fff;border:none;border-radius:12px;font-size:.95rem;cursor:pointer;transition:background .2s;font-weight:800}
+.btn-reveal:hover{background:#0f766e}
+.answer-section{display:none;margin-top:16px;padding:16px 16px;background:#fff7ed;border-radius:12px;border-left:4px solid #ea580c}
+.answer-section h3{font-size:.9rem;color:#ea580c;margin-bottom:8px;font-weight:900}
+.answer-section p,.answer-section li{font-size:.9rem;color:#333;line-height:1.7}
+.nav-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.nav-row .btn-nav{flex:1;min-width:220px}
+.btn-nav{padding:12px 22px;border:2px solid rgba(13,148,136,.45);color:#0f766e;background:#fff;border-radius:12px;font-size:.95rem;cursor:pointer;transition:transform .05s,background .2s,border-color .2s,color .2s,box-shadow .2s;font-weight:900;box-shadow:0 1px 0 rgba(0,0,0,.03)}
+.btn-nav:hover{background:#ecfeff;border-color:#0d9488;box-shadow:0 10px 24px rgba(13,148,136,.10)}
+.btn-nav:active{transform:translateY(1px)}
+.btn-nav.primary{background:#0d9488;color:#fff;border-color:#0d9488}
+.btn-nav.primary:hover{background:#0f766e;border-color:#0f766e;box-shadow:0 10px 24px rgba(15,118,110,.18)}
+.btn-nav:disabled{opacity:.55;cursor:default;box-shadow:none}
+.btn-nav:disabled:hover{background:#fff;border-color:rgba(13,148,136,.45)}
+.result-card{background:#fff;border-radius:18px;padding:30px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.08);border-top:6px solid #0d9488}
+.score-big{font-size:2.4rem;font-weight:900;color:#0d9488;margin:12px 0 6px}
+.score-label{font-size:1rem;color:#666;margin-bottom:16px}
+.checklist{margin-top:18px;text-align:left;padding:18px 18px;background:#f8fafc;border-radius:12px;border-left:4px solid #2563eb}
+.checklist h3{font-size:.9rem;color:#2563eb;margin-bottom:10px;font-weight:900}
+.cl-item{display:flex;gap:10px;align-items:flex-start;margin:10px 0;font-size:.92rem;color:#333;line-height:1.5}
+.cl-item input{margin-top:3px}
+.notice{margin-top:14px;padding:12px 14px;background:#f0fdf4;border-radius:12px;border-left:4px solid #059669;font-size:.9rem;line-height:1.6;color:#333;text-align:left}
+
+@media (max-width: 640px){
+  .container{padding:22px 14px}
+  .welcome-card{padding:26px}
+  .q-card{padding:22px}
+  .nav-row .btn-nav{min-width:0;width:100%}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<a href="simulation_questions_jury.html" class="back-link">&larr; Retour à la simulation jury</a>
+<h1>Quiz – Questions du jury (Interactif)</h1>
+<p class="subtitle">Active recall : réponds à voix haute, puis révèle.</p>
+<p class="desc"><strong>Consigne :</strong> lis la question, <strong>réponds à voix haute</strong> (1 à 2 minutes), puis clique pour afficher la <strong>réponse modèle</strong>. Ensuite passe à la question suivante.</p>
+
+<div id="welcomeScreen">
+  <div class="welcome-card">
+    <span class="badge">Simulation Jury</span>
+    <h2>15 questions classiques</h2>
+    <p>1 question à la fois, comme les autres quiz du site.</p>
+    <div class="info-row">
+      <span>&#128221; 15 questions</span>
+      <span>&#9201; Timer</span>
+      <span>&#127897; Oral</span>
+    </div>
+
+    <p style="font-size:.85rem;color:#0d9488;font-weight:900;margin-top:10px">Astuce : enregistre-toi sur 3 questions au hasard, puis réécoute.</p>
+    <button class="btn-start" id="startBtn">Charger les 15 questions</button>
+    <div id="loadError" class="notice hidden" style="border-left-color:#dc2626;background:#fef2f2"></div>
+  </div>
+</div>
+
+<div id="quizArea" class="hidden">
+  <div class="timer" id="timer">00:00</div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-text" id="progressText">1 / 15</div>
+  <div class="q-card" id="questionCard"></div>
+  <div class="nav-row" style="margin-top:18px">
+    <button class="btn-nav" id="prevBtn">&larr; Précédente</button>
+    <button class="btn-nav primary" id="nextBtn">Suivante &rarr;</button>
+  </div>
+</div>
+
+<div id="resultScreen" class="hidden">
+  <div class="result-card">
+    <span class="badge">Terminé</span>
+    <div class="score-big" id="scoreDisplay">0 / 0</div>
+    <div class="score-label">réponses modèle affichées</div>
+
+    <div class="notice"><strong>Conseil :</strong> enregistre-toi sur 3 questions au hasard, puis réécoute. Tu repèreras immédiatement ce qui est fluide et ce qui bloque.</div>
+
+    <div class="nav-row" style="margin-top:18px">
+      <button class="btn-nav" id="restartBtn">&#128260; Recommencer</button>
+      <a class="btn-nav primary" href="simulation_questions_jury.html" style="text-decoration:none">Retour simulation</a>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+var questions = [];
+var currentIndex = 0;
+var revealed = {};
+var revealedCount = 0;
+var timerInterval = null;
+var seconds = 0;
+
+function setText(id, txt){var el=document.getElementById(id); if(el) el.textContent=txt;}
+function byId(id){return document.getElementById(id);}
+
+function startTimer(){
+  if(timerInterval) clearInterval(timerInterval);
+  seconds = 0;
+  timerInterval = setInterval(function(){
+    seconds++;
+    var m = Math.floor(seconds/60);
+    var s = seconds % 60;
+    setText('timer',(m<10?'0':'')+m+':'+(s<10?'0':'')+s);
+  },1000);
+}
+function stopTimer(){
+  if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+}
+
+function parseLegacy(htmlText){
+  var doc = new DOMParser().parseFromString(htmlText,'text/html');
+  var h2s = Array.prototype.slice.call(doc.querySelectorAll('h2'))
+    .filter(function(h){return /^QUESTION\s+\d+/i.test((h.textContent||'').trim());});
+  return h2s.map(function(h){
+    var title = (h.textContent||'').trim();
+    var m = title.match(/^QUESTION\s+(\d+)/i);
+    var qid = m ? parseInt(m[1],10) : null;
+    var askNode = h.nextElementSibling;
+    var askHtml = (askNode && askNode.tagName && askNode.tagName.toLowerCase()==='p') ? askNode.innerHTML : '';
+    var node = askNode;
+    var details = null;
+    while(node){
+      if(node.tagName && node.tagName.toLowerCase()==='details'){details=node;break;}
+      if(node.tagName && node.tagName.toLowerCase()==='h2') break;
+      node = node.nextElementSibling;
+    }
+    var answerHtml = details ? details.innerHTML : '';
+    return {id: qid, title:title, askHtml:askHtml, answerHtml:answerHtml};
+  });
+}
+
+function renderQuestion(){
+  var q = questions[currentIndex];
+  var html = '';
+  html += '<div class="q-number">Question ' + (currentIndex + 1) + ' / ' + questions.length + '</div>';
+  html += '<div class="q-text"><strong>' + q.title + '</strong></div>';
+  html += '<div class="hint">' + (q.askHtml || '') + '</div>';
+  html += '<button class="btn-reveal" id="revealBtn">Afficher une réponse modèle</button>';
+  html += '<div class="answer-section" id="answerSection"><h3>Réponse modèle</h3><div>' + (q.answerHtml || '') + '</div></div>';
+  document.getElementById('questionCard').innerHTML = html;
+
+  document.getElementById('progressFill').style.width = ((currentIndex + 1) / questions.length * 100) + '%';
+  document.getElementById('progressText').textContent = (currentIndex + 1) + ' / ' + questions.length;
+
+  document.getElementById('revealBtn').onclick = function(){
+    var ans = document.getElementById('answerSection');
+    ans.style.display = 'block';
+    document.getElementById('revealBtn').style.display = 'none';
+    if(!revealed[String(currentIndex)]){
+      revealed[String(currentIndex)] = true;
+      revealedCount++;
+    }
+  };
+
+  window.scrollTo({top:0,behavior:'smooth'});
+
+}
+
+function showResults(){
+  stopTimer();
+  document.getElementById('quizArea').classList.add('hidden');
+  document.getElementById('resultScreen').classList.remove('hidden');
+  document.getElementById('scoreDisplay').textContent = revealedCount + ' / ' + questions.length;
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function startQuiz(){
+  currentIndex = 0;
+  revealed = {};
+  revealedCount = 0;
+  document.getElementById('welcomeScreen').classList.add('hidden');
+  document.getElementById('resultScreen').classList.add('hidden');
+  document.getElementById('quizArea').classList.remove('hidden');
+  startTimer();
+  renderQuestion();
+}
+document.getElementById('restartBtn').onclick = function(){
+  document.getElementById('resultScreen').classList.add('hidden');
+  startQuiz();
+};
+
+document.getElementById('prevBtn').onclick = function(){
+  if(currentIndex===0){
+    stopTimer();
+    document.getElementById('quizArea').classList.add('hidden');
+    document.getElementById('welcomeScreen').classList.remove('hidden');
+    return;
+  }
+  currentIndex--;
+  renderQuestion();
+};
+
+document.getElementById('nextBtn').onclick = function(){
+  if(currentIndex >= questions.length - 1){
+    showResults();
+    return;
+  }
+  currentIndex++;
+  renderQuestion();
+};
+
+document.getElementById('startBtn').onclick = async function(){
+  var err = document.getElementById('loadError');
+  err.classList.add('hidden');
+  err.textContent = '';
+
+  try{
+    var res = await fetch('quiz_questions_jury.html', {cache:'no-store'});
+    if(!res.ok) throw new Error('Impossible de charger quiz_questions_jury.html ('+res.status+')');
+    var text = await res.text();
+    questions = parseLegacy(text);
+    if(!questions.length) throw new Error('Aucune question détectée dans quiz_questions_jury.html');
+    startQuiz();
+  } catch(e){
+    err.textContent = 'Erreur chargement : ' + (e && e.message ? e.message : e);
+    err.classList.remove('hidden');
+  }
+};
+</script>
+</body>
+</html>

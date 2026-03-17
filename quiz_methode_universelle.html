@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz – Méthode universelle de réponse orale</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;min-height:100vh}
+.container{max-width:720px;margin:0 auto;padding:24px 16px}
+.back-link{display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;color:#e10600;text-decoration:none;font-size:.9rem}
+.back-link:hover{text-decoration:underline}
+h1{font-size:1.5rem;color:#1a1a2e;margin-bottom:4px;text-align:center}
+.subtitle{font-size:.92rem;color:#666;margin-bottom:10px;text-align:center}
+.desc{font-size:.9rem;color:#444;margin:0 auto 22px;max-width:680px;text-align:center;line-height:1.6}
+.seq-wrap{text-align:center;margin-bottom:18px}
+.seq{display:inline-block;padding:10px 14px;border-radius:12px;background:#fff5f5;border:1px solid rgba(225,6,0,.18);color:#7f1d1d;font-weight:800;font-size:.85rem;line-height:1.5}
+.hidden{display:none}
+.welcome-card{background:#fff;border-radius:16px;padding:32px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.06);border-top:4px solid #e10600}
+.welcome-card h2{margin:12px 0 8px;font-size:1.25rem;color:#1a1a2e}
+.welcome-card p{color:#666;font-size:.9rem;margin-bottom:6px;line-height:1.5}
+.badge-red{display:inline-block;padding:5px 16px;border-radius:20px;font-size:.75rem;font-weight:800;color:#fff;background:#e10600}
+.info-row{display:flex;justify-content:center;gap:18px;margin:16px 0;font-size:.85rem;color:#666;flex-wrap:wrap}
+.info-row span{display:flex;align-items:center;gap:4px}
+.btn-start{display:inline-block;margin-top:18px;padding:14px 36px;background:#e10600;color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:800;cursor:pointer;transition:background .2s}
+.btn-start:hover{background:#b30000}
+.progress-bar{height:6px;background:#e5e7eb;border-radius:3px;margin-bottom:8px;overflow:hidden}
+.progress-fill{height:100%;background:#e10600;border-radius:3px;transition:width .3s}
+.progress-text{font-size:.8rem;color:#999;margin-bottom:16px;text-align:right}
+.timer{font-size:.8rem;color:#e10600;text-align:center;margin-bottom:12px;font-weight:800}
+.q-card{background:#fff;border-radius:16px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,.06)}
+.q-number{font-size:.8rem;color:#e10600;font-weight:900;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.q-label{display:inline-block;padding:3px 10px;border-radius:8px;font-size:.75rem;font-weight:900;color:#fff;background:#e10600;margin-bottom:12px}
+.q-text{font-size:1.03rem;color:#1a1a2e;line-height:1.7;margin-bottom:16px;white-space:pre-line}
+.options{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.opt{padding:14px 18px;border:2px solid #e5e7eb;border-radius:12px;cursor:pointer;font-size:.95rem;color:#333;transition:all .15s;background:#fff}
+.opt:hover:not(.disabled){border-color:#e10600;background:#fff5f5}
+.opt.correct{border-color:#059669;background:#d1fae5;color:#065f46;font-weight:800}
+.opt.wrong{border-color:#dc2626;background:#fef2f2;color:#dc2626}
+.opt.disabled{cursor:default}
+.opt.disabled:not(.correct):not(.wrong){opacity:.6}
+.answer-section{display:none;margin-top:18px;padding:18px 18px;background:#fff7ed;border-radius:12px;border-left:4px solid #ea580c}
+.answer-section h3{font-size:.9rem;color:#ea580c;margin-bottom:10px;font-weight:900}
+.answer-section p{font-size:.9rem;color:#333;line-height:1.7;margin-bottom:6px}
+.answer-section strong{color:#9a3412}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:12px}
+.btn-nav{padding:10px 22px;border:2px solid #e10600;color:#e10600;background:#fff;border-radius:10px;font-size:.9rem;cursor:pointer;transition:all .2s;font-weight:900}
+.btn-nav:hover{background:#fff5f5}
+.btn-nav.primary{background:#e10600;color:#fff;border-color:#e10600}
+.btn-nav.primary:hover{background:#b30000}
+.result-card{background:#fff;border-radius:16px;padding:36px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.06);border-top:4px solid #e10600}
+.score-big{font-size:2.8rem;font-weight:900;color:#e10600;margin:16px 0 8px}
+.score-label{font-size:1rem;color:#666;margin-bottom:20px}
+.autocheck{margin-top:20px;padding:16px 20px;background:#f0fdf4;border-radius:12px;border-left:4px solid #059669;text-align:left}
+.autocheck h3{font-size:.85rem;color:#059669;margin-bottom:8px}
+.autocheck p{font-size:.85rem;color:#555;line-height:1.6}
+.btn-row{display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="container">
+<a href="quiz_prioritaires.html" class="back-link">&larr; Retour aux quiz prioritaires</a>
+<h1>Quiz – Méthode universelle de réponse orale</h1>
+<p class="subtitle">Automatiser la structure professionnelle de réponse au jury VAE DEES.</p>
+<p class="desc">Ce quiz entraîne à reconnaître et utiliser la structure universelle de réponse orale utilisée devant le jury : <strong>Contexte → Problématique → Objectifs → Actions → Posture → Réseau → Évaluation → Référentiel</strong>. L’objectif est d’automatiser cette structure mentale pour répondre clairement aux questions du jury.</p>
+<div class="seq-wrap"><span class="seq">Contexte → Problématique → Objectifs → Actions → Posture → Réseau → Évaluation → Référentiel</span></div>
+
+<div id="welcomeScreen">
+<div class="welcome-card">
+  <span class="badge-red">Quiz Prioritaire</span>
+  <h2>Méthode universelle — 8 blocs</h2>
+  <p>Exercices : <strong>reconnaissance</strong>, <strong>ordre</strong>, <strong>application</strong>.</p>
+  <div class="info-row">
+    <span>&#128221; 28 cartes</span>
+    <span>&#9201; 8-12 min</span>
+    <span>&#127919; Structure 8/8</span>
+  </div>
+  <p style="font-size:.85rem;color:#e10600;font-weight:900;margin-top:10px">Réponds à voix haute avant de cliquer. Objectif : automatisme.</p>
+  <button class="btn-start" onclick="startQuiz()">Commencer le quiz</button>
+</div>
+</div>
+
+<div id="quizArea" class="hidden">
+  <div class="timer" id="timer">00:00</div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-text" id="progressText">1 / 28</div>
+  <div class="q-card" id="questionCard"></div>
+  <div class="nav-row">
+    <button class="btn-nav" onclick="prevQ()">&larr; Précédente</button>
+    <button class="btn-nav primary" onclick="nextQ()">Suivante &rarr;</button>
+  </div>
+</div>
+
+<div id="resultScreen" class="hidden">
+<div class="result-card">
+  <span class="badge-red">Terminé !</span>
+  <div class="score-big" id="scoreDisplay">0 / 0</div>
+  <div class="score-label">questions QCM correctes</div>
+  <div class="autocheck">
+    <h3>&#9989; Auto-check (oral)</h3>
+    <p>Si tu peux nommer <strong>le bon bloc</strong> et <strong>la bonne séquence</strong> sans hésiter, tu as automatisé la structure.</p>
+    <p style="margin-top:8px">Ensuite, en simulation : déroule systématiquement jusqu’au <strong>Référentiel</strong> (DC + repère légal/théorique si pertinent).</p>
+  </div>
+  <div class="btn-row">
+    <button class="btn-nav" onclick="resetQuiz()">&#128260; Recommencer</button>
+    <a href="quiz_prioritaires.html" class="btn-nav primary" style="text-decoration:none">Retour prioritaire</a>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+var questions = [
+  { label: "Reconnaissance", q: "Quelle étape de la méthode universelle consiste à situer le cadre (lieu, dispositif, public, moment) ?", type: "qcm", options: ["Contexte","Problématique","Actions","Évaluation"], correct: 0, explanation: "<strong>Contexte</strong> : tu poses le cadre, le lieu, le dispositif, le public, le moment." },
+  { label: "Reconnaissance", q: "Quelle étape consiste à identifier la difficulté éducative / l’enjeu rencontré ?", type: "qcm", options: ["Contexte","Problématique","Réseau","Référentiel"], correct: 1, explanation: "<strong>Problématique</strong> : tu nommes l’enjeu éducatif, la tension, la difficulté à traiter." },
+  { label: "Reconnaissance", q: "Quelle étape consiste à formuler ce que tu veux favoriser / soutenir (intention éducative) ?", type: "qcm", options: ["Objectifs","Actions","Évaluation","Posture"], correct: 0, explanation: "<strong>Objectifs</strong> : intention + objectifs opérationnels (priorités)." },
+  { label: "Reconnaissance", q: "Quelle étape consiste à décrire concrètement ce que tu as fait (verbes d’action pro) ?", type: "qcm", options: ["Actions","Réseau","Contexte","Référentiel"], correct: 0, explanation: "<strong>Actions</strong> : tu décris l’intervention concrète (individuel/collectif, cadre, médiation, etc.)." },
+  { label: "Reconnaissance", q: "Quelle étape correspond à ton positionnement (écoute, contenance, éthique, respect du rythme) ?", type: "qcm", options: ["Posture","Objectifs","Évaluation","Actions"], correct: 0, explanation: "<strong>Posture</strong> : comment tu t’es positionné et pourquoi (éthique, relation, limites)." },
+  { label: "Reconnaissance", q: "Quelle étape consiste à nommer les acteurs impliqués (équipe, famille, partenaires) ?", type: "qcm", options: ["Réseau","Contexte","Référentiel","Problématique"], correct: 0, explanation: "<strong>Réseau</strong> : acteurs, transmissions, coordination, partenariats (même minimal)." },
+  { label: "Reconnaissance", q: "Quelle étape consiste à dire les effets observés et les ajustements ?", type: "qcm", options: ["Évaluation","Référentiel","Actions","Objectifs"], correct: 0, explanation: "<strong>Évaluation</strong> : effets observés + ajustements, limites, points de vigilance." },
+  { label: "Reconnaissance", q: "Quelle étape consiste à faire le lien avec le DC (et une loi/théorie si pertinent) ?", type: "qcm", options: ["Référentiel","Réseau","Contexte","Posture"], correct: 0, explanation: "<strong>Référentiel</strong> : DC principal (DC1/DC2/DC3/DC4) + repère légal/théorique si utile." },
+
+  { label: "Ordre", q: "Quelle est la bonne séquence de début (2 premiers blocs) ?", type: "qcm", options: ["Problématique → Contexte","Contexte → Problématique","Actions → Objectifs","Contexte → Actions"], correct: 1, explanation: "On commence par <strong>Contexte</strong>, puis <strong>Problématique</strong>." },
+  { label: "Ordre", q: "Quelle est la bonne séquence (4 premiers blocs) ?", type: "qcm", options: ["Contexte → Objectifs → Problématique → Actions","Contexte → Problématique → Objectifs → Actions","Problématique → Contexte → Actions → Objectifs","Contexte → Problématique → Actions → Objectifs"], correct: 1, explanation: "La base : <strong>Contexte → Problématique → Objectifs → Actions</strong>." },
+  { label: "Ordre", q: "Dans la méthode universelle, qu’est-ce qui vient juste après Actions ?", type: "qcm", options: ["Posture","Évaluation","Référentiel","Contexte"], correct: 0, explanation: "Après <strong>Actions</strong>, tu explicites ta <strong>Posture</strong>." },
+  { label: "Ordre", q: "Dans la méthode universelle, quel bloc vient juste après Posture ?", type: "qcm", options: ["Réseau","Évaluation","Référentiel","Objectifs"], correct: 0, explanation: "Après <strong>Posture</strong>, tu cites le <strong>Réseau</strong>." },
+  { label: "Ordre", q: "Dans la méthode universelle, quel bloc vient juste après Réseau ?", type: "qcm", options: ["Référentiel","Évaluation","Actions","Problématique"], correct: 1, explanation: "Après <strong>Réseau</strong>, tu fais l’<strong>Évaluation</strong> (effets + ajustements)." },
+  { label: "Ordre", q: "Quel est le bon enchaînement des 3 derniers blocs ?", type: "qcm", options: ["Posture → Réseau → Évaluation","Réseau → Évaluation → Référentiel","Évaluation → Réseau → Référentiel","Posture → Évaluation → Réseau"], correct: 1, explanation: "Fin de réponse : <strong>Réseau → Évaluation → Référentiel</strong>." },
+  { label: "Ordre", q: "Quel est l’ordre complet correct ?", type: "qcm", options: ["Contexte → Problématique → Objectifs → Actions → Posture → Réseau → Évaluation → Référentiel","Contexte → Objectifs → Problématique → Actions → Réseau → Posture → Évaluation → Référentiel","Problématique → Contexte → Objectifs → Actions → Posture → Réseau → Référentiel → Évaluation","Contexte → Problématique → Actions → Objectifs → Posture → Réseau → Évaluation → Référentiel"], correct: 0, explanation: "C’est la séquence 8/8 : <strong>Contexte → Problématique → Objectifs → Actions → Posture → Réseau → Évaluation → Référentiel</strong>." },
+  { label: "Ordre", q: "Si tu es pressé et que tu dois faire une réponse très courte, quels blocs restent indispensables ?", type: "qcm", options: ["Contexte + Problématique + Actions + Référentiel","Contexte + Actions + Réseau","Objectifs + Réseau + Évaluation","Posture + Évaluation"], correct: 0, explanation: "Même en court : <strong>Contexte</strong>, <strong>Problématique</strong>, <strong>Actions</strong>, <strong>Référentiel</strong> (DC) donnent une réponse pro minimale." },
+
+  { label: "Application", q: "Situation : Un enfant refuse de participer aux activités du groupe.\nQuelle pourrait être la problématique éducative ?", type: "qcm", options: ["L’enfant refuse l’activité proposée","Comprendre les raisons du retrait et soutenir l’intégration","Modifier immédiatement l’organisation de l’activité","Organiser une réunion avec la famille"], correct: 1, explanation: "La <strong>problématique</strong> vise l’enjeu éducatif : comprendre le retrait et favoriser l’intégration/participation." },
+  { label: "Application", q: "Situation : Un adolescent a des passages à l’acte lors des transitions.\nQuel objectif éducatif est le plus pertinent ?", type: "qcm", options: ["Le punir pour qu’il obéisse","Soutenir la régulation émotionnelle et sécuriser les transitions","Éviter toute transition","Faire une activité plus longue"], correct: 1, explanation: "Un <strong>objectif</strong> éducatif : régulation + sécurisation (pas la punition comme finalité)." },
+  { label: "Application", q: "Situation : Après une médiation, le climat du groupe s’apaise mais le conflit réapparaît 2 jours plus tard.\nQuel bloc travailles-tu ici ?", type: "qcm", options: ["Évaluation","Réseau","Contexte","Référentiel"], correct: 0, explanation: "C’est l’<strong>Évaluation</strong> : effets observés + ajustements à prévoir." },
+  { label: "Application", q: "Situation : Tu coordonnes avec l’enseignant et échanges brièvement avec la famille pour ajuster l’accompagnement.\nQuel bloc est principalement mobilisé ?", type: "qcm", options: ["Réseau","Actions","Posture","Objectifs"], correct: 0, explanation: "C’est le <strong>Réseau</strong> : travail en équipe, transmissions, partenariat." },
+  { label: "Application", q: "Situation : Tu expliques que tu as gardé une posture contenante, non punitive, en verbalisant la règle.\nQuel bloc est principalement mobilisé ?", type: "qcm", options: ["Posture","Contexte","Référentiel","Évaluation"], correct: 0, explanation: "C’est la <strong>Posture</strong> : positionnement, éthique, manière d’être en relation." },
+  { label: "Application", q: "Situation : Tu cites DC1 (relation éducative) et la loi 2002-2 pour ancrer tes choix.\nQuel bloc est principalement mobilisé ?", type: "qcm", options: ["Référentiel","Objectifs","Réseau","Actions"], correct: 0, explanation: "C’est le bloc <strong>Référentiel</strong> : DC + repère légal/théorique si pertinent." },
+  { label: "Application", q: "Situation : Tu décris le lieu, le dispositif, et ta place dans l’équipe avant de répondre.\nQuel bloc est principalement mobilisé ?", type: "qcm", options: ["Contexte","Problématique","Actions","Évaluation"], correct: 0, explanation: "C’est le <strong>Contexte</strong> : cadrage rapide et professionnel." },
+  { label: "Application", q: "Situation : Tu proposes une action éducative (médiation) mais tu n’expliques pas l’enjeu éducatif.\nQuel bloc manque le plus ?", type: "qcm", options: ["Problématique","Réseau","Évaluation","Référentiel"], correct: 0, explanation: "Sans <strong>Problématique</strong>, tu n’as pas d’enjeu éducatif clair : la réponse devient une liste d’actions." },
+  { label: "Application", q: "Situation : Tu expliques ce que tu veux favoriser (autonomie, inclusion) mais tu ne dis pas ce que tu as fait.\nQuel bloc manque le plus ?", type: "qcm", options: ["Actions","Posture","Réseau","Contexte"], correct: 0, explanation: "Le bloc <strong>Actions</strong> : le jury attend du concret (démontrer par l’action)." },
+  { label: "Application", q: "Situation : Tu as fait une action, mais tu ne dis rien de ce qui a changé ensuite.\nQuel bloc manque le plus ?", type: "qcm", options: ["Évaluation","Contexte","Référentiel","Problématique"], correct: 0, explanation: "Le bloc <strong>Évaluation</strong> : effets observés + ajustements." }
+];
+
+var currentIndex = 0;
+var answered = false;
+var score = 0;
+var totalQcm = 0;
+var timerInterval = null;
+var seconds = 0;
+
+function startQuiz() {
+  currentIndex = 0;
+  answered = false;
+  score = 0;
+  totalQcm = questions.length;
+  seconds = 0;
+  document.getElementById('welcomeScreen').classList.add('hidden');
+  document.getElementById('quizArea').classList.remove('hidden');
+  document.getElementById('resultScreen').classList.add('hidden');
+  timerInterval = setInterval(function() {
+    seconds++;
+    var m = Math.floor(seconds / 60);
+    var s = seconds % 60;
+    document.getElementById('timer').textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  }, 1000);
+  renderQuestion();
+}
+
+function renderQuestion() {
+  answered = false;
+  var q = questions[currentIndex];
+  var html = '';
+  html += '<div class="q-number">Question ' + (currentIndex + 1) + ' / ' + questions.length + '</div>';
+  html += '<div class="q-label">' + q.label + '</div>';
+  html += '<div class="q-text">' + q.q + '</div>';
+  html += '<div class="options">';
+  for (var i = 0; i < q.options.length; i++) {
+    html += '<div class="opt" id="opt' + i + '" onclick="selectOption(' + i + ')">' + q.options[i] + '</div>';
+  }
+  html += '</div>';
+  html += '<div class="answer-section" id="answerSection">';
+  html += '<h3>Explication</h3><p>' + q.explanation + '</p>';
+  html += '</div>';
+
+  document.getElementById('questionCard').innerHTML = html;
+  document.getElementById('progressFill').style.width = ((currentIndex + 1) / questions.length * 100) + '%';
+  document.getElementById('progressText').textContent = (currentIndex + 1) + ' / ' + questions.length;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function selectOption(i) {
+  if (answered) return;
+  answered = true;
+  var q = questions[currentIndex];
+  var opts = document.querySelectorAll('.opt');
+  for (var j = 0; j < opts.length; j++) {
+    opts[j].classList.add('disabled');
+    if (j === q.correct) opts[j].classList.add('correct');
+  }
+  if (i !== q.correct) {
+    document.getElementById('opt' + i).classList.add('wrong');
+  } else {
+    score++;
+  }
+  document.getElementById('answerSection').style.display = 'block';
+  setTimeout(function() {
+    document.getElementById('answerSection').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+  }, 150);
+}
+
+function prevQ() {
+  if (currentIndex === 0) {
+    clearInterval(timerInterval);
+    document.getElementById('quizArea').classList.add('hidden');
+    document.getElementById('welcomeScreen').classList.remove('hidden');
+    return;
+  }
+  currentIndex--;
+  renderQuestion();
+}
+
+function nextQ() {
+  if (currentIndex >= questions.length - 1) {
+    showResults();
+    return;
+  }
+  currentIndex++;
+  renderQuestion();
+}
+
+function showResults() {
+  clearInterval(timerInterval);
+  document.getElementById('quizArea').classList.add('hidden');
+  document.getElementById('resultScreen').classList.remove('hidden');
+  document.getElementById('scoreDisplay').textContent = score + ' / ' + totalQcm;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function resetQuiz() {
+  document.getElementById('resultScreen').classList.add('hidden');
+  startQuiz();
+}
+</script>
+</body>
+</html>

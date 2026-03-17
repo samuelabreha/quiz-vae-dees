@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 1 — Automatismes Situation / Analyse (VAE DEES) v3</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;color:#1a1a2e;min-height:100vh}
+.header{background:linear-gradient(135deg,#e10600 0%,#b30000 100%);color:#fff;padding:24px 20px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.header h1{font-size:1.3rem;font-weight:700;margin-bottom:4px}
+.header p{font-size:.85rem;opacity:.9}
+.progress-bar{background:rgba(255,255,255,.2);height:6px;border-radius:3px;margin-top:12px;overflow:hidden}
+.progress-fill{height:100%;background:#fff;border-radius:3px;transition:width .4s ease}
+.stats{display:flex;justify-content:center;gap:20px;margin-top:10px;font-size:.8rem}
+.stats span{background:rgba(255,255,255,.15);padding:4px 12px;border-radius:20px}
+.container{max-width:700px;margin:0 auto;padding:20px}
+.card{background:#fff;border-radius:16px;box-shadow:0 2px 16px rgba(0,0,0,.08);overflow:hidden;margin-bottom:20px;transition:transform .2s}
+.card-header{padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center}
+.card-num{font-size:.75rem;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.dc-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700;color:#fff}
+.dc1{background:#e10600}
+.dc2{background:#2563eb}
+.dc3{background:#059669}
+.dc4{background:#7c3aed}
+.dc-multi{background:linear-gradient(135deg,#e10600,#2563eb)}
+.question-section{padding:20px}
+.question-section h3{font-size:1.05rem;line-height:1.5;color:#1a1a2e;margin-bottom:12px}
+.competence-tag{display:inline-block;background:#f8f9fa;border:1px solid #e0e0e0;padding:4px 10px;border-radius:8px;font-size:.78rem;color:#555;margin-bottom:10px}
+.situation-tag{display:inline-block;background:#fff3cd;border:1px solid #ffc107;padding:4px 10px;border-radius:8px;font-size:.78rem;color:#856404;margin-top:4px}
+.options{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.opt{padding:12px 16px;border:2px solid #e5e7eb;border-radius:10px;cursor:pointer;font-size:.9rem;line-height:1.4;transition:all .2s;background:#fafafa}
+.opt:hover{border-color:#e10600;background:#fff5f5}
+.opt.correct{border-color:#059669;background:#d1fae5;font-weight:600}
+.opt.wrong{border-color:#dc2626;background:#fee2e2}
+.opt.disabled{pointer-events:none;opacity:.7}
+.opt.disabled:hover{background:inherit;border-color:#e5e7eb}
+.opt.disabled.correct{opacity:1}
+.answer-section{display:none;padding:0 20px 20px;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.answer-block{margin-bottom:14px;padding:12px 14px;border-radius:10px;border-left:4px solid}
+.answer-block h4{font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.answer-block p,.answer-block li{font-size:.88rem;line-height:1.6;color:#333}
+.answer-block ul{padding-left:18px}
+.answer-block li{margin-bottom:2px}
+.block-reponse{background:#f0fdf4;border-color:#059669}
+.block-reponse h4{color:#059669}
+.block-loi{background:#eff6ff;border-color:#2563eb}
+.block-loi h4{color:#2563eb}
+.block-theorie{background:#faf5ff;border-color:#7c3aed}
+.block-theorie h4{color:#7c3aed}
+.block-analyse{background:#fff7ed;border-color:#ea580c}
+.block-analyse h4{color:#ea580c}
+.nav-buttons{display:flex;gap:10px;margin-top:10px}
+.nav-btn{flex:1;padding:12px;border:2px solid #e10600;background:#fff;color:#e10600;font-size:.9rem;font-weight:600;border-radius:10px;cursor:pointer;transition:all .2s}
+.nav-btn:hover{background:#e10600;color:#fff}
+.nav-btn:disabled{border-color:#ccc;color:#ccc;cursor:default;background:#fff}
+.nav-btn.primary{background:#fff;color:#e10600}
+.nav-btn.primary:hover{background:#e10600;color:#fff}
+.score-btn{padding:8px 16px;background:#059669;color:#fff;border:none;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .15s}
+.score-btn:hover{opacity:.9;transform:scale(1.02)}
+.score-btn.fail{background:#e10600}
+.score-section{display:flex;gap:10px;margin-top:14px;justify-content:center}
+.welcome{text-align:center;padding:60px 20px}
+.welcome h2{font-size:1.5rem;margin-bottom:12px;color:#e10600}
+.welcome p{font-size:.95rem;color:#555;line-height:1.6;margin-bottom:8px}
+.start-btn{margin-top:24px;padding:16px 40px;background:linear-gradient(135deg,#e10600,#b30000);color:#fff;border:none;font-size:1.1rem;font-weight:700;border-radius:12px;cursor:pointer;transition:transform .2s}
+.start-btn:hover{transform:scale(1.05)}
+.results{text-align:center;padding:40px 20px}
+.results h2{font-size:1.6rem;color:#e10600;margin-bottom:16px}
+.results .score-big{font-size:3rem;font-weight:800;color:#059669;margin:20px 0}
+.results p{font-size:1rem;color:#555;margin-bottom:8px}
+.hidden{display:none}
+.shuffle-btn{padding:8px 16px;background:#fff;border:2px solid #e10600;color:#e10600;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;margin-top:12px}
+.shuffle-btn:hover{background:#e10600;color:#fff}
+.back-link{display:inline-block;margin-top:20px;padding:8px 16px;font-size:.82rem;color:#999;text-decoration:none;border:1px solid #ddd;border-radius:8px;transition:all .2s}
+.back-link:hover{color:#e10600;border-color:#e10600}
+.qcm-instruction{margin-top:8px;font-size:.85rem;color:#999;font-style:italic}
+.separator{height:1px;background:#f0f0f0;margin:16px 0 0}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Quiz 1 &mdash; Automatismes Situation / Analyse</h1>
+  <p>30 cartes QCM + flashcards &bull; Entra&icirc;nement oral VAE DEES</p>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="stats">
+    <span id="statCurrent">0 / 30</span>
+    <span id="statCorrect" style="color:#a7f3d0">&#10003; 0</span>
+    <span id="statWrong" style="color:#fca5a5">&#10007; 0</span>
+  </div>
+</div>
+
+<div class="container">
+  <div id="welcomeScreen" class="welcome">
+    <h2>Pr&eacute;paration Oral VAE DEES</h2>
+    <p><strong>Mode hybride :</strong> QCM interactif + fiche de r&eacute;vision compl&egrave;te</p>
+    <p>1. Lisez la question &rarr; 2. R&eacute;pondez au QCM &rarr; 3. D&eacute;couvrez la fiche d&eacute;taill&eacute;e</p>
+    <p style="margin-top:16px;font-size:.85rem;color:#888">30 cartes &bull; Situations : N (Perthes), R (Vergers), Amir (FINC)</p>
+    <button class="start-btn" onclick="startQuiz()">Commencer le quiz</button>
+    <br>
+    <button class="shuffle-btn" onclick="shuffleAndStart()">M&eacute;langer et commencer</button>
+    <br><a href="index.html" class="back-link">&larr; Retour &agrave; l'accueil</a>
+  </div>
+
+  <div id="quizArea" class="hidden"></div>
+
+  <div id="resultsScreen" class="hidden results">
+    <h2>R&eacute;sultats</h2>
+    <div class="score-big" id="finalScore"></div>
+    <p id="finalMsg"></p>
+    <div style="margin:20px auto 0;max-width:420px;padding:14px 18px;background:#f0fdfa;border-radius:12px;border-left:4px solid #0d9488;text-align:left">
+      <p style="font-size:.85rem;color:#333;line-height:1.6"><strong style="color:#0d9488">&#128172; Besoin d'aide pour structurer vos r&eacute;ponses ?</strong><br>Le <strong>Coach Interactif</strong> vous guide question par question avec des indices progressifs si vous bloquez.</p>
+      <a href="agent_pedagogique.html" style="display:inline-block;margin-top:8px;padding:8px 20px;background:#0d9488;color:#fff;border-radius:10px;font-size:.85rem;font-weight:600;text-decoration:none;transition:background .2s">Lancer le Coach Interactif &rarr;</a>
+    </div>
+    <button class="start-btn" onclick="resetQuiz()" style="margin-top:20px;font-size:.95rem;padding:12px 30px">Recommencer</button>
+    <button class="shuffle-btn" onclick="shuffleAndStart()">M&eacute;langer et recommencer</button>
+  </div>
+</div>
+
+<script>
+const flashcards = [
+  {
+    q:"Comment construisez-vous une relation de confiance avec un enfant qui se m\u00e9fie de l'adulte ?",
+    options:[
+      "En imposant imm\u00e9diatement des entretiens formels pour \u00ab cr\u00e9er le lien \u00bb",
+      "En respectant son rythme, par une pr\u00e9sence r\u00e9guli\u00e8re et des temps informels r\u00e9p\u00e9t\u00e9s",
+      "En laissant l'enfant enti\u00e8rement libre sans aucune intervention",
+      "En d\u00e9l\u00e9guant la relation de confiance \u00e0 un coll\u00e8gue plus exp\u00e9riment\u00e9"
+    ],correct:1,
+    dc:"DC1",dcLabel:"DC1 \u2014 Relation \u00e9ducative",dcClass:"dc1",
+    comp:"Construction de la relation \u00e9ducative",
+    situation:"N (Perthes) \u2014 enfant hospitalis\u00e9, m\u00e9fiance initiale",
+    reponse:"La confiance se construit par la r\u00e9gularit\u00e9 de la pr\u00e9sence \u00e9ducative. Avec N, j'ai respect\u00e9 son rythme, \u00e9t\u00e9 pr\u00e9sent sans forcer l'\u00e9change. Par des temps informels r\u00e9p\u00e9t\u00e9s, il a progressivement accept\u00e9 la relation. C'est la constance de ma posture qui a permis l'ouverture.",
+    loi:"Loi 2002-2 (dignit\u00e9, rythme) \u2014 CIDE art. 3 (int\u00e9r\u00eat sup\u00e9rieur de l'enfant)",
+    theorie:"Winnicott (environnement suffisamment bon, holding) \u2014 Rogers (consid\u00e9ration positive inconditionnelle)",
+    analyse:"La relation \u00e9ducative se construit dans la dur\u00e9e et les espaces non formalis\u00e9s. C'est une comp\u00e9tence professionnelle, pas une qualit\u00e9 personnelle."
+  },
+  {
+    q:"Comment g\u00e9rez-vous un enfant qui a des comportements impulsifs et perturbateurs dans un groupe ?",
+    options:[
+      "En l'isolant syst\u00e9matiquement du groupe d\u00e8s le premier incident",
+      "En ignorant les comportements pour ne pas les renforcer",
+      "En observant les d\u00e9clencheurs, posant un cadre clair et travaillant la verbalisation des \u00e9motions",
+      "En appliquant une sanction imm\u00e9diate et proportionnelle \u00e0 chaque \u00e9cart"
+    ],correct:2,
+    dc:"DC1",dcLabel:"DC1 \u2014 Cadre et r\u00e8gles",dcClass:"dc1",
+    comp:"Cadre et r\u00e8gles, dynamique de groupe",
+    situation:"R (Vergers) \u2014 enfant avec impulsivit\u00e9, difficult\u00e9s de r\u00e9gulation",
+    reponse:"J'ai d'abord observ\u00e9 les d\u00e9clencheurs dans le groupe. J'ai pos\u00e9 un cadre clair avec des r\u00e8gles explicites, offert des espaces de retour au calme. J'ai travaill\u00e9 la verbalisation des \u00e9motions et valoris\u00e9 les moments de r\u00e9gulation. Le cadre est contenant et s\u00e9curisant, pas punitif.",
+    loi:"Loi 2002-2 (accompagnement individualis\u00e9) \u2014 Loi 2007 (besoins fondamentaux)",
+    theorie:"Vygotski (zone proximale de d\u00e9veloppement) \u2014 Winnicott (cadre comme contenant psychique)",
+    analyse:"L'impulsivit\u00e9 est un besoin non satisfait. L'\u00e9ducateur analyse les causes avant d'agir sur les manifestations. Le cadre est un outil \u00e9ducatif."
+  },
+  {
+    q:"Comment favorisez-vous l'inclusion d'un enfant qui reste isol\u00e9 dans un groupe ?",
+    options:[
+      "En identifiant ses centres d'int\u00e9r\u00eat et en lui proposant un r\u00f4le valorisant progressivement",
+      "En le for\u00e7ant \u00e0 participer \u00e0 toutes les activit\u00e9s du groupe",
+      "En le laissant dans son isolement pour respecter son choix personnel",
+      "En demandant aux autres enfants de l'int\u00e9grer par eux-m\u00eames"
+    ],correct:0,
+    dc:"DC1",dcLabel:"DC1 \u2014 Dynamique de groupe",dcClass:"dc1",
+    comp:"Dynamique de groupe, participation de la personne",
+    situation:"Amir (FINC) \u2014 inclusion progressive, maison de quartier",
+    reponse:"Amir restait en retrait. J'ai identifi\u00e9 ses centres d'int\u00e9r\u00eat par l'observation, propos\u00e9 un r\u00f4le valorisant dans une activit\u00e9, cr\u00e9ant un pont vers le groupe. L'inclusion s'est faite progressivement, en respectant son rythme et en m'appuyant sur ses comp\u00e9tences.",
+    loi:"Loi 2005 (participation, citoyennet\u00e9) \u2014 CIDE art. 31 (droit au loisir)",
+    theorie:"Vygotski (m\u00e9diation par les pairs) \u2014 Freire (participation = \u00e9mancipation)",
+    analyse:"L'inclusion est un processus, pas un r\u00e9sultat. L'\u00e9ducateur cr\u00e9e les conditions de la participation en s'appuyant sur les ressources propres de la personne."
+  },
+  {
+    q:"Comment adaptez-vous votre accompagnement \u00e0 la singularit\u00e9 de chaque enfant ?",
+    options:[
+      "En appliquant le m\u00eame protocole valid\u00e9 pour tous les enfants",
+      "En reproduisant ce qui a fonctionn\u00e9 avec un enfant similaire",
+      "En suivant uniquement les directives du projet d'\u00e9tablissement",
+      "En utilisant une d\u00e9marche commune (observer, analyser, ajuster) avec une r\u00e9ponse singuli\u00e8re"
+    ],correct:3,
+    dc:"DC1",dcLabel:"DC1 \u2014 Singularit\u00e9",dcClass:"dc1",
+    comp:"Accueil dans la singularit\u00e9, analyse des besoins",
+    situation:"N (Perthes) et R (Vergers) \u2014 deux accompagnements diff\u00e9rents",
+    reponse:"N avait besoin de stabilit\u00e9 et pr\u00e9sence rassurante. R avait besoin d'un cadre structurant. La structure professionnelle est la m\u00eame \u2014 observer, analyser, ajuster \u2014 mais la r\u00e9ponse \u00e9ducative est singuli\u00e8re. Avec N : relation duelle, temps calmes. Avec R : r\u00e9gulation par le groupe, cadre explicite.",
+    loi:"Loi 2002-2 (individualisation, projet personnalis\u00e9)",
+    theorie:"Rogers (empathie, cadre de r\u00e9f\u00e9rence de l'autre) \u2014 Maslow (hi\u00e9rarchie des besoins)",
+    analyse:"La comp\u00e9tence est de tenir un cadre professionnel commun et une r\u00e9ponse individualis\u00e9e. La singularit\u00e9 est le point de d\u00e9part de l'action \u00e9ducative."
+  },
+  {
+    q:"Comment \u00e9laborez-vous un projet \u00e9ducatif individualis\u00e9 ?",
+    options:[
+      "En r\u00e9digeant seul les objectifs \u00e0 partir du dossier de l'enfant",
+      "En observant, partageant un diagnostic en \u00e9quipe, co-construisant avec la personne et \u00e9valuant",
+      "En appliquant le projet d'\u00e9tablissement tel quel \u00e0 la situation individuelle",
+      "En laissant la famille d\u00e9finir seule les objectifs du projet"
+    ],correct:1,
+    dc:"DC2",dcLabel:"DC2 \u2014 Projet \u00e9ducatif",dcClass:"dc2",
+    comp:"Conception et conduite d'un projet \u00e9ducatif",
+    situation:"N (Perthes) \u2014 objectifs adapt\u00e9s \u00e0 la situation de sant\u00e9",
+    reponse:"J'ai observ\u00e9 et recueilli des \u00e9l\u00e9ments sur sa situation globale. Diagnostic partag\u00e9 avec l'\u00e9quipe, co-construction d'objectifs r\u00e9alistes : maintenir le lien social, pr\u00e9server la scolarit\u00e9, pr\u00e9parer le retour. Indicateurs observables et bilans r\u00e9guliers pour r\u00e9ajustement.",
+    loi:"Loi 2002-2 (contrat de s\u00e9jour, projet personnalis\u00e9) \u2014 Loi 2005 (projet de vie)",
+    theorie:"Boutinet (anthropologie du projet : processus, pas document)",
+    analyse:"Le projet \u00e9ducatif est un processus vivant, co-construit, \u00e9valu\u00e9 et r\u00e9ajust\u00e9. L'\u00e9ducateur est un technicien du projet."
+  },
+  {
+    q:"Comment impliquez-vous la personne dans son propre projet ?",
+    options:[
+      "En lui faisant signer le contrat de s\u00e9jour sans discussion pr\u00e9alable",
+      "En attendant qu'elle formule elle-m\u00eame ses objectifs spontan\u00e9ment",
+      "En cr\u00e9ant un espace de confiance et en proposant des choix progressifs",
+      "En laissant l'\u00e9quipe pluridisciplinaire d\u00e9cider pour elle"
+    ],correct:2,
+    dc:"DC2",dcLabel:"DC2 \u2014 Implication",dcClass:"dc2",
+    comp:"Implication de la personne, adh\u00e9sion et consentement",
+    situation:"Amir (FINC) \u2014 construction progressive de sa participation",
+    reponse:"Avec Amir, l'implication ne pouvait pas \u00eatre imm\u00e9diate. J'ai cr\u00e9\u00e9 un espace de confiance, propos\u00e9 des choix simples. Progressivement, il est devenu acteur de ses objectifs. Le consentement est un processus d'adh\u00e9sion, pas un oui formel.",
+    loi:"Loi 2002-2 (consentement \u00e9clair\u00e9, participation directe)",
+    theorie:"Freire (conscientisation) \u2014 Rogers (autod\u00e9termination)",
+    analyse:"L'implication est une pratique concr\u00e8te, pas un principe \u00e0 r\u00e9citer. La personne est experte de sa situation \u2014 l'\u00e9ducateur facilite cette expertise."
+  },
+  {
+    q:"Comment \u00e9valuez-vous un projet \u00e9ducatif que vous avez mis en place ?",
+    options:[
+      "En d\u00e9finissant des indicateurs concrets en amont et en r\u00e9alisant des bilans r\u00e9guliers pour r\u00e9ajuster",
+      "En se fiant \u00e0 l'impression g\u00e9n\u00e9rale de l'\u00e9quipe en fin d'ann\u00e9e",
+      "En comparant les r\u00e9sultats avec ceux des autres enfants du groupe",
+      "En attendant la fin du projet pour faire un bilan global unique"
+    ],correct:0,
+    dc:"DC2",dcLabel:"DC2 \u2014 \u00c9valuation",dcClass:"dc2",
+    comp:"\u00c9valuation, indicateurs et crit\u00e8res, r\u00e9ajustement",
+    situation:"R (Vergers) \u2014 \u00e9valuation de la r\u00e9gulation de l'impulsivit\u00e9",
+    reponse:"Indicateurs concrets : fr\u00e9quence des passages \u00e0 l'acte, capacit\u00e9 \u00e0 verbaliser, dur\u00e9e de maintien en activit\u00e9. Diminution constat\u00e9e mais r\u00e9ajustement n\u00e9cessaire car le rythme de R diff\u00e9rait de l'anticipation.",
+    loi:"Loi 2002-2 (\u00e9valuation interne, projet d'\u00e9tablissement)",
+    theorie:"Boutinet (l'\u00e9valuation comme r\u00e9gulation, pas comme verdict)",
+    analyse:"L'\u00e9valuation est un outil de r\u00e9gulation. Le r\u00e9ajustement d\u00e9montre une d\u00e9marche r\u00e9flexive, pas une application rigide."
+  },
+  {
+    q:"Comment utilisez-vous le quotidien comme outil \u00e9ducatif ?",
+    options:[
+      "En s\u00e9parant strictement les temps \u00e9ducatifs et les temps de vie quotidienne",
+      "En planifiant uniquement des activit\u00e9s formelles structur\u00e9es",
+      "En laissant le quotidien se d\u00e9rouler sans intervention \u00e9ducative",
+      "En transformant les moments ordinaires (repas, jeux, repos) en opportunit\u00e9s \u00e9ducatives"
+    ],correct:3,
+    dc:"DC1",dcLabel:"DC1 \u2014 Quotidien",dcClass:"dc1",
+    comp:"Quotidien comme support \u00e9ducatif, espaces non formalis\u00e9s",
+    situation:"N (Perthes) \u2014 temps du quotidien hospitalier",
+    reponse:"Le contexte hospitalier limitait les activit\u00e9s formelles. Repas, jeux, repos sont devenus des espaces \u00e9ducatifs. C'est pendant un jeu de cartes que N a commenc\u00e9 \u00e0 parler de ses inqui\u00e9tudes. Le quotidien est le premier terrain de la relation \u00e9ducative.",
+    loi:"Loi 2002-2 (accompagnement global)",
+    theorie:"Winnicott (jeu comme espace transitionnel) \u2014 Mauss (dimension \u00e9ducative du quotidien)",
+    analyse:"La comp\u00e9tence se mesure \u00e0 la capacit\u00e9 \u00e0 transformer des moments ordinaires en opportunit\u00e9s \u00e9ducatives. Le quotidien est un outil professionnel."
+  },
+  {
+    q:"Comment travaillez-vous avec les familles ?",
+    options:[
+      "En communiquant uniquement les difficult\u00e9s rencontr\u00e9es par l'enfant",
+      "En accueillant la famille sans jugement et en l'associant aux d\u00e9cisions",
+      "En excluant la famille du suivi pour prot\u00e9ger l'enfant",
+      "En donnant des directives parentales \u00e0 suivre imp\u00e9rativement"
+    ],correct:1,
+    dc:"DC1+DC3",dcLabel:"DC1 + DC3",dcClass:"dc-multi",
+    comp:"Ressources de l'environnement + Communication professionnelle",
+    situation:"Amir (FINC) \u2014 travail avec la famille, maison de quartier",
+    reponse:"J'ai \u00e9tabli un lien de confiance en accueillant la famille dans un espace non stigmatisant. Partag\u00e9 les observations positives avant les difficult\u00e9s. Communication dans le respect de la place parentale, en les associant aux d\u00e9cisions.",
+    loi:"Loi 2002-2 (participation des familles) \u2014 Loi 2007 (place des parents) \u2014 CIDE art. 18",
+    theorie:"Ausloos (comp\u00e9tence des familles) \u2014 Rogers (posture non jugeante)",
+    analyse:"La famille est une ressource, pas un obstacle. Travailler AVEC et non SUR les familles est un marqueur de professionnalisme."
+  },
+  {
+    q:"Comment transmettez-vous les informations au sein de votre \u00e9quipe ?",
+    options:[
+      "En partageant toutes les informations disponibles avec l'ensemble de l'\u00e9quipe",
+      "En ne communiquant que par \u00e9crit pour garder une trace syst\u00e9matique",
+      "En s\u00e9lectionnant les informations pertinentes dans le cadre du secret professionnel partag\u00e9",
+      "En transmettant uniquement lors des r\u00e9unions formelles hebdomadaires"
+    ],correct:2,
+    dc:"DC3",dcLabel:"DC3 \u2014 Transmission",dcClass:"dc3",
+    comp:"Transmission d'informations, travail d'\u00e9quipe",
+    situation:"N (Perthes) \u2014 \u00e9quipe pluridisciplinaire (m\u00e9decins, enseignants)",
+    reponse:"Transmissions quotidiennes avec l'\u00e9quipe soignante et \u00e9ducative. S\u00e9lection des informations pertinentes, distinction observation \u00e9ducative / m\u00e9dical. Transmissions \u00e9crites factuelles et cibl\u00e9es. Observations, non jugements.",
+    loi:"Art. 226-13 Code p\u00e9nal (secret professionnel) \u2014 Art. L.226-2-2 CASF (secret partag\u00e9)",
+    theorie:"Secret professionnel partag\u00e9 \u2014 strict n\u00e9cessaire, int\u00e9r\u00eat de la personne",
+    analyse:"La transmission est encadr\u00e9e juridiquement et \u00e9thiquement. L'\u00e9ducateur s\u00e9lectionne, adapte et trace dans un cadre professionnel."
+  },
+  {
+    q:"Comment vous positionnez-vous face \u00e0 un d\u00e9saccord en \u00e9quipe ?",
+    options:[
+      "En me rangeant \u00e0 l'avis du chef de service pour maintenir la coh\u00e9rence",
+      "En argumentant en r\u00e9union avec des observations et r\u00e9f\u00e9rences pour construire une position commune",
+      "En \u00e9vitant le conflit et en appliquant ma propre m\u00e9thode en silence",
+      "En imposant mon point de vue car je connais mieux la situation"
+    ],correct:1,
+    dc:"DC3",dcLabel:"DC3 \u2014 Coh\u00e9rence",dcClass:"dc3",
+    comp:"Coh\u00e9rence de l'action socio-\u00e9ducative, dynamique institutionnelle",
+    situation:"R (Vergers) \u2014 d\u00e9saccord sur la r\u00e9ponse \u00e9ducative",
+    reponse:"L'\u00e9quipe \u00e9tait partag\u00e9e entre approche contenante stricte et souple. J'ai argument\u00e9 en m'appuyant sur mes observations et r\u00e9f\u00e9rences th\u00e9oriques. D\u00e9saccord trait\u00e9 en r\u00e9union, position commune trouv\u00e9e. Le d\u00e9saccord est un signe de vitalit\u00e9 institutionnelle.",
+    loi:"Loi 2002-2 (projet d'\u00e9tablissement comme cadre commun)",
+    theorie:"Rouzel (transfert institutionnel, conflictualit\u00e9 productive)",
+    analyse:"L'\u00e9ducateur argumente sans imposer. La coh\u00e9rence d'\u00e9quipe se construit dans le d\u00e9bat, pas dans le silence."
+  },
+  {
+    q:"Comment accompagnez-vous un enfant dans l'acc\u00e8s \u00e0 ses droits ?",
+    options:[
+      "En g\u00e9rant les d\u00e9marches administratives \u00e0 sa place pour aller plus vite",
+      "En d\u00e9l\u00e9guant l'acc\u00e8s aux droits aux services juridiques comp\u00e9tents",
+      "En attendant que l'enfant soit en \u00e2ge de comprendre pleinement ses droits",
+      "En l'informant de mani\u00e8re adapt\u00e9e et en l'accompagnant dans les d\u00e9marches concr\u00e8tes"
+    ],correct:3,
+    dc:"DC1",dcLabel:"DC1 \u2014 Acc\u00e8s aux droits",dcClass:"dc1",
+    comp:"Acc\u00e8s aux droits, citoyennet\u00e9, autonomie",
+    situation:"N (Perthes) \u2014 droit \u00e0 la scolarit\u00e9, droit \u00e0 l'information",
+    reponse:"N avait droit \u00e0 la continuit\u00e9 scolaire. Lien avec l'enseignant r\u00e9f\u00e9rent, information adapt\u00e9e \u00e0 son \u00e2ge sur sa situation. L'acc\u00e8s aux droits est un accompagnement \u00e9ducatif qui d\u00e9veloppe la citoyennet\u00e9.",
+    loi:"Loi 2005 (scolarisation) \u2014 CIDE art. 28 (\u00e9ducation) \u2014 CIDE art. 12 (\u00eatre entendu)",
+    theorie:"Freire (l'\u00e9ducation comme pratique de la libert\u00e9)",
+    analyse:"L'\u00e9ducateur est garant des droits de la personne. L'acc\u00e8s aux droits est un levier d'autonomie, pas une formalit\u00e9."
+  },
+  {
+    q:"Comment intervenez-vous dans une situation de crise ?",
+    options:[
+      "En s\u00e9curisant le groupe, attendant le retour au calme, puis en analysant les d\u00e9clencheurs en \u00e9quipe",
+      "En isolant imm\u00e9diatement l'enfant et en le sanctionnant",
+      "En appelant syst\u00e9matiquement les parents pour qu'ils g\u00e8rent la crise",
+      "En r\u00e9agissant fermement pour montrer l'autorit\u00e9 de l'\u00e9ducateur"
+    ],correct:0,
+    dc:"DC2",dcLabel:"DC2 \u2014 Gestion de crise",dcClass:"dc2",
+    comp:"Pr\u00e9vention des dysfonctionnements, gestion de conflit",
+    situation:"R (Vergers) \u2014 passages \u00e0 l'acte, situations de crise",
+    reponse:"S\u00e9curisation du groupe et de R, attente du retour au calme, verbalisation. Analyse des d\u00e9clencheurs en \u00e9quipe, mesures pr\u00e9ventives : rep\u00e9rage des signes, am\u00e9nagement, protocole de retour au calme. La crise est une information \u00e9ducative.",
+    loi:"Loi 2002-2 (s\u00e9curit\u00e9) \u2014 Loi 2007 (signalement, protection)",
+    theorie:"Winnicott (contenance) \u2014 Vygotski (\u00e9tayage dans la zone proximale de r\u00e9gulation)",
+    analyse:"Pr\u00e9vention (avant), intervention (pendant), analyse (apr\u00e8s). L'\u00e9ducateur agit dans un cadre professionnel, pas dans l'\u00e9motion."
+  },
+  {
+    q:"Comment articulez-vous observation et action \u00e9ducative ?",
+    options:[
+      "En agissant d'abord selon mon exp\u00e9rience puis en ajustant si n\u00e9cessaire",
+      "En suivant les directives de l'\u00e9quipe sans observation pr\u00e9alable personnelle",
+      "En observant de mani\u00e8re intentionnelle avant d'intervenir, pour fonder l'action sur des \u00e9l\u00e9ments concrets",
+      "En utilisant uniquement les \u00e9valuations psychologiques pour guider l'action"
+    ],correct:2,
+    dc:"DC1",dcLabel:"DC1 \u2014 Observation",dcClass:"dc1",
+    comp:"Observation, \u00e9coute, analyse des besoins",
+    situation:"Amir (FINC) \u2014 observation avant intervention",
+    reponse:"Avant toute intervention, temps d'observation : centres d'int\u00e9r\u00eat, modes de communication, moments de repli et d'ouverture. L'intervention a \u00e9t\u00e9 fond\u00e9e sur ce que j'observais, pas sur ce que je pensais qu'il fallait faire.",
+    loi:"Loi 2002-2 (accompagnement adapt\u00e9 aux besoins)",
+    theorie:"Rogers (\u00e9coute active, compr\u00e9hension empathique) \u2014 Piaget (observation comme m\u00e9thode clinique)",
+    analyse:"L'observation est un acte professionnel intentionnel. L'\u00e9ducateur qui observe avant d'agir construit un accompagnement sur mesure."
+  },
+  {
+    q:"Comment travaillez-vous la notion de cadre avec les enfants ?",
+    options:[
+      "En imposant des r\u00e8gles strictes sans possibilit\u00e9 de n\u00e9gociation",
+      "En posant un cadre clair et explicite, en donnant du sens aux r\u00e8gles et en les ajustant",
+      "En laissant les enfants d\u00e9finir eux-m\u00eames les r\u00e8gles du groupe",
+      "En appliquant des sanctions automatiques \u00e0 chaque transgression"
+    ],correct:1,
+    dc:"DC1",dcLabel:"DC1 \u2014 Cadre",dcClass:"dc1",
+    comp:"Cadre et r\u00e8gles, fonction d'\u00e9tayage",
+    situation:"R (Vergers) \u2014 cadre structurant face \u00e0 l'impulsivit\u00e9",
+    reponse:"Cadre clair, explicite et constant. R\u00e8gles expliqu\u00e9es, pas impos\u00e9es. Retour syst\u00e9matique sur le sens lors des transgressions. Le cadre est ferme et bienveillant. Il s\u00e9curise en donnant des rep\u00e8res pr\u00e9visibles.",
+    loi:"CIDE art. 19 (protection) \u2014 Loi 2002-2 (droits dans le cadre institutionnel)",
+    theorie:"Winnicott (enveloppe psychique s\u00e9curisante) \u2014 Korczak (respect de l'enfant)",
+    analyse:"Le cadre est un outil \u00e9ducatif de s\u00e9curit\u00e9. L'\u00e9ducateur tient le cadre avec constance et donne du sens."
+  },
+  {
+    q:"Comment favorisez-vous l'expression de l'enfant ?",
+    options:[
+      "En diversifiant les supports d'expression (jeu, dessin, parole) adapt\u00e9s \u00e0 chaque enfant",
+      "En organisant des entretiens individuels obligatoires chaque semaine",
+      "En attendant que l'enfant vienne spontan\u00e9ment exprimer ses besoins",
+      "En posant uniquement des questions ferm\u00e9es pour faciliter la r\u00e9ponse"
+    ],correct:0,
+    dc:"DC1",dcLabel:"DC1 \u2014 Expression",dcClass:"dc1",
+    comp:"Expression, participation de la personne",
+    situation:"N (Perthes) \u2014 enfant qui verbalise peu face \u00e0 la maladie",
+    reponse:"Supports m\u00e9diatis\u00e9s (dessin, jeu) pour offrir des espaces d'expression indirects. Progressivement, la parole est venue dans les temps informels. L'expression ne passe pas toujours par la parole \u2014 diversifier les canaux.",
+    loi:"CIDE art. 12 (exprimer son opinion) \u2014 CIDE art. 13 (libert\u00e9 d'expression) \u2014 Loi 2002-2",
+    theorie:"Winnicott (jeu comme espace transitionnel) \u2014 Dolto (l'enfant a des choses \u00e0 dire)",
+    analyse:"L'expression est un droit et un besoin. La comp\u00e9tence est dans la diversification des supports adapt\u00e9s \u00e0 chaque personne."
+  },
+  {
+    q:"Comment travaillez-vous en partenariat avec d'autres professionnels ?",
+    options:[
+      "En d\u00e9l\u00e9guant les aspects hors de ma comp\u00e9tence aux autres professionnels",
+      "En communiquant uniquement par des rapports \u00e9crits formels",
+      "En gardant la ma\u00eetrise du projet \u00e9ducatif sans interf\u00e9rence ext\u00e9rieure",
+      "En coordonnant les objectifs avec les partenaires dans le respect des comp\u00e9tences de chacun"
+    ],correct:3,
+    dc:"DC4",dcLabel:"DC4 \u2014 Partenariat",dcClass:"dc4",
+    comp:"Partenariat, r\u00e9seau, coop\u00e9ration",
+    situation:"N (Perthes) \u2014 \u00e9quipe m\u00e9dicale, enseignant, famille",
+    reponse:"Plusieurs partenaires mobilis\u00e9s. Coordination de l'information \u00e9ducative, respect des comp\u00e9tences de chacun. Temps d'\u00e9change r\u00e9guliers, coh\u00e9rence des objectifs \u00e9ducatifs avec le projet m\u00e9dical et scolaire.",
+    loi:"Loi 2002-2 (coordination) \u2014 Loi 2005 (\u00e9quipe pluridisciplinaire)",
+    theorie:"Partenariat : objectifs communs, engagements r\u00e9ciproques, reconnaissance des comp\u00e9tences",
+    analyse:"Le partenariat est une co-construction autour de la personne. L'\u00e9ducateur apporte son regard sp\u00e9cifique."
+  },
+  {
+    q:"Comment prenez-vous en compte le contexte institutionnel dans votre pratique ?",
+    options:[
+      "En appliquant mes propres m\u00e9thodes ind\u00e9pendamment du projet d'\u00e9tablissement",
+      "En suivant uniquement les consignes de mon sup\u00e9rieur hi\u00e9rarchique",
+      "En inscrivant mon action dans le projet institutionnel et en participant aux temps collectifs",
+      "En ignorant les contraintes institutionnelles pour me concentrer sur l'accompagnement"
+    ],correct:2,
+    dc:"DC4",dcLabel:"DC4 \u2014 Institution",dcClass:"dc4",
+    comp:"Connaissance et analyse des contextes institutionnels",
+    situation:"Amir (FINC) \u2014 maison de quartier, ses missions et valeurs",
+    reponse:"\u00c0 la FINC, l'institution porte des valeurs d'ouverture, inclusion, participation citoyenne. Mon accompagnement s'inscrivait dans ce cadre. Objectifs coh\u00e9rents avec le projet de la structure. Participation aux temps institutionnels pour faire remonter mes observations.",
+    loi:"Loi 2002-2 (projet d'\u00e9tablissement) \u2014 CASF",
+    theorie:"Rouzel (l'institution comme cadre symbolique)",
+    analyse:"L'\u00e9ducateur inscrit son action dans un projet institutionnel dont il conna\u00eet les missions et limites."
+  },
+  {
+    q:"Comment menez-vous une activit\u00e9 \u00e9ducative collective ?",
+    options:[
+      "En proposant une activit\u00e9 occupationnelle pour maintenir le calme du groupe",
+      "En concevant l'activit\u00e9 avec des objectifs \u00e9ducatifs pr\u00e9cis, adapt\u00e9e aux participants",
+      "En laissant le groupe s'auto-organiser pour d\u00e9velopper l'autonomie",
+      "En imposant la participation obligatoire pour favoriser la coh\u00e9sion"
+    ],correct:1,
+    dc:"DC2",dcLabel:"DC2 \u2014 Activit\u00e9 collective",dcClass:"dc2",
+    comp:"Animation du quotidien, intervention collective, cr\u00e9ativit\u00e9",
+    situation:"Amir (FINC) \u2014 activit\u00e9s collectives \u00e0 la maison de quartier",
+    reponse:"Activit\u00e9s con\u00e7ues avec des objectifs pr\u00e9cis : coop\u00e9ration, expression, vivre-ensemble. Adaptation pour qu'Amir trouve sa place sans difficult\u00e9 face au groupe. L'activit\u00e9 collective est un outil \u00e9ducatif pens\u00e9, pas une occupation.",
+    loi:"CIDE art. 31 (droit au jeu et activit\u00e9s r\u00e9cr\u00e9atives)",
+    theorie:"Vygotski (apprentissage par interaction sociale) \u2014 Freinet (p\u00e9dagogie coop\u00e9rative)",
+    analyse:"L'activit\u00e9 collective est un projet \u00e9ducatif : objectifs, m\u00e9thodologie, \u00e9valuation. L'\u00e9ducateur anime avec intention."
+  },
+  {
+    q:"Comment r\u00e9digez-vous un rapport \u00e9ducatif pour un juge ?",
+    options:[
+      "En structurant un rapport factuel, distinguant faits et analyse, avec un vocabulaire adapt\u00e9 au destinataire",
+      "En recopiant les transmissions quotidiennes du cahier de bord",
+      "En donnant mon opinion personnelle sur l'\u00e9volution de l'enfant",
+      "En laissant le chef de service r\u00e9diger car c'est sa responsabilit\u00e9"
+    ],correct:0,
+    dc:"DC3",dcLabel:"DC3 \u2014 \u00c9crits professionnels",dcClass:"dc3",
+    comp:"\u00c9crits professionnels, adaptation au destinataire, cadre \u00e9thique",
+    situation:"R (Vergers) \u2014 r\u00e9daction d'un \u00e9crit professionnel",
+    reponse:"Rapport factuel et structur\u00e9 : situation initiale, objectifs, observations, \u00e9volution. Vocabulaire adapt\u00e9 au magistrat. Distinction faits / analyse professionnelle. Informations strictement n\u00e9cessaires, respect du cadre \u00e9thique.",
+    loi:"Art. 226-13 (secret professionnel) \u2014 Loi 2002-2 (vie priv\u00e9e)",
+    theorie:"\u00c9crit professionnel situ\u00e9 : l'\u00e9crit engage l'institution et a des effets sur la personne",
+    analyse:"L'\u00e9crit influence les d\u00e9cisions. Rigueur dans la distinction faits / observations / interpr\u00e9tations."
+  },
+  {
+    q:"Comment analysez-vous une situation \u00e9ducative complexe ?",
+    options:[
+      "En identifiant la cause principale du probl\u00e8me pour agir directement dessus",
+      "En me r\u00e9f\u00e9rant uniquement au dossier administratif de la personne",
+      "En appliquant une grille d'analyse standardis\u00e9e pr\u00e9d\u00e9finie",
+      "En croisant les informations et en partageant l'analyse en \u00e9quipe pour un diagnostic syst\u00e9mique"
+    ],correct:3,
+    dc:"DC2",dcLabel:"DC2 \u2014 Analyse",dcClass:"dc2",
+    comp:"Observation et analyse des situations, diagnostic partag\u00e9",
+    situation:"R (Vergers) \u2014 analyse plurifactorielle (familiale, scolaire, comportementale)",
+    reponse:"Croisement des informations familiales, scolaires, comportementales. Analyse partag\u00e9e en \u00e9quipe pour un diagnostic socio-\u00e9ducatif commun. Ce diagnostic a fond\u00e9 les objectifs du projet. L'analyse est collective, pas individuelle.",
+    loi:"Loi 2007 (\u00e9valuation des situations de danger) \u2014 Loi 2002-2 (projet personnalis\u00e9)",
+    theorie:"Approche syst\u00e9mique : comprendre dans le contexte global, pas par un sympt\u00f4me isol\u00e9",
+    analyse:"L'analyse est syst\u00e9mique (pas mono-causale), partag\u00e9e (pas individuelle), \u00e9volutive (pas fig\u00e9e)."
+  },
+  {
+    q:"Comment accompagnez-vous un enfant dans le d\u00e9veloppement de ses capacit\u00e9s ?",
+    options:[
+      "En faisant les choses \u00e0 sa place pour lui \u00e9viter l'\u00e9chec",
+      "En l'\u00e9tayant progressivement puis en r\u00e9duisant le soutien \u00e0 mesure qu'il gagne en autonomie",
+      "En le mettant face \u00e0 des d\u00e9fis difficiles pour stimuler sa progression",
+      "En comparant ses progr\u00e8s avec ceux des autres enfants du groupe"
+    ],correct:1,
+    dc:"DC1",dcLabel:"DC1 \u2014 \u00c9tayage",dcClass:"dc1",
+    comp:"D\u00e9veloppement des capacit\u00e9s, fonction d'\u00e9tayage",
+    situation:"Amir (FINC) \u2014 d\u00e9veloppement des comp\u00e9tences sociales",
+    reponse:"Amir avait des comp\u00e9tences qu'il ne mobilisait pas encore en groupe. \u00c9tayage : accompagnement individuel dans les activit\u00e9s, puis r\u00e9duction progressive du soutien. La comp\u00e9tence se d\u00e9veloppe quand on cr\u00e9e les conditions pour exp\u00e9rimenter dans un cadre s\u00e9curisant.",
+    loi:"Loi 2005 (compensation, d\u00e9veloppement des potentialit\u00e9s)",
+    theorie:"Vygotski (ZPD) \u2014 Bruner (\u00e9tayage / scaffolding)",
+    analyse:"L'\u00e9tayage consiste \u00e0 faire AVEC avant de laisser faire SEUL. Se retirer progressivement quand le soutien n'est plus n\u00e9cessaire."
+  },
+  {
+    q:"Comment vous positionnez-vous face au secret professionnel ?",
+    options:[
+      "En partageant toutes les informations avec l'\u00e9quipe pour assurer la transparence",
+      "En ne communiquant rien pour prot\u00e9ger totalement la vie priv\u00e9e",
+      "En partageant uniquement le n\u00e9cessaire dans l'int\u00e9r\u00eat de la personne, dans un cadre l\u00e9gal strict",
+      "En laissant le responsable hi\u00e9rarchique d\u00e9cider de ce qui peut \u00eatre partag\u00e9"
+    ],correct:2,
+    dc:"DC3",dcLabel:"DC3 \u2014 Secret professionnel",dcClass:"dc3",
+    comp:"Cadre \u00e9thique, respect des droits",
+    situation:"N (Perthes) \u2014 informations m\u00e9dicales sensibles en contexte pluridisciplinaire",
+    reponse:"Partage uniquement des \u00e9l\u00e9ments n\u00e9cessaires \u00e0 la coh\u00e9rence de l'accompagnement \u00e9ducatif. Pas de d\u00e9tails m\u00e9dicaux hors comp\u00e9tence. Le secret n'est pas le silence \u2014 c'est le partage raisonn\u00e9 de l'information dans l'int\u00e9r\u00eat de la personne.",
+    loi:"Art. 226-13 et 226-14 Code p\u00e9nal \u2014 Art. L.226-2-2 CASF (secret partag\u00e9)",
+    theorie:"Tension entre devoir de partage (coh\u00e9rence) et devoir de discr\u00e9tion (respect)",
+    analyse:"Le secret professionnel est une comp\u00e9tence \u00e9thique : discernement permanent sur ce qu'il est utile et l\u00e9gitime de partager."
+  },
+  {
+    q:"Comment inscrivez-vous votre pratique dans les politiques publiques actuelles ?",
+    options:[
+      "En articulant mon action avec les orientations l\u00e9gislatives et en actualisant mes connaissances",
+      "En me concentrant uniquement sur la relation individuelle sans consid\u00e9rer le cadre politique",
+      "En appliquant uniquement les directives internes de l'\u00e9tablissement",
+      "En attendant que mon employeur m'informe des \u00e9volutions l\u00e9gislatives"
+    ],correct:0,
+    dc:"DC4",dcLabel:"DC4 \u2014 Politiques publiques",dcClass:"dc4",
+    comp:"Politiques publiques, l\u00e9gislation, actualisation des connaissances",
+    situation:"Amir (FINC) \u2014 politique de la ville, coh\u00e9sion sociale",
+    reponse:"La maison de quartier s'inscrit dans la politique de la ville et de coh\u00e9sion sociale. L'accompagnement d'Amir r\u00e9pondait \u00e0 des objectifs de pr\u00e9vention, inclusion et lien social. Veille sur les \u00e9volutions l\u00e9gislatives et orientations des sch\u00e9mas d\u00e9partementaux.",
+    loi:"Loi 2002-2 (r\u00e9novation de l'action sociale) \u2014 Politiques de la ville",
+    theorie:"L'\u00e9ducateur est un acteur d'une politique sociale qui d\u00e9passe son institution",
+    analyse:"L'\u00e9ducateur ne travaille pas hors du monde. L'actualisation des connaissances est un devoir professionnel."
+  },
+  {
+    q:"Qu'est-ce que la posture r\u00e9flexive pour vous ?",
+    options:[
+      "Une remise en question ponctuelle apr\u00e8s un incident grave",
+      "Une obligation administrative impos\u00e9e par l'institution",
+      "Un signe de doute qui affaiblit la posture professionnelle",
+      "La capacit\u00e9 \u00e0 questionner sa pratique en continu en s'appuyant sur l'analyse et la th\u00e9orie"
+    ],correct:3,
+    dc:"DC4",dcLabel:"DC4 \u2014 R\u00e9flexivit\u00e9",dcClass:"dc4",
+    comp:"Analyse critique de la pratique, conceptualisation",
+    situation:"Transversale \u2014 prise de recul sur l'exp\u00e9rience",
+    reponse:"Capacit\u00e9 \u00e0 questionner sa propre pratique. Avec R, j'ai d'abord r\u00e9agi de mani\u00e8re trop r\u00e9active. L'analyse de pratique m'a fait comprendre que je reproduisais un rapport de force au lieu d'un sch\u00e9ma \u00e9ducatif. Cette prise de conscience a transform\u00e9 mon intervention.",
+    loi:"Loi 2002-2 (\u00e9valuation comme obligation institutionnelle)",
+    theorie:"Sch\u00f6n (praticien r\u00e9flexif) \u2014 Perrenoud (pratique r\u00e9flexive dans le m\u00e9tier)",
+    analyse:"La r\u00e9flexivit\u00e9 est un processus. Le jury veut voir ce qu'on a compris, chang\u00e9, et pourquoi. La VAE est elle-m\u00eame un acte de r\u00e9flexivit\u00e9."
+  },
+  {
+    q:"Comment pr\u00e9venez-vous l'usure professionnelle ?",
+    options:[
+      "En gardant ses difficult\u00e9s pour soi pour ne pas inqui\u00e9ter l'\u00e9quipe",
+      "En changeant r\u00e9guli\u00e8rement de poste pour \u00e9viter la routine",
+      "En utilisant les espaces institutionnels de r\u00e9gulation et en reconnaissant ses limites",
+      "En \u00e9vitant les situations trop charg\u00e9es \u00e9motionnellement"
+    ],correct:2,
+    dc:"DC4+DC3",dcLabel:"DC4 + DC3",dcClass:"dc-multi",
+    comp:"Analyse critique + Dynamique institutionnelle",
+    situation:"Transversale \u2014 les deux exp\u00e9riences (AIS et FINC)",
+    reponse:"Espaces institutionnels de r\u00e9gulation : analyse de pratique, supervision, \u00e9changes en \u00e9quipe. Apprendre \u00e0 ne pas porter seul les situations difficiles. Quand en difficult\u00e9, utiliser les espaces pr\u00e9vus pour en parler.",
+    loi:"Code du travail (pr\u00e9vention des risques psychosociaux) \u2014 Loi 2002-2 (\u00e9valuation interne)",
+    theorie:"Burnout : risque professionnel \u00e0 pr\u00e9venir institutionnellement, pas une faiblesse individuelle",
+    analyse:"Reconna\u00eetre ses limites et utiliser les ressources institutionnelles est un indicateur de maturit\u00e9 professionnelle."
+  },
+  {
+    q:"Comment repr\u00e9sentez-vous votre service ou institution \u00e0 l'ext\u00e9rieur ?",
+    options:[
+      "En donnant mon avis personnel sur le fonctionnement de l'institution",
+      "En portant les valeurs et missions de l'institution avec un discours adapt\u00e9 aux interlocuteurs",
+      "En critiquant les dysfonctionnements pour montrer ma lucidit\u00e9 professionnelle",
+      "En laissant le directeur g\u00e9rer les relations ext\u00e9rieures"
+    ],correct:1,
+    dc:"DC3",dcLabel:"DC3 \u2014 Repr\u00e9sentation",dcClass:"dc3",
+    comp:"Repr\u00e9sentation du service ou de l'institution",
+    situation:"Amir (FINC) \u2014 repr\u00e9sentation aupr\u00e8s des partenaires locaux",
+    reponse:"Rencontres avec \u00e9coles, associations, services sociaux. Pr\u00e9sentation des missions et actions, discours adapt\u00e9 aux interlocuteurs. Repr\u00e9senter, c'est porter les valeurs et objectifs de mani\u00e8re claire et professionnelle.",
+    loi:"Loi 2002-2 (projet d'\u00e9tablissement, tissu local)",
+    theorie:"Communication institutionnelle : l'\u00e9ducateur est ambassadeur de son institution",
+    analyse:"Repr\u00e9senter est une comp\u00e9tence de communication. L'\u00e9ducateur adapte, porte les valeurs et rend compte de son action."
+  },
+  {
+    q:"Comment accompagnez-vous la scolarit\u00e9 d'un enfant en difficult\u00e9 ?",
+    options:[
+      "En coordonnant avec l'enseignant et en cr\u00e9ant les conditions pour que le droit \u00e0 l'\u00e9ducation soit effectif",
+      "En rempla\u00e7ant l'enseignant pour assurer le soutien scolaire directement",
+      "En s\u00e9parant le suivi \u00e9ducatif du suivi scolaire pour ne pas interf\u00e9rer",
+      "En d\u00e9cidant seul des am\u00e9nagements n\u00e9cessaires pour l'enfant"
+    ],correct:0,
+    dc:"DC1+DC4",dcLabel:"DC1 + DC4",dcClass:"dc-multi",
+    comp:"Acc\u00e8s aux droits, d\u00e9veloppement des capacit\u00e9s + Partenariat",
+    situation:"N (Perthes) \u2014 maintien de la scolarit\u00e9 pendant l'hospitalisation",
+    reponse:"Lien avec l'enseignant sp\u00e9cialis\u00e9 pour la continuit\u00e9 scolaire. Adaptation des temps \u00e9ducatifs selon l'\u00e9nergie de N. Mon r\u00f4le n'\u00e9tait pas d'enseigner mais de cr\u00e9er les conditions pour que le droit \u00e0 l'\u00e9ducation soit effectif.",
+    loi:"Loi 2005 (scolarisation) \u2014 CIDE art. 28 (\u00e9ducation)",
+    theorie:"Vygotski (l'apprentissage pr\u00e9c\u00e8de le d\u00e9veloppement)",
+    analyse:"L'\u00e9ducateur est garant du droit \u00e0 l'\u00e9ducation. Il coordonne les acteurs et cr\u00e9e les conditions favorables."
+  },
+  {
+    q:"Comment vous assurez-vous que votre accompagnement respecte les droits fondamentaux ?",
+    options:[
+      "En appliquant un protocole standardis\u00e9 identique pour tous",
+      "En int\u00e9grant l'information sur les droits, la participation et le respect de la vie priv\u00e9e dans chaque accompagnement",
+      "En d\u00e9l\u00e9guant la question des droits au r\u00e9f\u00e9rent juridique de l'\u00e9tablissement",
+      "En ne m'en pr\u00e9occupant qu'en cas de signalement ou de plainte"
+    ],correct:1,
+    dc:"DC4+DC1",dcLabel:"DC4 + DC1",dcClass:"dc-multi",
+    comp:"Respect des droits fondamentaux + Participation",
+    situation:"Transversale \u2014 N et Amir",
+    reponse:"Information sur les droits, participation aux d\u00e9cisions, respect de la vie priv\u00e9e. Pour N : information adapt\u00e9e. Pour Amir : respect du rythme d'inclusion. Les droits sont le socle de l'action \u00e9ducative, pas un suppl\u00e9ment.",
+    loi:"Loi 2002-2 (7 droits fondamentaux) \u2014 CIDE \u2014 DUDH",
+    theorie:"Approche par les droits : l'intervention sociale se fonde sur les droits, pas sur la charit\u00e9",
+    analyse:"Le respect des droits est le fondement \u00e9thique. L'\u00e9ducateur est un professionnel des droits de la personne vuln\u00e9rable."
+  },
+  {
+    q:"Qu'est-ce que cette exp\u00e9rience vous a appris sur le m\u00e9tier d'\u00e9ducateur sp\u00e9cialis\u00e9 ?",
+    options:[
+      "Que c'est un m\u00e9tier avant tout intuitif fond\u00e9 sur la bienveillance naturelle",
+      "Que le dipl\u00f4me et l'anciennet\u00e9 suffisent pour \u00eatre comp\u00e9tent",
+      "Que l'\u00e9ducateur est un professionnel de la relation, du projet et du cadre, alliant observation, analyse et r\u00e9flexivit\u00e9",
+      "Que l'exp\u00e9rience personnelle de vie est le meilleur guide professionnel"
+    ],correct:2,
+    dc:"DC4",dcLabel:"DC4 \u2014 Synth\u00e8se",dcClass:"dc4",
+    comp:"Conceptualisation, analyse critique + Transversal",
+    situation:"Transversale \u2014 bilan des deux exp\u00e9riences (AIS et FINC)",
+    reponse:"L'\u00e9ducateur sp\u00e9cialis\u00e9 est un professionnel de la relation, du projet et du cadre. La relation \u00e9ducative est son outil principal. Le projet est sa m\u00e9thodologie. Le cadre l\u00e9gal est son rep\u00e8re. La comp\u00e9tence est dans la capacit\u00e9 \u00e0 observer, analyser, agir et \u00e9valuer de mani\u00e8re rigoureuse et r\u00e9flexive.",
+    loi:"Loi 2002-2 et Loi 2005 comme cadres structurants",
+    theorie:"Sch\u00f6n (praticien r\u00e9flexif) \u2014 Boutinet (projet comme professionnalisation)",
+    analyse:"Synth\u00e8se r\u00e9flexive : montrer le passage de l'exp\u00e9rience v\u00e9cue \u00e0 la comp\u00e9tence professionnelle consciente et transf\u00e9rable."
+  }
+];
+
+let currentIndex = 0;
+let correct = 0;
+let wrong = 0;
+let answered = false;
+let order = [];
+
+function init(){
+  order = flashcards.map((_,i)=>i);
+}
+
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+  return arr;
+}
+
+function startQuiz(){
+  if(order.length===0) init();
+  currentIndex=0;correct=0;wrong=0;answered=false;
+  document.getElementById('welcomeScreen').classList.add('hidden');
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('quizArea').classList.remove('hidden');
+  renderCard();
+}
+
+function shuffleAndStart(){
+  order = shuffle(flashcards.map((_,i)=>i));
+  currentIndex=0;correct=0;wrong=0;answered=false;
+  document.getElementById('welcomeScreen').classList.add('hidden');
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('quizArea').classList.remove('hidden');
+  renderCard();
+}
+
+function updateStats(){
+  const total = flashcards.length;
+  document.getElementById('statCurrent').textContent = (currentIndex+1)+' / '+total;
+  document.getElementById('statCorrect').innerHTML = '&#10003; '+correct;
+  document.getElementById('statWrong').innerHTML = '&#10007; '+wrong;
+  document.getElementById('progressFill').style.width = ((currentIndex+1)/total*100)+'%';
+}
+
+function renderCard(){
+  answered = false;
+  const fc = flashcards[order[currentIndex]];
+  updateStats();
+  let optsHtml = '';
+  fc.options.forEach((o, i) => {
+    optsHtml += '<div class="opt" id="opt'+i+'" onclick="selectOption('+i+')">'+String.fromCharCode(65+i)+'. '+o+'</div>';
+  });
+  const html = '\
+    <div class="card">\
+      <div class="card-header">\
+        <span class="card-num">Carte '+( currentIndex+1)+' / '+flashcards.length+'</span>\
+        <span class="dc-badge" id="dcBadge" style="background:#ccc;color:#fff">? DC</span>\
+      </div>\
+      <div class="question-section">\
+        <h3>\u00ab '+fc.q+' \u00bb</h3>\
+        <p class="qcm-instruction">Choisissez la bonne r\u00e9ponse parmi les propositions :</p>\
+        <div class="options">'+optsHtml+'</div>\
+      </div>\
+      <div class="separator"></div>\
+      <div class="answer-section" id="answerSection">\
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;margin-top:16px;align-items:center">\
+          <span class="dc-badge '+fc.dcClass+'">'+fc.dcLabel+'</span>\
+          <span class="competence-tag">'+fc.comp+'</span>\
+          <span class="situation-tag">'+fc.situation+'</span>\
+        </div>\
+        <div class="answer-block block-reponse">\
+          <h4>R\u00e9ponse synth\u00e9tique orale</h4>\
+          <p>'+fc.reponse+'</p>\
+        </div>\
+        <div class="answer-block block-loi">\
+          <h4>Loi \u00e0 citer</h4>\
+          <p>'+fc.loi+'</p>\
+        </div>\
+        <div class="answer-block block-theorie">\
+          <h4>R\u00e9f\u00e9rence th\u00e9orique</h4>\
+          <p>'+fc.theorie+'</p>\
+        </div>\
+        <div class="answer-block block-analyse">\
+          <h4>Point d\'analyse \u00e0 montrer au jury</h4>\
+          <p>'+fc.analyse+'</p>\
+        </div>\
+        <div class="score-section">\
+          <button class="score-btn" onclick="markResult(true)">&#10003; Je savais</button>\
+          <button class="score-btn fail" onclick="markResult(false)">&#10007; \u00c0 revoir</button>\
+        </div>\
+      </div>\
+    </div>\
+    <div class="nav-buttons">\
+      <button class="nav-btn" onclick="prevCard()">&#8592; Pr\u00e9c\u00e9dente</button>\
+      <button class="nav-btn primary" onclick="nextCard()">Suivante &#8594;</button>\
+    </div>';
+  document.getElementById('quizArea').innerHTML = html;
+}
+
+function selectOption(i){
+  if(answered) return;
+  answered = true;
+  const fc = flashcards[order[currentIndex]];
+  // Disable all options + show correct/wrong
+  document.querySelectorAll('.opt').forEach(function(el, j){
+    el.classList.add('disabled');
+    if(j === fc.correct) el.classList.add('correct');
+  });
+  if(i !== fc.correct){
+    document.getElementById('opt'+i).classList.add('wrong');
+  }
+  // Reveal DC badge
+  var badge = document.getElementById('dcBadge');
+  badge.textContent = fc.dcLabel;
+  badge.className = 'dc-badge ' + fc.dcClass;
+  // Reveal answer section
+  document.getElementById('answerSection').style.display = 'block';
+  // Scroll to answer
+  setTimeout(function(){
+    document.getElementById('answerSection').scrollIntoView({behavior:'smooth',block:'start'});
+  }, 200);
+}
+
+function markResult(success){
+  if(success) correct++; else wrong++;
+  updateStats();
+  if(currentIndex < flashcards.length-1){
+    nextCard();
+  } else {
+    showResults();
+  }
+}
+
+function nextCard(){
+  if(currentIndex < flashcards.length-1){currentIndex++;renderCard();window.scrollTo({top:0,behavior:'smooth'});}
+}
+function prevCard(){
+  if(currentIndex > 0){currentIndex--;renderCard();window.scrollTo({top:0,behavior:'smooth'});}
+  else{document.getElementById('quizArea').classList.add('hidden');document.getElementById('welcomeScreen').classList.remove('hidden');}
+}
+
+function showResults(){
+  document.getElementById('quizArea').classList.add('hidden');
+  var rs = document.getElementById('resultsScreen');
+  rs.classList.remove('hidden');
+  var pct = Math.round(correct/(correct+wrong)*100)||0;
+  document.getElementById('finalScore').textContent = pct+'%';
+  var msg = '';
+  if(pct>=80) msg='Excellent ! Vous \u00eates pr\u00eat(e) pour le jury.';
+  else if(pct>=60) msg='Bon niveau. Continuez \u00e0 r\u00e9viser les points faibles.';
+  else msg='\u00c0 retravailler. Concentrez-vous sur les cartes \u00e9chou\u00e9es.';
+  document.getElementById('finalMsg').textContent = correct+' r\u00e9ussies, '+wrong+' \u00e0 revoir \u2014 '+msg;
+  document.getElementById('progressFill').style.width = '100%';
+}
+
+function resetQuiz(){
+  init();
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('welcomeScreen').classList.remove('hidden');
+  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('statCurrent').textContent = '0 / 30';
+  document.getElementById('statCorrect').innerHTML = '&#10003; 0';
+  document.getElementById('statWrong').innerHTML = '&#10007; 0';
+}
+
+init();
+</script>
+</body>
+</html>
