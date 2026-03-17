@@ -450,6 +450,17 @@ transition:all .3s ease}\
 font-size:.55rem;color:#dc2626;font-weight:700}\
 @media(max-width:400px){#mentor-bubble{right:10px;bottom:14px;max-width:calc(100vw - 20px);font-size:.82rem}\
 #mentor-toggle{bottom:14px;right:10px;width:42px;height:42px;font-size:20px}}\
+#mentor-timer{position:fixed;top:auto;bottom:76px;right:22px;z-index:94;display:none;align-items:center;gap:6px}\
+#mentor-timer.active{display:flex}\
+#mentor-timer .timer-ring{width:36px;height:36px;position:relative}\
+#mentor-timer .timer-ring svg{transform:rotate(-90deg);width:36px;height:36px}\
+#mentor-timer .timer-ring circle{fill:none;stroke-width:3}\
+#mentor-timer .timer-ring .bg{stroke:rgba(255,255,255,.15)}\
+#mentor-timer .timer-ring .fg{stroke:#fbbf24;stroke-linecap:round;transition:stroke-dashoffset .3s linear}\
+#mentor-timer .timer-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);\
+font-size:.7rem;font-weight:700;color:#fbbf24;font-family:monospace}\
+#mentor-timer .timer-label{font-size:.65rem;color:rgba(26,26,46,.5);font-weight:600}\
+@media(max-width:400px){#mentor-timer{bottom:64px;right:14px}}\
 ';
     var style = document.createElement('style');
     style.id = 'mentor-styles';
@@ -472,6 +483,67 @@ font-size:.55rem;color:#dc2626;font-weight:700}\
     document.body.appendChild(el);
     bubbleEl = el;
     el.querySelector('.mentor-close').addEventListener('click', function(){ hide(); });
+  }
+
+  // ── Timer visuel ──
+  var timerEl = null;
+  var timerInterval = null;
+  var timerStartTime = 0;
+  var TIMER_DURATION = HINT_LEVEL_DELAYS[0] / 1000; // 10 secondes
+
+  function createTimer(){
+    if(timerEl) return;
+    var el = document.createElement('div');
+    el.id = 'mentor-timer';
+    var circumference = 2 * Math.PI * 15; // r=15
+    el.innerHTML = '\
+<div class="timer-ring">\
+  <svg viewBox="0 0 36 36">\
+    <circle class="bg" cx="18" cy="18" r="15"/>\
+    <circle class="fg" cx="18" cy="18" r="15" stroke-dasharray="'+circumference+'" stroke-dashoffset="0"/>\
+  </svg>\
+  <span class="timer-text">'+TIMER_DURATION+'</span>\
+</div>\
+<span class="timer-label">Mentor</span>';
+    document.body.appendChild(el);
+    timerEl = el;
+  }
+
+  function startVisualTimer(){
+    if(!timerEl) createTimer();
+    if(examMode){ timerEl.classList.remove('active'); return; }
+    timerEl.classList.add('active');
+    timerStartTime = Date.now();
+    var circumference = 2 * Math.PI * 15;
+    var fg = timerEl.querySelector('.fg');
+    var textEl = timerEl.querySelector('.timer-text');
+    fg.style.strokeDashoffset = '0';
+    textEl.textContent = TIMER_DURATION;
+
+    clearInterval(timerInterval);
+    timerInterval = setInterval(function(){
+      var elapsed = (Date.now() - timerStartTime) / 1000;
+      var remaining = Math.max(0, TIMER_DURATION - elapsed);
+      var progress = elapsed / TIMER_DURATION;
+
+      textEl.textContent = Math.ceil(remaining);
+      fg.style.strokeDashoffset = (progress * circumference).toFixed(1);
+
+      // Change color as time runs out
+      if(remaining <= 3) fg.style.stroke = '#ef4444';
+      else if(remaining <= 6) fg.style.stroke = '#f59e0b';
+      else fg.style.stroke = '#fbbf24';
+
+      if(remaining <= 0){
+        clearInterval(timerInterval);
+        timerEl.classList.remove('active');
+      }
+    }, 200);
+  }
+
+  function stopVisualTimer(){
+    clearInterval(timerInterval);
+    if(timerEl) timerEl.classList.remove('active');
   }
 
   function createToggle(){
@@ -545,6 +617,9 @@ font-size:.55rem;color:#dc2626;font-weight:700}\
 
     if(examMode) return;
 
+    // Démarrer le timer visuel
+    startVisualTimer();
+
     // Niveau 1 — 10s
     hesitationTimers.push(setTimeout(function(){
       if(examMode) return;
@@ -571,6 +646,7 @@ font-size:.55rem;color:#dc2626;font-weight:700}\
     for(var i=0;i<hesitationTimers.length;i++) clearTimeout(hesitationTimers[i]);
     hesitationTimers = [];
     clearTimeout(autoHideTimer);
+    stopVisualTimer();
   }
 
   // ══════════════════════════════════════════════════════════════
@@ -583,6 +659,7 @@ font-size:.55rem;color:#dc2626;font-weight:700}\
       loadProgression();
       injectStyles();
       createBubble();
+      createTimer();
       createToggle();
       initialized = true;
     },
