@@ -7,7 +7,7 @@
   'use strict';
 
   // ── Configuration ──
-  var HESITATION_DELAY = 15000; // 15 secondes
+  var HESITATION_DELAY = 10000; // 10 secondes
   var BUBBLE_DURATION  = 12000; // bulle visible 12s puis fade
   var AUTO_HIDE        = true;
 
