@@ -90,6 +90,7 @@ h1{font-size:1.8rem;color:#1a1a2e;margin:12px 0 6px;text-align:center}
 <button onclick="selectQuiz(1)">&#128214; Mon livret 2<span class="tab-score" id="tab-score-1"></span></button>
 <button onclick="selectQuiz(2)">&#9878; Lois &amp; concepts<span class="tab-score" id="tab-score-2"></span></button>
 <button onclick="selectQuiz(3)">&#128736; Posture &amp; DC<span class="tab-score" id="tab-score-3"></span></button>
+<button onclick="selectQuiz(4)">&#127891; Simulation jury<span class="tab-score" id="tab-score-4"></span></button>
 </div>
 
 <div class="quiz-area" id="quiz-area">
@@ -339,11 +340,63 @@ explain:"Posture de pr&eacute;vention : observer, intervenir en amont. Reformule
 opts:["Elle ne m'a pas transform&eacute;","Avant j'agissais par intuition, aujourd'hui je sais nommer, analyser et relier ma pratique &agrave; un cadre th&eacute;orique","Elle m'a appris un nouveau m&eacute;tier","Elle m'a donn&eacute; confiance uniquement"],
 correct:1,
 explain:"VAE = passage de l'intuition &agrave; l'analyse. Je sais nommer ce que je fais et le relier au r&eacute;f&eacute;rentiel."}
+],
+
+[
+{q:"Le jury demande : &laquo; Comment d&eacute;finissez-vous l'autisme ? &raquo; Quelle r&eacute;ponse montre un discours d'ES ?",
+opts:["J'ai accompagn&eacute; un enfant autiste, il avait du mal &agrave; communiquer","Le TSA est un trouble du neurod&eacute;veloppement caract&eacute;ris&eacute; par des difficult&eacute;s de communication et d'interactions sociales, avec des comportements restreints et r&eacute;p&eacute;titifs. Le diagnostic est pos&eacute; par les CRA ou des &eacute;quipes pluridisciplinaires. En accompagnement, on s'appuie sur des m&eacute;thodes comme l'ABA ou TEACCH","C'est quand un enfant ne parle pas et reste dans son coin","C'est une maladie mentale qu'on soigne avec des m&eacute;dicaments"],
+correct:1,
+explain:"Le jury attend une d&eacute;finition professionnelle (TSA, neurod&eacute;veloppement), les lieux de diagnostic (CRA, &eacute;quipe pluridisciplinaire) et les m&eacute;thodes (ABA, TEACCH). Pas juste un exemple."},
+
+{q:"&laquo; Pourquoi le DEES et pas un autre dipl&ocirc;me ? &raquo; Quelle r&eacute;ponse est argument&eacute;e ?",
+opts:["Parce que c'est le dipl&ocirc;me que je vise depuis longtemps","Au regard de mon exp&eacute;rience, les comp&eacute;tences que j'ai d&eacute;velopp&eacute;es correspondent &agrave; celles d'un ES : accompagnement &eacute;ducatif individualis&eacute;, relation de confiance dans un cadre professionnel, travail en &eacute;quipe pluripro et inscription dans les dynamiques de r&eacute;seau","C'est le seul dipl&ocirc;me que je connais","Mon pr&eacute;parateur m'a dit que c'&eacute;tait le bon choix"],
+correct:1,
+explain:"Argumenter avec les fonctions du m&eacute;tier : accompagnement, relation, &eacute;quipe, r&eacute;seau. Ce sont les 4 DC. Pas d'argument personnel."},
+
+{q:"&laquo; Si un enfant vous demande de garder un secret ? &raquo; Quelle r&eacute;ponse est professionnelle ?",
+opts:["Je garde le secret car la confiance est prioritaire","Je lui explique que je ne peux pas si cela concerne sa s&eacute;curit&eacute;. Mon r&ocirc;le est de transmettre pour le prot&eacute;ger, tout en restant transparent pour maintenir la relation de confiance. Je lui laisse un espace de parole","Je pr&eacute;viens tout le monde imm&eacute;diatement","Je lui dis que les secrets sont interdits dans l'institution"],
+correct:1,
+explain:"3 &eacute;l&eacute;ments cl&eacute;s : protection (s&eacute;curit&eacute;), transparence (relation de confiance), espace de parole (respect). C'est un positionnement d'ES, pas une r&egrave;gle rigide."},
+
+{q:"&laquo; Quelles sont les &eacute;tapes d'une d&eacute;marche de projet ? &raquo; La bonne r&eacute;ponse argument&eacute;e ?",
+opts:["J'observe, puis j'agis, puis je fais un bilan","Observations, recueil des attentes, identification des besoins, d&eacute;finition des objectifs, moyens, mise en oeuvre, &eacute;valuation. Chaque &eacute;tape est men&eacute;e en concertation avec la personne, la famille et l'&eacute;quipe","Je fais un projet quand la direction me le demande","Je m'adapte au jour le jour sans plan pr&eacute;cis"],
+correct:1,
+explain:"7 &eacute;tapes pr&eacute;cises &agrave; conna&icirc;tre par coeur. Le jury v&eacute;rifie que tu connais la m&eacute;thodologie ET que c'est co-construit (objectif partag&eacute;)."},
+
+{q:"&laquo; Diff&eacute;rence entre r&eacute;seau et partenariat ? &raquo; R&eacute;ponse d'ES ?",
+opts:["C'est pareil, ce sont des gens avec qui je travaille","Le r&eacute;seau d&eacute;signe l'ensemble des acteurs du territoire avec lesquels je suis en lien de mani&egrave;re ponctuelle. Le partenariat est une collaboration formalis&eacute;e avec des &eacute;changes d'informations autour de la personne. Ce qui les diff&eacute;rencie : le niveau de collaboration et d'engagement","Le r&eacute;seau c'est les institutions, le partenariat c'est les familles","Je ne fais pas la diff&eacute;rence dans ma pratique"],
+correct:1,
+explain:"Le jury teste ta ma&icirc;trise du vocabulaire professionnel. R&eacute;seau = ponctuel, territoire. Partenariat = formalis&eacute;, autour de la personne."},
+
+{q:"&laquo; Quelle est la place de l'ES ? &raquo; R&eacute;ponse argument&eacute;e ?",
+opts:["Je fais tout ce qu'on me demande","L'ES accompagne la personne dans son d&eacute;veloppement et son autonomie. Il est attentif &agrave; la dynamique d'&eacute;quipe et participe &agrave; la coordination des actions &eacute;ducatives. Il inscrit son action dans un cadre institutionnel et &eacute;thique","Je remplace les parents quand ils ne sont pas l&agrave;","Je suis l&agrave; pour surveiller et appliquer les r&egrave;gles"],
+correct:1,
+explain:"3 fonctions : accompagnement (d&eacute;veloppement, autonomie), &eacute;quipe (dynamique, coordination), cadre (institutionnel, &eacute;thique). Pas de la surveillance."},
+
+{q:"&laquo; Pourquoi ne pas prendre de notes sur t&eacute;l&eacute;phone ? &raquo; Argument professionnel ?",
+opts:["Parce que c'est mal vu","Le RGPD encadre la confidentialit&eacute; et la protection des donn&eacute;es personnelles des usagers. Les informations sensibles doivent &ecirc;tre consign&eacute;es sur des supports institutionnels s&eacute;curis&eacute;s","Parce que mon t&eacute;l&eacute;phone n'a plus de batterie","Parce que je pr&eacute;f&egrave;re tout retenir de t&ecirc;te"],
+correct:1,
+explain:"Argument l&eacute;gal : RGPD. Argument pro : supports institutionnels s&eacute;curis&eacute;s. Le jury v&eacute;rifie que tu connais le cadre l&eacute;gal."},
+
+{q:"&laquo; Comment ajustez-vous votre posture ? &raquo; R&eacute;ponse d'ES ?",
+opts:["Je fais comme je le sens sur le moment","J'ajuste ma posture en prenant en compte les retours formels et informels : ceux de la personne, des familles et de l'&eacute;quipe. Cela me permet d'adapter mes actions, de rester coh&eacute;rent dans l'accompagnement et de faire &eacute;voluer ma pratique","Je fais ce que la direction me dit","Je ne change jamais ma posture, la constance est importante"],
+correct:1,
+explain:"Ajustement = retours formels ET informels, de 3 sources (personne, famille, &eacute;quipe). Pas de l'intuition, de l'analyse continue."},
+
+{q:"&laquo; Qu'est-ce qu'un objectif partag&eacute; ? &raquo; R&eacute;ponse argument&eacute;e ?",
+opts:["Un objectif que tout le monde conna&icirc;t","Un objectif construit avec la personne accompagn&eacute;e, la famille et l'&eacute;quipe. Il s'inscrit dans la d&eacute;marche de projet : observations, attentes, besoins, objectifs, moyens, mise en oeuvre, &eacute;valuation","Un objectif fix&eacute; par l'&eacute;ducateur seul et communiqu&eacute; aux autres","Un objectif du projet d'&eacute;tablissement"],
+correct:1,
+explain:"Partag&eacute; = co-construit avec les 3 acteurs. Le jury v&eacute;rifie que tu sais le rattacher &agrave; la d&eacute;marche de projet (7 &eacute;tapes)."},
+
+{q:"Le jury dit : &laquo; Donnez-nous un exemple. &raquo; Quel pi&egrave;ge &eacute;viter ?",
+opts:["Raconter une longue anecdote sans analyse","Donner l'exemple PUIS argumenter : nommer le DC vis&eacute;, la comp&eacute;tence mobilis&eacute;e, le cadre th&eacute;orique ou l&eacute;gal, et l'&eacute;valuation de mon action","R&eacute;pondre que je n'ai pas d'exemple en t&ecirc;te","Donner plusieurs exemples rapidement sans d&eacute;velopper"],
+correct:1,
+explain:"Pi&egrave;ge = rester dans l'anecdote. Le jury veut : exemple COURT + analyse (DC, comp&eacute;tence, cadre, &eacute;valuation). Argumenter, pas raconter."}
 ]
 ];
 
 var currentQuiz=0,currentQ=0,score=0,answered=false;
-var scores=[null,null,null,null];
+var scores=[null,null,null,null,null];
 
 function selectQuiz(idx){
   currentQuiz=idx;currentQ=0;score=0;answered=false;
@@ -359,8 +412,8 @@ function renderQuestion(){
   var total=quiz.length;
   document.getElementById('progress-fill').style.width=((currentQ)/total*100)+'%';
   document.getElementById('progress-text').textContent=(currentQ+1)+' / '+total;
-  var colors=['#d97706','#2563eb','#059669','#7c3aed'];
-  var labels=['Jury','Livret 2','Lois','Posture'];
+  var colors=['#d97706','#2563eb','#059669','#7c3aed','#dc2626'];
+  var labels=['Jury','Livret 2','Lois','Posture','Simulation'];
   document.getElementById('q-badge').style.background=colors[currentQuiz];
   document.getElementById('q-badge').innerHTML=labels[currentQuiz]+' &bull; Q'+(currentQ+1);
   document.getElementById('q-text').innerHTML=q.q;
@@ -415,7 +468,7 @@ function showResults(){
 }
 
 function updateTabScores(){
-  for(var i=0;i<4;i++){
+  for(var i=0;i<5;i++){
     var el=document.getElementById('tab-score-'+i);
     if(scores[i]!==null){el.textContent=' '+scores[i]+'/'+allQuizzes[i].length}
   }
