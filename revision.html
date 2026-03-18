@@ -14,645 +14,422 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f
 .navbar a.active{color:#fff;background:rgba(255,255,255,.15);box-shadow:inset 0 -3px 0 #d97706}
 .navbar .nav-icon{font-size:1.1rem}
 
-.cpoaprer{background:linear-gradient(135deg,#0d9488 0%,#0f766e 100%);color:#fff;border-radius:14px;padding:14px 18px;margin-bottom:14px;box-shadow:0 4px 16px rgba(13,148,136,.25);max-width:920px;width:100%}
-.cpoaprer .title{font-size:.75rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;opacity:.85}
-.cpoaprer .steps{display:flex;flex-wrap:wrap;gap:4px 3px;align-items:center;font-size:.82rem;font-weight:700}
-.cpoaprer .steps span.step{background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px}
-.cpoaprer .steps span.arrow{opacity:.6}
-
 h1{font-size:1.8rem;color:#1a1a2e;margin:12px 0 6px;text-align:center}
-.sub{font-size:.95rem;color:#666;margin-bottom:16px;text-align:center}
+.sub{font-size:.95rem;color:#666;margin-bottom:20px;text-align:center}
 
-.global-progress{max-width:920px;width:100%;background:#fff;border-radius:14px;padding:16px 20px;box-shadow:0 4px 16px rgba(0,0,0,.06);margin-bottom:24px}
-.global-progress .bar-bg{height:10px;background:#e5e7eb;border-radius:5px;overflow:hidden;margin-top:8px}
-.global-progress .bar-fill{height:100%;background:linear-gradient(90deg,#d97706,#f59e0b);border-radius:5px;transition:width .4s}
-.global-progress .label{font-size:.9rem;font-weight:700;color:#1a1a2e}
-.timer-box{float:right;font-size:.85rem;color:#d97706;font-weight:700}
+.container{max-width:920px;width:100%}
 
-.phase{max-width:920px;width:100%;margin-bottom:28px}
-.phase-header{padding:18px 22px;border-radius:14px 14px 0 0;color:#fff;font-weight:800;font-size:1.1rem;display:flex;align-items:center;gap:10px}
-.phase-header .emoji{font-size:1.4rem}
-.phase-body{background:#fff;border-radius:0 0 14px 14px;box-shadow:0 4px 16px rgba(0,0,0,.06);overflow:hidden}
+.quiz-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:24px}
+.quiz-tabs button{border:2px solid #e5e7eb;background:#fff;color:#555;font-weight:700;font-size:.85rem;padding:10px 18px;border-radius:12px;cursor:pointer;transition:all .2s}
+.quiz-tabs button:hover{border-color:#d97706;color:#d97706}
+.quiz-tabs button.active{background:#d97706;color:#fff;border-color:#d97706}
+.quiz-tabs button .tab-score{display:inline-block;margin-left:6px;font-size:.75rem;opacity:.8}
 
-.step{border-bottom:1px solid #f0f2f5}
-.step:last-child{border-bottom:none}
-.step-header{display:flex;align-items:center;gap:12px;padding:16px 20px;cursor:pointer;transition:background .2s;user-select:none}
-.step-header:hover{background:#fafafa}
-.step-header input[type=checkbox]{width:20px;height:20px;accent-color:#d97706;cursor:pointer;flex-shrink:0}
-.step-header .step-title{font-weight:700;font-size:.95rem;color:#1a1a2e;flex:1}
-.step-header .step-badge{font-size:.75rem;color:#fff;padding:3px 10px;border-radius:12px;font-weight:700}
-.step-header .chevron{font-size:1.2rem;color:#aaa;transition:transform .3s}
-.step.open .chevron{transform:rotate(90deg)}
+.quiz-area{background:#fff;border-radius:20px;box-shadow:0 6px 28px rgba(0,0,0,.08);padding:28px 24px;margin-bottom:24px}
 
-.step-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
-.step.open .step-content{max-height:5000px}
+.progress-bar{height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden;margin-bottom:18px}
+.progress-fill{height:100%;background:linear-gradient(90deg,#d97706,#f59e0b);border-radius:4px;transition:width .3s}
+.progress-text{font-size:.82rem;color:#888;margin-bottom:14px;text-align:center}
 
-.exercise{padding:20px;background:#fafbfc;border-top:1px solid #eee}
-.exercise h3{font-size:1rem;color:#1a1a2e;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.exercise .score-badge{font-size:.8rem;background:#059669;color:#fff;padding:2px 10px;border-radius:10px;font-weight:700}
+.question-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700;color:#fff;margin-bottom:10px}
+.question-text{font-size:1.1rem;font-weight:700;color:#1a1a2e;margin-bottom:18px;line-height:1.5}
 
-/* QCM */
-.qcm-card{background:#fff;border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.05);display:none}
-.qcm-card.active{display:block}
-.qcm-q{font-weight:700;font-size:.95rem;margin-bottom:12px;color:#1a1a2e;line-height:1.5}
-.qcm-opts{display:flex;flex-direction:column;gap:8px}
-.qcm-opt{padding:12px 16px;border:2px solid #e5e7eb;border-radius:10px;cursor:pointer;font-size:.9rem;transition:all .2s;background:#fff}
-.qcm-opt:hover{border-color:#d97706;background:#fffbeb}
-.qcm-opt.correct{border-color:#059669;background:#ecfdf5;font-weight:700}
-.qcm-opt.wrong{border-color:#dc2626;background:#fef2f2}
-.qcm-opt.disabled{pointer-events:none;opacity:.7}
-.qcm-expl{margin-top:12px;padding:12px;background:#f0fdf4;border-left:4px solid #059669;border-radius:8px;font-size:.85rem;color:#065f46;display:none}
-.qcm-nav{display:flex;justify-content:space-between;margin-top:12px}
-.qcm-progress{text-align:center;font-size:.85rem;color:#888;margin-bottom:10px;font-weight:600}
+.options{display:flex;flex-direction:column;gap:10px}
+.option-btn{border:2px solid #e5e7eb;background:#fafafa;border-radius:12px;padding:14px 16px;font-size:.92rem;color:#333;cursor:pointer;transition:all .2s;text-align:left;line-height:1.5}
+.option-btn:hover:not(.disabled){border-color:#d97706;background:#fffbf0}
+.option-btn.correct{border-color:#059669;background:#ecfdf5;color:#065f46}
+.option-btn.wrong{border-color:#dc2626;background:#fef2f2;color:#991b1b}
+.option-btn.disabled{cursor:default;opacity:.7}
 
-/* Fill blanks */
-.fill-card{background:#fff;border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
-.fill-sentence{font-size:.95rem;line-height:1.8;color:#1a1a2e;margin-bottom:8px}
-.fill-sentence input{border:2px solid #e5e7eb;border-radius:8px;padding:4px 10px;font-size:.9rem;width:140px;text-align:center;transition:border-color .3s}
-.fill-sentence input.correct{border-color:#059669;background:#ecfdf5}
-.fill-sentence input.wrong{border-color:#dc2626;background:#fef2f2}
-.fill-hint{font-size:.8rem;color:#888;font-style:italic;margin-bottom:6px}
+.explanation{margin-top:16px;padding:14px 16px;background:#f0fdf4;border-left:4px solid #059669;border-radius:0 12px 12px 0;font-size:.88rem;color:#065f46;line-height:1.6;display:none}
+.explanation.visible{display:block}
 
-/* Match */
-.match-area{display:flex;gap:20px;flex-wrap:wrap}
-.match-terms{flex:1;min-width:200px;display:flex;flex-direction:column;gap:8px}
-.match-term{padding:10px 14px;background:#fff;border:2px solid #e5e7eb;border-radius:10px;cursor:pointer;font-size:.85rem;transition:all .2s;text-align:center}
-.match-term:hover{border-color:#d97706}
-.match-term.selected{border-color:#d97706;background:#fffbeb;font-weight:700}
-.match-term.matched{border-color:#059669;background:#ecfdf5;pointer-events:none;opacity:.7}
-.match-term.wrong-shake{animation:shake .4s}
-.match-bins{display:flex;flex-direction:column;gap:8px;flex:0 0 120px}
-.match-bin{padding:14px;border:2px dashed #d1d5db;border-radius:12px;text-align:center;font-weight:800;font-size:.9rem;cursor:pointer;transition:all .2s;min-height:50px}
-.match-bin:hover{border-color:#d97706;background:#fffbeb}
-.match-bin.dc1{color:#2563eb}.match-bin.dc2{color:#059669}.match-bin.dc3{color:#d97706}.match-bin.dc4{color:#7c3aed}
-.match-bin .count{font-size:.75rem;font-weight:400;color:#888;display:block;margin-top:2px}
+.next-btn{display:none;margin-top:18px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff;border:none;padding:12px 28px;border-radius:12px;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .2s}
+.next-btn:hover{transform:scale(1.03)}
+.next-btn.visible{display:inline-block}
 
-/* DC identification */
-.dc-card{background:#fff;border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.05);display:none}
-.dc-card.active{display:block}
-.dc-situation{font-size:.95rem;line-height:1.6;color:#1a1a2e;margin-bottom:14px;padding:12px;background:#f8fafc;border-radius:8px;border-left:4px solid #d97706}
-.dc-opts{display:flex;gap:8px;flex-wrap:wrap}
-.dc-opt{flex:1;min-width:100px;padding:12px;border:2px solid #e5e7eb;border-radius:10px;text-align:center;font-weight:800;font-size:.95rem;cursor:pointer;transition:all .2s}
-.dc-opt:hover{border-color:#d97706}
-.dc-opt.correct{border-color:#059669;background:#ecfdf5}
-.dc-opt.wrong{border-color:#dc2626;background:#fef2f2}
-.dc-opt.disabled{pointer-events:none;opacity:.6}
+.results{text-align:center;padding:30px 20px}
+.results .score-big{font-size:3rem;font-weight:900;color:#d97706}
+.results .score-label{font-size:1.1rem;color:#555;margin-bottom:20px}
+.results .restart-btn{background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff;border:none;padding:14px 32px;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:16px}
 
-/* Transitions */
-.trans-card{background:#fff;border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.05);display:none}
-.trans-card.active{display:block}
-.trans-start{font-size:.95rem;color:#1a1a2e;font-weight:700;margin-bottom:12px;line-height:1.5}
-
-/* Buttons */
-.btn{padding:10px 22px;border:none;border-radius:10px;font-weight:700;font-size:.9rem;cursor:pointer;transition:all .2s}
-.btn-primary{background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff}
-.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(217,119,6,.3)}
-.btn-secondary{background:#e5e7eb;color:#1a1a2e}
-.btn-secondary:hover{background:#d1d5db}
-.btn-sm{padding:6px 14px;font-size:.8rem}
-
-.results-box{text-align:center;padding:20px;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
-.results-box .score-big{font-size:2.5rem;font-weight:900;color:#d97706}
-.results-box .msg{font-size:.95rem;color:#555;margin:8px 0 14px}
-
-.link-audio{display:inline-flex;align-items:center;gap:6px;color:#d97706;font-weight:700;text-decoration:none;font-size:.9rem;margin-top:8px}
-.link-audio:hover{text-decoration:underline}
-
-.footer{margin-top:40px;font-size:.8rem;color:#aaa;text-align:center}
-
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.planning{background:#fff;border-radius:20px;box-shadow:0 6px 28px rgba(0,0,0,.08);padding:24px;margin-bottom:24px}
+.planning h2{font-size:1.1rem;color:#1a1a2e;margin-bottom:14px}
+.planning .phase{margin-bottom:16px;padding:14px;border-radius:12px;border-left:4px solid}
+.planning .phase h3{font-size:.95rem;margin-bottom:6px}
+.planning .phase p{font-size:.85rem;color:#555;line-height:1.5}
+.planning .phase.soir{border-color:#7c3aed;background:#f5f3ff}
+.planning .phase.matin{border-color:#d97706;background:#fffbf0}
 
 @media(max-width:768px){
-  .navbar a{padding:10px 18px;font-size:.88rem}
-  .match-area{flex-direction:column}
-  .match-bins{flex-direction:row;flex-wrap:wrap}
-  .match-bin{flex:1;min-width:60px;padding:10px}
+  .quiz-tabs button{padding:8px 14px;font-size:.8rem}
 }
 @media(max-width:640px){
-  body{padding:0 10px 24px}
-  .navbar a{padding:8px 12px;font-size:.82rem}
-  h1{font-size:1.4rem}
-  .phase-header{font-size:1rem;padding:14px 16px}
-  .step-header{padding:12px 14px}
-  .exercise{padding:14px}
-  .dc-opts{flex-direction:column}
-  .dc-opt{min-width:auto}
+  body{padding:0 12px 24px}
+  .navbar a{padding:8px 16px;font-size:.85rem}
+  .quiz-area{padding:20px 16px}
+  .quiz-tabs button{padding:7px 10px;font-size:.75rem}
 }
 </style>
 </head>
 <body>
 
 <nav class="navbar">
-  <a href="index.html"><span class="nav-icon">&#128203;</span> Quiz</a>
-  <a href="audio.html"><span class="nav-icon">&#127925;</span> Audio</a>
-  <a href="revision.html" class="active"><span class="nav-icon">&#128640;</span> R&eacute;vision</a>
+<a href="index.html"><span class="nav-icon">&#128218;</span> Quiz</a>
+<a href="audio.html"><span class="nav-icon">&#127911;</span> Audio</a>
+<a href="revision.html" class="active"><span class="nav-icon">&#127919;</span> R&eacute;vision</a>
 </nav>
 
-<div class="cpoaprer">
-  <div class="title">M&eacute;thode universelle (CPOAPRER)</div>
-  <div class="steps">
-    <span class="step">Contexte</span><span class="arrow">&rarr;</span>
-    <span class="step">Probl&eacute;matique</span><span class="arrow">&rarr;</span>
-    <span class="step">Objectifs</span><span class="arrow">&rarr;</span>
-    <span class="step">Actions</span><span class="arrow">&rarr;</span>
-    <span class="step">Posture</span><span class="arrow">&rarr;</span>
-    <span class="step">R&eacute;seau</span><span class="arrow">&rarr;</span>
-    <span class="step">&Eacute;valuation</span><span class="arrow">&rarr;</span>
-    <span class="step">R&eacute;f&eacute;rentiel</span>
-  </div>
+<h1>&#127919; R&eacute;vision Active &mdash; Oral DEES</h1>
+<p class="sub">Quiz flash pour m&eacute;moriser avant le jury &bull; R&eacute;ponses courtes en &laquo; je &raquo;</p>
+
+<div class="container">
+
+<div class="quiz-tabs">
+<button class="active" onclick="selectQuiz(0)">&#9889; Questions jury<span class="tab-score" id="tab-score-0"></span></button>
+<button onclick="selectQuiz(1)">&#128214; Mon livret 2<span class="tab-score" id="tab-score-1"></span></button>
+<button onclick="selectQuiz(2)">&#9878; Lois &amp; concepts<span class="tab-score" id="tab-score-2"></span></button>
+<button onclick="selectQuiz(3)">&#128736; Posture &amp; DC<span class="tab-score" id="tab-score-3"></span></button>
 </div>
 
-<h1>&#128170; R&eacute;vision Active</h1>
-<p class="sub">Exercices interactifs pour ancrer ta pr&eacute;sentation orale</p>
-
-<div class="global-progress" id="globalProgress">
-  <span class="label" id="progressLabel">0 / 9 &eacute;tapes</span>
-  <span class="timer-box" id="sessionTimer">00:00</span>
-  <div class="bar-bg"><div class="bar-fill" id="progressBar" style="width:0%"></div></div>
+<div class="quiz-area" id="quiz-area">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+<div class="progress-text" id="progress-text">1 / 10</div>
+<div id="question-container">
+  <div class="question-badge" id="q-badge" style="background:#d97706">Question</div>
+  <div class="question-text" id="q-text"></div>
+  <div class="options" id="options"></div>
+  <div class="explanation" id="explanation"></div>
+  <button class="next-btn" id="next-btn" onclick="nextQuestion()">Suivante &rarr;</button>
+</div>
+<div class="results" id="results" style="display:none">
+  <div class="score-big" id="score-big"></div>
+  <div class="score-label" id="score-label"></div>
+  <button class="restart-btn" onclick="restartQuiz()">&#128260; Recommencer ce quiz</button>
+</div>
 </div>
 
-<!-- ==================== PHASE 1 ==================== -->
-<div class="phase">
-  <div class="phase-header" style="background:linear-gradient(135deg,#d97706,#f59e0b)">
-    <span class="emoji">&#127769;</span> Phase 1 : Mercredi soir &mdash; L'Ancrage (20h &ndash; 01h)
-  </div>
-  <div class="phase-body">
-
-    <!-- Step 1 -->
-    <div class="step" data-step="1">
-      <div class="step-header" onclick="toggleStep(this)">
-        <input type="checkbox" onclick="event.stopPropagation();saveCheck(1,this.checked)">
-        <span class="step-title">1. Lire &agrave; voix haute (3x) + &Eacute;couter les audios</span>
-        <span class="step-badge" style="background:#d97706">20h &ndash; 21h</span>
-        <span class="chevron">&#9654;</span>
-      </div>
-      <div class="step-content">
-        <div class="exercise">
-          <h3>&#127911; &Eacute;coute tes enregistrements</h3>
-          <p style="font-size:.9rem;color:#555;margin-bottom:12px">Lis le texte &agrave; voix haute en m&ecirc;me temps que l'audio pour caler ton rythme.</p>
-          <a href="audio.html" class="link-audio">&#127925; Aller &agrave; la page Audio &rarr;</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Step 2: QCM Eclair -->
-    <div class="step" data-step="2">
-      <div class="step-header" onclick="toggleStep(this)">
-        <input type="checkbox" onclick="event.stopPropagation();saveCheck(2,this.checked)">
-        <span class="step-title">2. Quiz &Eacute;clair &mdash; 10 QCM sur ta pr&eacute;sentation</span>
-        <span class="step-badge" style="background:#d97706">21h &ndash; 21h30</span>
-        <span class="chevron">&#9654;</span>
-      </div>
-      <div class="step-content">
-        <div class="exercise" id="exQcm">
-          <h3>&#9889; QCM &Eacute;clair <span class="score-badge" id="qcmScore" style="display:none"></span></h3>
-          <div id="qcmArea"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Step 3: Mots-piliers -->
-    <div class="step" data-step="3">
-      <div class="step-header" onclick="toggleStep(this)">
-        <input type="checkbox" onclick="event.stopPropagation();saveCheck(3,this.checked)">
-        <span class="step-title">3. Mots-Piliers &mdash; Associe chaque terme au bon DC</span>
-        <span class="step-badge" style="background:#d97706">21h30 &ndash; 21h45</span>
-        <span class="chevron">&#9654;</span>
-      </div>
-      <div class="step-content">
-        <div class="exercise" id="exMatch">
-          <h3>&#128279; Mots-Piliers &rarr; DC <span class="score-badge" id="matchScore" style="display:none"></span></h3>
-          <p style="font-size:.85rem;color:#666;margin-bottom:14px">Tape un terme, puis tape le DC correspondant.</p>
-          <div class="match-area" id="matchArea"></div>
-          <div style="margin-top:14px;text-align:center">
-            <button class="btn btn-primary btn-sm" onclick="matchReset()">Recommencer</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Step 4: Identification DC -->
-    <div class="step" data-step="4">
-      <div class="step-header" onclick="toggleStep(this)">
-        <input type="checkbox" onclick="event.stopPropagation();saveCheck(4,this.checked)">
-        <span class="step-title">4. Identification DC &mdash; Quelle situation = quel DC ?</span>
-        <span class="step-badge" style="background:#d97706">22h15 &ndash; 23h</span>
-        <span class="chevron">&#9654;</span>
-      </div>
-      <div class="step-content">
-        <div class="exercise" id="exDc">
-          <h3>&#127919; Identification DC <span class="score-badge" id="dcScore" style="display:none"></span></h3>
-          <div id="dcArea"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Step 5: Simulation -->
-    <div class="step" data-step="5">
-      <div class="step-header" onclick="toggleStep(this)">
-        <input type="checkbox" onclick="event.stopPropagation();saveCheck(5,this.checked)">
-        <span class="step-title">5. Simulation Grand Oral &mdash; Debout, chrono 8 min</span>
-        <span class="step-badge" style="background:#d97706">23h30 &ndash; 00h30</span>
-        <span class="chevron">&#9654;</span>
-      </div>
-      <div class="step-content">
-        <div class="exercise">
-          <h3>&#127908; Simulation chrono</h3>
-          <p style="font-size:.9rem;color:#555;margin-bottom:14px">L&egrave;ve-toi, mets le chrono et r&eacute;cite face &agrave; une chaise vide. Objectif : 4 min 50.</p>
-          <div style="text-align:center;margin:16px 0">
-            <div id="simTimer" style="font-size:2.5rem;font-weight:900;color:#d97706">00:00</div>
-            <div style="margin-top:10px;display:flex;gap:8px;justify-content:center">
-              <button class="btn btn-primary" onclick="simStart()">D&eacute;marrer</button>
-              <button class="btn btn-secondary" onclick="simStop()">Arr&ecirc;ter</button>
-              <button class="btn btn-secondary" onclick="simReset()">Reset</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
+<div class="planning">
+<h2>&#128197; Plan de r&eacute;vision</h2>
+<div class="phase soir">
+  <h3>&#127769; Ce soir &mdash; L'Ancrage</h3>
+  <p>&#10148; Lecture haute voix (3x) + quiz flash ci-dessus<br>
+  &#10148; R&eacute;p&eacute;tition miroir avec tes 6 audios (4 min 50)<br>
+  &#10148; PAUSE 30 min (marche, eau, pas d'&eacute;crans)<br>
+  &#10148; R&eacute;cite les 4 DC dans le d&eacute;sordre<br>
+  &#10148; Simulation debout, chrono obligatoire</p>
+</div>
+<div class="phase matin">
+  <h3>&#9728; Jeudi matin &mdash; La Ma&icirc;trise</h3>
+  <p>&#10148; &Eacute;coute passive des audios (petit-d&eacute;j, douche)<br>
+  &#10148; 3 passages &agrave; blanc complets (15 min pause entre chaque)<br>
+  &#10148; Check-up transitions (&laquo; C'est ce qui m'a conduit... &raquo;)<br>
+  &#10148; &Agrave; 12h : STOP. Repos jusqu'au soir<br>
+  &#10148; Jeudi soir : 1 relecture calme + &eacute;coute audios + sommeil</p>
+</div>
 </div>
 
-<!-- ==================== PHASE 2 ==================== -->
-<div class="phase">
-  <div class="phase-header" style="background:linear-gradient(135deg,#059669,#10b981)">
-    <span class="emoji">&#9728;&#65039;</span> Phase 2 : Jeudi matin &mdash; La Ma&icirc;trise (08h &ndash; 12h)
-  </div>
-  <div class="phase-body">
-
-    <!-- Step 6 -->
-    <div class="step" data-step="6">
-      <div class="step-header" onclick="toggleStep(this)">
-        <input type="checkbox" onclick="event.stopPropagation();saveCheck(6,this.checked)">
-        <span class="step-title">6. &Eacute;coute passive des audios (petit-d&eacute;j, douche)</span>
-        <span class="step-badge" style="background:#059669">08h &ndash; 09h30</span>
-        <span class="chevron">&#9654;</span>
-      </div>
-      <div class="step-content">
-        <div class="exercise">
-          <h3>&#127911; &Eacute;coute passive</h3>
-          <p style="font-size:.9rem;color:#555;margin-bottom:12px">Laisse tourner tes audios en boucle pendant tes activit&eacute;s du matin.</p>
-          <a href="audio.html" class="link-audio">&#127925; Aller &agrave; la page Audio &rarr;</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Step 7: Texte a trous -->
-    <div class="step" data-step="7">
-      <div class="step-header" onclick="toggleStep(this)">
-        <input type="checkbox" onclick="event.stopPropagation();saveCheck(7,this.checked)">
-        <span class="step-title">7. Texte &agrave; trous &mdash; Compl&egrave;te les phrases cl&eacute;s</span>
-        <span class="step-badge" style="background:#059669">09h30 &ndash; 10h30</span>
-        <span class="chevron">&#9654;</span>
-      </div>
-      <div class="step-content">
-        <div class="exercise" id="exFill">
-          <h3>&#9999;&#65039; Texte &agrave; trous <span class="score-badge" id="fillScore" style="display:none"></span></h3>
-          <div id="fillArea"></div>
-          <div style="margin-top:14px;text-align:center">
-            <button class="btn btn-primary" onclick="fillCheck()">V&eacute;rifier</button>
-            <button class="btn btn-secondary btn-sm" onclick="fillReset()">Recommencer</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Step 8: Transitions -->
-    <div class="step" data-step="8">
-      <div class="step-header" onclick="toggleStep(this)">
-        <input type="checkbox" onclick="event.stopPropagation();saveCheck(8,this.checked)">
-        <span class="step-title">8. Phrases de transition &mdash; Compl&egrave;te les encha&icirc;nements</span>
-        <span class="step-badge" style="background:#059669">10h30 &ndash; 11h</span>
-        <span class="chevron">&#9654;</span>
-      </div>
-      <div class="step-content">
-        <div class="exercise" id="exTrans">
-          <h3>&#128260; Transitions <span class="score-badge" id="transScore" style="display:none"></span></h3>
-          <div id="transArea"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Step 9 -->
-    <div class="step" data-step="9">
-      <div class="step-header" onclick="toggleStep(this)">
-        <input type="checkbox" onclick="event.stopPropagation();saveCheck(9,this.checked)">
-        <span class="step-title">9. Check-up final &mdash; STOP &agrave; 12h !</span>
-        <span class="step-badge" style="background:#059669">11h &ndash; 12h</span>
-        <span class="chevron">&#9654;</span>
-      </div>
-      <div class="step-content">
-        <div class="exercise">
-          <h3>&#9989; Check-up final</h3>
-          <p style="font-size:.9rem;color:#555;margin-bottom:10px">V&eacute;rifie ces points essentiels :</p>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <label style="font-size:.9rem;display:flex;align-items:center;gap:8px"><input type="checkbox"> Je connais les 4 DC par coeur</label>
-            <label style="font-size:.9rem;display:flex;align-items:center;gap:8px"><input type="checkbox"> Je ma&icirc;trise les transitions entre sections</label>
-            <label style="font-size:.9rem;display:flex;align-items:center;gap:8px"><input type="checkbox"> Je tiens en moins de 5 minutes</label>
-            <label style="font-size:.9rem;display:flex;align-items:center;gap:8px"><input type="checkbox"> L'effet surprise est fluide</label>
-            <label style="font-size:.9rem;display:flex;align-items:center;gap:8px"><input type="checkbox"> Je parle en "je" naturellement</label>
-            <label style="font-size:.9rem;display:flex;align-items:center;gap:8px"><input type="checkbox"> CPOAPRER est un r&eacute;flexe</label>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
 </div>
 
-<p class="footer">Oral VAE DEES &mdash; R&eacute;vision active &mdash; 26 mars 2026</p>
-
-<script src="mentor.js"></script>
 <script>
-/* ============ GLOBAL ============ */
-var sessionStart=Date.now();
-setInterval(function(){
-  var d=Math.floor((Date.now()-sessionStart)/1000);
-  var m=String(Math.floor(d/60)).padStart(2,"0");
-  var s=String(d%60).padStart(2,"0");
-  document.getElementById("sessionTimer").textContent=m+":"+s;
-},1000);
+var allQuizzes=[
+[
+{q:"Comment je d&eacute;finis l'autisme si le jury me le demande ?",
+opts:["C'est un trouble du comportement li&eacute; &agrave; l'&eacute;ducation","C'est un trouble du neurod&eacute;veloppement avec des difficult&eacute;s de communication, d'interactions sociales et des comportements restreints et r&eacute;p&eacute;titifs","C'est un handicap moteur qui emp&ecirc;che l'apprentissage","C'est un retard mental diagnostiqu&eacute; &agrave; l'&eacute;cole"],
+correct:1,
+explain:"TSA = trouble du neurod&eacute;veloppement. Diagnostic : CRA ou &eacute;quipe pluridisciplinaire. M&eacute;thodes : ABA (analyse du comportement) et TEACCH (structuration de l'environnement)."},
 
-function toggleStep(el){
-  var step=el.closest(".step");
-  step.classList.toggle("open");
-}
-function saveCheck(n,v){
-  localStorage.setItem("rev_check_"+n,v?"1":"0");
-  updateGlobal();
-}
-function updateGlobal(){
-  var c=0;
-  for(var i=1;i<=9;i++){if(localStorage.getItem("rev_check_"+i)==="1")c++;}
-  document.getElementById("progressLabel").textContent=c+" / 9 etapes";
-  document.getElementById("progressBar").style.width=Math.round(c/9*100)+"%";
-}
-function loadChecks(){
-  for(var i=1;i<=9;i++){
-    var el=document.querySelector('[data-step="'+i+'"] input[type=checkbox]');
-    if(el&&localStorage.getItem("rev_check_"+i)==="1")el.checked=true;
-  }
-  updateGlobal();
-}
-loadChecks();
+{q:"Pourquoi je veux le dipl&ocirc;me fran&ccedil;ais sp&eacute;cifiquement ?",
+opts:["Parce que le dipl&ocirc;me suisse n'existe pas","Parce que j'exerce depuis plusieurs ann&eacute;es, j'ai un projet de vie en France, et je veux faire reconna&icirc;tre mes comp&eacute;tences","Parce que c'est obligatoire pour travailler en Suisse","Parce que mon employeur me l'impose"],
+correct:1,
+explain:"Je suis en couple depuis 3 ans avec une personne en France. Le DEES me permet de faire reconna&icirc;tre mes comp&eacute;tences et poursuivre ma carri&egrave;re l&agrave;-bas."},
 
-/* ============ SIMULATION TIMER ============ */
-var simInterval=null,simSec=0;
-function simStart(){
-  if(simInterval)return;
-  simInterval=setInterval(function(){
-    simSec++;
-    var m=String(Math.floor(simSec/60)).padStart(2,"0");
-    var s=String(simSec%60).padStart(2,"0");
-    document.getElementById("simTimer").textContent=m+":"+s;
-    if(simSec>=290)document.getElementById("simTimer").style.color="#dc2626";
-  },1000);
-}
-function simStop(){if(simInterval){clearInterval(simInterval);simInterval=null;}}
-function simReset(){simStop();simSec=0;document.getElementById("simTimer").textContent="00:00";document.getElementById("simTimer").style.color="#d97706";}
+{q:"Si un enfant me demande de garder un secret, que dois-je faire ?",
+opts:["Je garde le secret pour maintenir la confiance","Je lui explique que je ne peux pas si cela concerne sa s&eacute;curit&eacute;, je transmets en restant transparent pour maintenir la confiance","Je pr&eacute;viens imm&eacute;diatement ses parents sans lui dire","Je refuse et je lui dis que les secrets sont interdits"],
+correct:1,
+explain:"Mon r&ocirc;le est de prot&eacute;ger l'enfant. Je transmets les informations n&eacute;cessaires tout en restant transparent avec lui pour pr&eacute;server la relation de confiance."},
 
-/* ============ QCM ECLAIR ============ */
-var qcmData=[
-  {q:"Combien de parties comporte votre presentation orale ?",opts:["4","5","6","7"],correct:2,expl:"6 enregistrements : Presentation, Declic, Demarche VAE, Plan+DC, (DC1-DC4 dans le plan), Remerciement."},
-  {q:"Quelle est la duree cible totale de votre presentation ?",opts:["3 min","4 min 50","8 min","10 min"],correct:1,expl:"La presentation dure environ 4 min 50 au total."},
-  {q:"Quel mot-cle resume le DC1 ?",opts:["Projet collectif","Relation educative","Communication","Partenariat"],correct:1,expl:"DC1 = relation educative specialisee."},
-  {q:"Quel est le moment fondateur de votre parcours ?",opts:["Le basket","Le service civil","La formation DEES","Le poste AIS"],correct:1,expl:"Le service civil est le declic professionnel."},
-  {q:"Quels 3 termes decrivent votre posture DC1 ?",opts:["Autorite, cadre, sanction","Respect inconditionnel, ecoute active, continuite educative","Observation, analyse, evaluation","Transmission, redaction, synthese"],correct:1,expl:"DC1 : respect inconditionnel, ecoute active, continuite educative."},
-  {q:"Le DC2 s'illustre par quel type de projet ?",opts:["Projet sportif en club","Projet educatif collectif en maison de quartier","Projet de recherche universitaire","Projet de construction"],correct:1,expl:"DC2 : conception du projet educatif collectif en maison de quartier."},
-  {q:"En DC3, que soulignez-vous depuis le depot ?",opts:["Vos diplomes","Vos transmissions orales et ecrites","Votre salaire","Vos conges"],correct:1,expl:"DC3 : importance des transmissions orales et ecrites."},
-  {q:"Quels partenaires nommez-vous en DC4 ?",opts:["FIFA, UEFA, CIO","DIP, coordination FINC, FASe","ONU, UNICEF, OMS","Parents uniquement"],correct:1,expl:"DC4 : DIP, coordination FINC, FASe, familles, specialistes du reseau."},
-  {q:"Que signifie 'l effet surprise' dans votre plan ?",opts:["Un tour de magie","Un regard enrichi et muri depuis le depot","Un changement de sujet","Une nouvelle situation inventee"],correct:1,expl:"Pas une repetition du livret, mais un regard enrichi par la reflexion."},
-  {q:"Comment concluez-vous votre presentation ?",opts:["Par une citation philosophique","Par un remerciement pour l'ecoute","Par une chanson","Par une liste de diplomes"],correct:1,expl:"Je vous remercie pour votre ecoute."}
-];
-var qcmIdx=0,qcmOk=0,qcmDone=0;
+{q:"Quelles sont les &eacute;tapes d'une d&eacute;marche de projet ?",
+opts:["Id&eacute;e, Budget, Action, Bilan","Observations, Recueil des attentes, Besoins, Objectifs, Moyens, Mise en oeuvre, &Eacute;valuation","Diagnostic, Prescription, Traitement, Gu&eacute;rison","Projet, R&eacute;union, D&eacute;cision, Rapport"],
+correct:1,
+explain:"7 &eacute;tapes : Observations, Recueil des attentes, Identification des besoins, D&eacute;finition des objectifs, Moyens, Mise en oeuvre, &Eacute;valuation."},
 
-function qcmRender(){
-  var area=document.getElementById("qcmArea");
-  var html='<div class="qcm-progress">Question '+(qcmIdx+1)+' / '+qcmData.length+'</div>';
-  var d=qcmData[qcmIdx];
-  html+='<div class="qcm-card active"><div class="qcm-q">'+d.q+'</div><div class="qcm-opts">';
-  for(var i=0;i<d.opts.length;i++){
-    html+='<div class="qcm-opt" onclick="qcmSelect('+i+')">'+d.opts[i]+'</div>';
-  }
-  html+='</div><div class="qcm-expl" id="qcmExpl">'+d.expl+'</div></div>';
-  html+='<div class="qcm-nav">';
-  if(qcmIdx>0)html+='<button class="btn btn-secondary btn-sm" onclick="qcmPrev()">&larr; Pr&eacute;c&eacute;dent</button>';
-  else html+='<span></span>';
-  html+='</div>';
-  area.innerHTML=html;
-}
-function qcmSelect(i){
-  var opts=document.querySelectorAll("#qcmArea .qcm-opt");
-  if(opts[0].classList.contains("disabled"))return;
-  var d=qcmData[qcmIdx];
-  for(var j=0;j<opts.length;j++){opts[j].classList.add("disabled");}
-  if(i===d.correct){opts[i].classList.add("correct");qcmOk++;}
-  else{opts[i].classList.add("wrong");opts[d.correct].classList.add("correct");}
-  qcmDone++;
-  document.getElementById("qcmExpl").style.display="block";
-  setTimeout(function(){
-    if(qcmIdx<qcmData.length-1){qcmIdx++;qcmRender();}
-    else{qcmShowResults();}
-  },1800);
-}
-function qcmPrev(){if(qcmIdx>0){qcmIdx--;qcmRender();}}
-function qcmShowResults(){
-  var pct=Math.round(qcmOk/qcmData.length*100);
-  var msg=pct>=80?"Excellent ! Tu maitrises ta presentation.":pct>=60?"Bien ! Relis les parties faibles.":"A revoir. Reecoute tes audios.";
-  document.getElementById("qcmArea").innerHTML='<div class="results-box"><div class="score-big">'+pct+'%</div><div class="msg">'+msg+'</div><p>'+qcmOk+' / '+qcmData.length+' correctes</p><button class="btn btn-primary" style="margin-top:12px" onclick="qcmReset()">Recommencer</button></div>';
-  var badge=document.getElementById("qcmScore");badge.textContent=pct+"%";badge.style.display="inline";
-}
-function qcmReset(){qcmIdx=0;qcmOk=0;qcmDone=0;qcmRender();}
-qcmRender();
+{q:"Quelle est la diff&eacute;rence entre r&eacute;seau et partenariat ?",
+opts:["Le r&eacute;seau est formel, le partenariat est informel","Le r&eacute;seau = acteurs du territoire (lien ponctuel). Le partenariat = collaboration formalis&eacute;e autour de la personne","C'est la m&ecirc;me chose, juste deux mots diff&eacute;rents","Le r&eacute;seau concerne les familles, le partenariat les institutions"],
+correct:1,
+explain:"Ce qui les diff&eacute;rencie : le niveau de collaboration et d'engagement. R&eacute;seau = ponctuel. Partenariat = formalis&eacute;, avec &eacute;changes d'informations."},
 
-/* ============ MATCH MOTS-PILIERS ============ */
-var matchData=[
-  {terme:"Respect inconditionnel",dc:"DC1"},
-  {terme:"Ecoute active",dc:"DC1"},
-  {terme:"Continuite educative",dc:"DC1"},
-  {terme:"Projet collectif maison de quartier",dc:"DC2"},
-  {terme:"Objectifs partages",dc:"DC2"},
-  {terme:"Observation fine",dc:"DC2"},
-  {terme:"Transmissions orales et ecrites",dc:"DC3"},
-  {terme:"Integration rapide dans equipes",dc:"DC3"},
-  {terme:"Reflexion collective",dc:"DC3"},
-  {terme:"Coordination FINC",dc:"DC4"},
-  {terme:"DIP et FASe",dc:"DC4"},
-  {terme:"Politiques inclusion canton",dc:"DC4"}
-];
-var matchSelected=null,matchOk=0,matchTotal=matchData.length;
+{q:"Pourquoi je ne prends pas de notes sur t&eacute;l&eacute;phone ou ordinateur ?",
+opts:["Parce que c'est impoli devant les familles","Parce que le RGPD encadre la confidentialit&eacute; et la protection des donn&eacute;es personnelles","Parce que les &eacute;crans sont interdits dans les &eacute;coles","Parce que je pr&eacute;f&egrave;re le papier"],
+correct:1,
+explain:"RGPD = R&egrave;glement G&eacute;n&eacute;ral sur la Protection des Donn&eacute;es. Les donn&eacute;es personnelles des usagers doivent &ecirc;tre prot&eacute;g&eacute;es."},
 
-function matchShuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+{q:"Qu'est-ce qu'un objectif partag&eacute; ?",
+opts:["Un objectif fix&eacute; par le directeur seul","Un objectif construit avec la personne accompagn&eacute;e, la famille et l'&eacute;quipe, dans le cadre de la d&eacute;marche de projet","Un objectif vot&eacute; en r&eacute;union d'&eacute;quipe","Un objectif impos&eacute; par le r&eacute;f&eacute;rentiel"],
+correct:1,
+explain:"Il s'inscrit dans la d&eacute;marche de projet : observations, attentes, besoins, objectifs, moyens, mise en oeuvre, &eacute;valuation."},
 
-function matchRender(){
-  matchSelected=null;matchOk=0;
-  var shuffled=matchShuffle(matchData.slice());
-  var html='<div class="match-terms" id="matchTerms">';
-  for(var i=0;i<shuffled.length;i++){
-    html+='<div class="match-term" data-dc="'+shuffled[i].dc+'" onclick="matchSelectTerm(this)">'+shuffled[i].terme+'</div>';
-  }
-  html+='</div><div class="match-bins">';
-  html+='<div class="match-bin dc1" onclick="matchSelectBin(this,\'DC1\')">DC1<span class="count">Relation &eacute;ducative</span></div>';
-  html+='<div class="match-bin dc2" onclick="matchSelectBin(this,\'DC2\')">DC2<span class="count">Projet &eacute;ducatif</span></div>';
-  html+='<div class="match-bin dc3" onclick="matchSelectBin(this,\'DC3\')">DC3<span class="count">Communication</span></div>';
-  html+='<div class="match-bin dc4" onclick="matchSelectBin(this,\'DC4\')">DC4<span class="count">Partenariats</span></div>';
-  html+='</div>';
-  document.getElementById("matchArea").innerHTML=html;
-}
-function matchSelectTerm(el){
-  if(el.classList.contains("matched"))return;
-  document.querySelectorAll(".match-term").forEach(function(t){t.classList.remove("selected");});
-  el.classList.add("selected");
-  matchSelected=el;
-}
-function matchSelectBin(bin,dc){
-  if(!matchSelected)return;
-  if(matchSelected.getAttribute("data-dc")===dc){
-    matchSelected.classList.add("matched");
-    matchSelected.classList.remove("selected");
-    matchOk++;
-    matchSelected=null;
-    if(matchOk===matchTotal){
-      var badge=document.getElementById("matchScore");
-      badge.textContent=matchOk+"/"+matchTotal;badge.style.display="inline";
-    }
-  }else{
-    matchSelected.classList.add("wrong-shake");
-    var el=matchSelected;
-    setTimeout(function(){el.classList.remove("wrong-shake");},400);
-  }
-}
-function matchReset(){matchRender();}
-matchRender();
+{q:"Qu'est-ce qu'une posture &eacute;ducative adapt&eacute;e ?",
+opts:["Rester toujours dans la m&ecirc;me posture quoi qu'il arrive","Ajuster ma mani&egrave;re d'agir selon la situation, les besoins de la personne et le contexte","Appliquer strictement le protocole sans jamais d&eacute;vier","Laisser la personne d&eacute;cider de tout"],
+correct:1,
+explain:"J'ajuste ma posture en prenant en compte les retours de l'enfant, des parents et de l'&eacute;quipe. C'est un ajustement permanent."},
 
-/* ============ DC IDENTIFICATION ============ */
-var dcData=[
-  {sit:"Vous accompagnez un eleve en dispositif FINC, construisant une relation de confiance sur la duree fondee sur le respect inconditionnel.",correct:"DC1",expl:"La relation de confiance = DC1 relation educative."},
-  {sit:"Vous concevez un projet educatif collectif en maison de quartier avec des objectifs ajustes aux dynamiques des enfants.",correct:"DC2",expl:"Concevoir un projet educatif = DC2."},
-  {sit:"En tant que remplacant AIS, vous vous integrez rapidement dans l'equipe et assurez des transmissions ecrites claires.",correct:"DC3",expl:"Transmissions et travail en equipe = DC3 communication."},
-  {sit:"Vous articulez votre intervention avec les orientations de la FASe et les politiques d'inclusion du canton.",correct:"DC4",expl:"Politiques institutionnelles et partenariats = DC4."},
-  {sit:"Vous adaptez votre posture en tenant compte de la singularite de chaque personne et des enjeux relationnels.",correct:"DC1",expl:"Posture adaptee a la singularite = DC1."},
-  {sit:"Vous mobilisez le DIP, la coordination FINC et les familles pour securiser le parcours d'un jeune.",correct:"DC4",expl:"Mobilisation des partenaires = DC4."}
-];
-var dcIdx=0,dcOk=0;
+{q:"Pourquoi pas un autre dipl&ocirc;me que le DEES ?",
+opts:["Parce que c'est le seul qui existe","Parce que mes comp&eacute;tences correspondent clairement &agrave; celles d'un &eacute;ducateur sp&eacute;cialis&eacute; : accompagnement, relation, travail en r&eacute;seau","Parce que c'est le plus facile &agrave; obtenir","Parce que mon pr&eacute;parateur me l'a conseill&eacute;"],
+correct:1,
+explain:"Au regard de mon exp&eacute;rience, le DEES correspond aux comp&eacute;tences que j'ai d&eacute;velopp&eacute;es sur le terrain."},
 
-function dcRender(){
-  var area=document.getElementById("dcArea");
-  if(dcIdx>=dcData.length){dcShowResults();return;}
-  var d=dcData[dcIdx];
-  var html='<div class="qcm-progress">Situation '+(dcIdx+1)+' / '+dcData.length+'</div>';
-  html+='<div class="dc-card active"><div class="dc-situation">'+d.sit+'</div><div class="dc-opts">';
-  var dcs=["DC1","DC2","DC3","DC4"];
-  for(var i=0;i<dcs.length;i++){
-    html+='<div class="dc-opt" onclick="dcSelect(this,\''+dcs[i]+'\')">'+dcs[i]+'</div>';
-  }
-  html+='</div><div class="qcm-expl" id="dcExpl">'+d.expl+'</div></div>';
-  area.innerHTML=html;
-}
-function dcSelect(el,dc){
-  var opts=document.querySelectorAll("#dcArea .dc-opt");
-  if(opts[0].classList.contains("disabled"))return;
-  opts.forEach(function(o){o.classList.add("disabled");});
-  var d=dcData[dcIdx];
-  if(dc===d.correct){el.classList.add("correct");dcOk++;}
-  else{el.classList.add("wrong");opts.forEach(function(o){if(o.textContent===d.correct)o.classList.add("correct");});}
-  document.getElementById("dcExpl").style.display="block";
-  setTimeout(function(){dcIdx++;dcRender();},1500);
-}
-function dcShowResults(){
-  var pct=Math.round(dcOk/dcData.length*100);
-  document.getElementById("dcArea").innerHTML='<div class="results-box"><div class="score-big">'+pct+'%</div><div class="msg">'+dcOk+' / '+dcData.length+' correctes</div><button class="btn btn-primary" style="margin-top:12px" onclick="dcReset()">Recommencer</button></div>';
-  var badge=document.getElementById("dcScore");badge.textContent=pct+"%";badge.style.display="inline";
-}
-function dcReset(){dcIdx=0;dcOk=0;dcRender();}
-dcRender();
+{q:"Quelle est la place d'un &eacute;ducateur sp&eacute;cialis&eacute; ?",
+opts:["Il remplace les parents dans l'&eacute;ducation","Il accompagne la personne dans son d&eacute;veloppement et son autonomie, participe &agrave; la dynamique d'&eacute;quipe et coordonne les actions &eacute;ducatives","Il donne des cours de soutien scolaire","Il fait de la th&eacute;rapie"],
+correct:1,
+explain:"L'ES accompagne, coordonne et est attentif &agrave; la dynamique d'&eacute;quipe. Il ne remplace ni les parents ni les th&eacute;rapeutes."}
+],
 
-/* ============ TEXTE A TROUS ============ */
-var fillData=[
-  {parts:["Mon parcours s'est construit autour de trois axes : AIS, moniteur ","____"," en maison de quartier, et entraineur de ","____","."],blanks:["FINC","basket-ball"],hint:"Un dispositif FASe et un sport"},
-  {parts:["Le DC1 concerne la ","____"," educative specialisee."],blanks:["relation"],hint:"Le coeur du metier"},
-  {parts:["Mon moment fondateur est le ","____"," civil."],blanks:["service"],hint:"Un engagement citoyen"},
-  {parts:["La VAE m'a permis de ","____"," mes actions et d'identifier mes ","____","."],blanks:["structurer","limites"],hint:"Organiser + zones de progression"},
-  {parts:["En DC2, l'","____"," fine du groupe m'a permis de definir des objectifs ","____","."],blanks:["observation","partages"],hint:"Regarder attentivement + avec l'equipe"},
-  {parts:["En DC4, j'inscris mon action dans les politiques d'","____"," du canton."],blanks:["inclusion"],hint:"Le contraire de l'exclusion"},
-  {parts:["Je ne presente pas une simple ","____"," de ce qui est ecrit, mais un regard ","____","."],blanks:["repetition","enrichi"],hint:"Pas du copier-coller, quelque chose de plus"},
-  {parts:["Le DC3 concerne la ","____"," professionnelle."],blanks:["communication"],hint:"Transmettre, ecrire, echanger"}
+[
+{q:"Dans mon livret 2, quelles sont mes 3 exp&eacute;riences professionnelles ?",
+opts:["AIS (DIP Gen&egrave;ve), moniteur FINC/FASe en maison de quartier, entra&icirc;neur de basket","Enseignant, moniteur, psychologue","AIS, infirmier scolaire, animateur","FASe, AEMO, foyer"],
+correct:0,
+explain:"Exp&eacute;rience 1 : AIS au DIP Gen&egrave;ve. Exp&eacute;rience 2 : Moniteur FINC/FASe en maison de quartier. Exp&eacute;rience 3 : Entra&icirc;neur de basketball."},
+
+{q:"Dans la situation AIS avec l'&eacute;l&egrave;ve R., quel &eacute;tait l'enjeu principal ?",
+opts:["Lui apprendre &agrave; lire","Cr&eacute;er un cadre s&eacute;curisant pour un enfant avec des difficult&eacute;s d'attention et d'impulsivit&eacute;","Remplacer l'enseignante absente","Pr&eacute;parer un spectacle de fin d'ann&eacute;e"],
+correct:1,
+explain:"R. pr&eacute;sentait des difficult&eacute;s d'attention et d'impulsivit&eacute;. J'ai mis en place : rep&egrave;res verbaux, anticipation des transitions, pr&eacute;vention."},
+
+{q:"Dans la situation avec M. (fracture), quel &eacute;quilibre je devais trouver ?",
+opts:["Punition et r&eacute;compense","S&eacute;curit&eacute;, autonomie et inclusion","Th&eacute;orie et pratique","Libert&eacute; totale et surveillance constante"],
+correct:1,
+explain:"M. avait un handicap temporaire (fracture au ski). L'enjeu : s&eacute;curiser sans surprot&eacute;ger, maintenir son autonomie et son inclusion."},
+
+{q:"Mon service civil, c'&eacute;tait quand et o&ugrave; ?",
+opts:["2018 &agrave; Lausanne","2013 dans des &eacute;coles du canton de Gen&egrave;ve (Onex-Parc, Lignon)","2010 &agrave; Paris","2015 &agrave; Zurich"],
+correct:1,
+explain:"2 affectations en 2013 : Onex-Parc et Lignon. Devoirs surveill&eacute;s, soutien d'enfants &agrave; besoins sp&eacute;cifiques."},
+
+{q:"Dans mon exp&eacute;rience FINC, qu'est-ce que j'accompagne ?",
+opts:["Des adultes en r&eacute;insertion","Des enfants et jeunes en maison de quartier : inclusion, socialisation, r&eacute;gulation, autonomie","Des personnes &acirc;g&eacute;es en EHPAD","Des adolescents en centre ferm&eacute;"],
+correct:1,
+explain:"FINC = dispositif FASe en maison de quartier. Enjeux : inclusion, socialisation, r&eacute;gulation des comportements, autonomie."},
+
+{q:"Comment je d&eacute;cris ma capacit&eacute; d'adaptation en tant que rempla&ccedil;ant AIS ?",
+opts:["Je refuse les missions complexes","Mobilit&eacute; r&eacute;guli&egrave;re, adaptation rapide, lecture fine des contextes, int&eacute;gration imm&eacute;diate aux &eacute;quipes","Je travaille toujours dans la m&ecirc;me &eacute;cole","J'attends qu'on me dise quoi faire"],
+correct:1,
+explain:"Contrairement &agrave; un poste fixe, ma fonction implique mobilit&eacute; et int&eacute;gration imm&eacute;diate &agrave; des &eacute;quipes nouvelles."},
+
+{q:"Quel dispositif encadre mon travail AIS &agrave; Gen&egrave;ve ?",
+opts:["DIP / DGEO / SeREP","Minist&egrave;re de la Sant&eacute;","MDPH","P&ocirc;le Emploi"],
+correct:0,
+explain:"DIP = D&eacute;partement de l'Instruction Publique. DGEO = Enseignement obligatoire. SeREP = Service des Remplacements."},
+
+{q:"Ma posture avec l'&eacute;l&egrave;ve R. ?",
+opts:["Pr&eacute;sence constante et directive","&Eacute;quilibre entre pr&eacute;sence contenante et discr&eacute;tion, pour s&eacute;curiser sans cr&eacute;er de d&eacute;pendance","Retrait total pour le laisser autonome","Intervention uniquement en cas de crise"],
+correct:1,
+explain:"Disponible et rep&eacute;rable mais pas intrusif. Pr&eacute;vention plut&ocirc;t que r&eacute;action."},
+
+{q:"Quel public j'accompagne en AIS ?",
+opts:["Uniquement des enfants autistes","Des enfants de 4 &agrave; 15 ans (voire 19) : TSA, TDAH, handicap moteur, maladies chroniques","Des adultes handicap&eacute;s","Des adolescents d&eacute;linquants"],
+correct:1,
+explain:"Public h&eacute;t&eacute;rog&egrave;ne : TSA, TDAH, troubles du langage, handicap moteur/sensoriel, maladies chroniques."},
+
+{q:"Depuis quand j'exerce comme AIS ?",
+opts:["Depuis 2013","Depuis avril 2018, toujours en poste en 2026","Depuis 2020","Depuis 2015"],
+correct:1,
+explain:"Entr&eacute;e en fonction : avril 2018. Temps partiel ~77%. Toujours en poste."}
+],
+
+[
+{q:"Que dit la loi du 2 janvier 2002 ?",
+opts:["Elle cr&eacute;e le DEES","Elle place la personne accompagn&eacute;e au centre du dispositif et renforce ses droits","Elle interdit le travail des mineurs","Elle cr&eacute;e le RGPD"],
+correct:1,
+explain:"Loi 2002-2 : r&eacute;novation de l'action sociale. Droits des usagers : projet personnalis&eacute;, livret d'accueil, charte des droits."},
+
+{q:"Que signifie RGPD ?",
+opts:["R&egrave;glement G&eacute;n&eacute;ral sur la Protection des Donn&eacute;es","R&eacute;f&eacute;rentiel G&eacute;n&eacute;ral des Pratiques DEES","R&egrave;glement de Gestion des Projets D&eacute;partementaux","R&eacute;pertoire des Partenaires Disponibles"],
+correct:0,
+explain:"RGPD = protection des donn&eacute;es personnelles. Pas de notes sur t&eacute;l&eacute;phone concernant les usagers."},
+
+{q:"Que signifie ABA ?",
+opts:["Association des Besoins Alimentaires","Applied Behavior Analysis &mdash; analyse appliqu&eacute;e du comportement","Aide aux B&eacute;n&eacute;ficiaires de l'ASE","Accompagnement Bienveillant Adapt&eacute;"],
+correct:1,
+explain:"ABA = approche bas&eacute;e sur l'analyse du comportement. Utilis&eacute;e pour l'accompagnement des personnes avec TSA."},
+
+{q:"Que signifie TEACCH ?",
+opts:["Test d'&Eacute;valuation des Acquis","Structuration de l'environnement pour favoriser l'autonomie des personnes autistes","Technique d'Entretien et d'Aide","Th&eacute;rapie &Eacute;ducative par les Arts"],
+correct:1,
+explain:"TEACCH = Treatment and Education of Autistic and Communication Handicapped Children."},
+
+{q:"Que signifie FASe ?",
+opts:["Fondation genevoise pour l'Animation Socioculturelle","F&eacute;d&eacute;ration des Assistants Sociaux","Fonds d'Aide Sociale &agrave; l'Enfance","Formation Sp&eacute;cialis&eacute;e"],
+correct:0,
+explain:"FASe = Fondation genevoise pour l'animation socioculturelle. Cadre de mon exp&eacute;rience FINC."},
+
+{q:"Quels sont les 4 DC du DEES ?",
+opts:["DC1 Relation &eacute;ducative, DC2 Projet &eacute;ducatif, DC3 Communication pro, DC4 Dynamiques interinstitutionnelles","DC1 P&eacute;dagogie, DC2 Psychologie, DC3 Droit, DC4 M&eacute;decine","DC1 Accueil, DC2 H&eacute;bergement, DC3 Insertion, DC4 Suivi","DC1 &Eacute;coute, DC2 Animation, DC3 Gestion, DC4 Direction"],
+correct:0,
+explain:"DC1 = Relation &eacute;ducative sp&eacute;cialis&eacute;e. DC2 = Conception/conduite de projet. DC3 = Communication pro. DC4 = Partenariats/r&eacute;seaux."},
+
+{q:"Que signifie DIP ?",
+opts:["D&eacute;partement International de la Police","D&eacute;partement de l'Instruction Publique (Gen&egrave;ve)","Direction de l'Int&eacute;gration Professionnelle","Dipl&ocirc;me d'Intervention Pluridisciplinaire"],
+correct:1,
+explain:"DIP = D&eacute;partement de l'Instruction Publique du canton de Gen&egrave;ve."},
+
+{q:"Que signifie FINC ?",
+opts:["Fichier de Nomenclature Comptable","Foyer de Naturalisation Culturelle","Un dispositif FASe d'accompagnement en maison de quartier","Formation Nationale Continue"],
+correct:2,
+explain:"FINC = dispositif FASe. Accompagnement d'enfants et jeunes en maison de quartier."},
+
+{q:"Que signifie CRA ?",
+opts:["Centre R&eacute;gional d'Animation","Centre Ressources Autisme &mdash; &eacute;valuation, orientation, accompagnement","Comit&eacute; de R&eacute;f&eacute;rence Acad&eacute;mique","Certificat de Reconnaissance des Acquis"],
+correct:1,
+explain:"CRA = structures sp&eacute;cialis&eacute;es dans le diagnostic et l'accompagnement de l'autisme."},
+
+{q:"Que signifie AIS ?",
+opts:["Aide &agrave; l'Insertion Sociale","Appui &agrave; l'Int&eacute;gration Scolaire (comparable aux AESH en France)","Association d'Int&eacute;r&ecirc;t Social","Accompagnement Individuel Sp&eacute;cialis&eacute;"],
+correct:1,
+explain:"AIS = Appui &agrave; l'Int&eacute;gration Scolaire. J'accompagne des &eacute;l&egrave;ves &agrave; besoins sp&eacute;cifiques en milieu ordinaire."}
+],
+
+[
+{q:"DC1 &mdash; Comment je construis une relation &eacute;ducative de confiance ?",
+opts:["En &eacute;tant ami avec l'enfant","Par le respect inconditionnel, l'&eacute;coute active et la continuit&eacute; &eacute;ducative, dans un cadre professionnel","En imposant des r&egrave;gles strictes sans discussion","En laissant l'enfant d&eacute;cider de tout"],
+correct:1,
+explain:"DC1 = relation de confiance + adaptation &agrave; la singularit&eacute; + cadre professionnel. Pas de l'amiti&eacute;, du respect inconditionnel."},
+
+{q:"DC2 &mdash; Comment j'ai con&ccedil;u le projet collectif en maison de quartier ?",
+opts:["J'ai suivi un mod&egrave;le pr&eacute;d&eacute;fini","Par l'observation fine du groupe, des objectifs partag&eacute;s avec l'&eacute;quipe et des ajustements selon les dynamiques r&eacute;elles","J'ai demand&eacute; aux enfants ce qu'ils voulaient","J'ai copi&eacute; le projet pr&eacute;c&eacute;dent"],
+correct:1,
+explain:"DC2 = observer, analyser, d&eacute;finir des objectifs, mettre en oeuvre et ajuster. Co-construit avec l'&eacute;quipe."},
+
+{q:"DC3 &mdash; Ma communication professionnelle ?",
+opts:["Je communique uniquement par &eacute;crit","Capacit&eacute; &agrave; m'int&eacute;grer rapidement aux &eacute;quipes, transmissions orales et &eacute;crites qui nourrissent la coh&eacute;rence &eacute;ducative","Je garde mes observations pour moi","Je parle seulement avec la direction"],
+correct:1,
+explain:"DC3 = travail en &eacute;quipe pluripro + transmissions pertinentes + rendre compte de sa pratique."},
+
+{q:"DC4 &mdash; Comment je m'inscris dans les dynamiques interinstitutionnelles ?",
+opts:["Je travaille seul","En articulant mon intervention avec le DIP, la coordination FINC, les familles, les sp&eacute;cialistes et les orientations FASe","Je contacte les partenaires en cas de crise","Je d&eacute;l&egrave;gue tout au r&eacute;seau"],
+correct:1,
+explain:"DC4 = inscrire mon action dans un cadre institutionnel large + mobiliser les partenaires + comprendre les politiques sociales."},
+
+{q:"L'ajustement de posture, c'est quoi concr&egrave;tement ?",
+opts:["Changer de position physique","Adapter ma mani&egrave;re d'agir gr&acirc;ce aux retours de l'enfant, des parents et de l'&eacute;quipe","Suivre toujours le m&ecirc;me protocole","Demander &agrave; mon sup&eacute;rieur quoi faire"],
+correct:1,
+explain:"Retours formels ET informels. Adapter mes actions et faire &eacute;voluer ma pratique en continu."},
+
+{q:"Qu'est-ce que le jury attend de mon discours ?",
+opts:["Des exemples personnels sans lien avec le m&eacute;tier","Un discours d'ES : argumenter avec des connaissances pro et s'appuyer sur les fonctions du m&eacute;tier","R&eacute;citer mon livret 2 par coeur","Parler de mes &eacute;motions"],
+correct:1,
+explain:"Le jury veut : connaissances pro + fonctions du m&eacute;tier + analyse. Pas juste des exemples."},
+
+{q:"Les 4 axes &agrave; ma&icirc;triser pour le jury ?",
+opts:["Lecture, &eacute;criture, calcul, sport","Relation &eacute;ducative, d&eacute;marche de projet, travail d'&eacute;quipe, travail en r&eacute;seau et partenariat","Psychologie, sociologie, droit, m&eacute;decine","Animation, gestion, communication, marketing"],
+correct:1,
+explain:"4 axes = les 4 DC. Chacun doit &ecirc;tre illustr&eacute; par des situations concr&egrave;tes de mon livret."},
+
+{q:"Qu'est-ce qui diff&eacute;rencie mon oral de mon livret &eacute;crit ?",
+opts:["Rien, je r&eacute;p&egrave;te ce qui est &eacute;crit","Un regard enrichi, plus mature, nourri par le recul et la r&eacute;flexion depuis le d&eacute;p&ocirc;t","Je corrige les erreurs du livret","Je parle d'autres exp&eacute;riences"],
+correct:1,
+explain:"Effet surprise : je montre que j'ai continu&eacute; &agrave; r&eacute;fl&eacute;chir. Pas une r&eacute;p&eacute;tition, un regard enrichi."},
+
+{q:"Comment je pr&eacute;viens les crises plut&ocirc;t que d'y r&eacute;agir ?",
+opts:["J'isole l'enfant d&egrave;s le moindre signe","Observation des signes pr&eacute;curseurs + ajustements simples : reformulation, objectif interm&eacute;diaire, micro-responsabilit&eacute;","J'appelle la direction","J'attends que la crise passe"],
+correct:1,
+explain:"Posture de pr&eacute;vention : observer, intervenir en amont. Reformuler, fractionner, responsabiliser, valoriser."},
+
+{q:"Pourquoi la VAE m'a transform&eacute; ?",
+opts:["Elle ne m'a pas transform&eacute;","Avant j'agissais par intuition, aujourd'hui je sais nommer, analyser et relier ma pratique &agrave; un cadre th&eacute;orique","Elle m'a appris un nouveau m&eacute;tier","Elle m'a donn&eacute; confiance uniquement"],
+correct:1,
+explain:"VAE = passage de l'intuition &agrave; l'analyse. Je sais nommer ce que je fais et le relier au r&eacute;f&eacute;rentiel."}
+]
 ];
 
-function fillRender(){
-  var html="";
-  for(var i=0;i<fillData.length;i++){
-    var d=fillData[i];
-    html+='<div class="fill-card"><div class="fill-hint">Indice : '+d.hint+'</div><div class="fill-sentence">';
-    var bIdx=0;
-    for(var j=0;j<d.parts.length;j++){
-      if(d.parts[j]==="____"){
-        html+='<input type="text" data-fill="'+i+'-'+bIdx+'" data-answer="'+d.blanks[bIdx]+'" placeholder="...">';
-        bIdx++;
-      }else{
-        html+=d.parts[j];
-      }
-    }
-    html+='</div></div>';
-  }
-  document.getElementById("fillArea").innerHTML=html;
+var currentQuiz=0,currentQ=0,score=0,answered=false;
+var scores=[null,null,null,null];
+
+function selectQuiz(idx){
+  currentQuiz=idx;currentQ=0;score=0;answered=false;
+  document.querySelectorAll('.quiz-tabs button').forEach(function(b,i){b.classList.toggle('active',i===idx)});
+  document.getElementById('results').style.display='none';
+  document.getElementById('question-container').style.display='block';
+  renderQuestion();
 }
-function normalize(s){return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();}
-function fillCheck(){
-  var inputs=document.querySelectorAll("#fillArea input[data-fill]");
-  var ok=0,total=inputs.length;
-  inputs.forEach(function(inp){
-    var answer=normalize(inp.getAttribute("data-answer"));
-    var val=normalize(inp.value);
-    if(val===answer){inp.classList.add("correct");inp.classList.remove("wrong");ok++;}
-    else{inp.classList.add("wrong");inp.classList.remove("correct");inp.value=inp.getAttribute("data-answer");}
+
+function renderQuestion(){
+  var quiz=allQuizzes[currentQuiz];
+  var q=quiz[currentQ];
+  var total=quiz.length;
+  document.getElementById('progress-fill').style.width=((currentQ)/total*100)+'%';
+  document.getElementById('progress-text').textContent=(currentQ+1)+' / '+total;
+  var colors=['#d97706','#2563eb','#059669','#7c3aed'];
+  var labels=['Jury','Livret 2','Lois','Posture'];
+  document.getElementById('q-badge').style.background=colors[currentQuiz];
+  document.getElementById('q-badge').innerHTML=labels[currentQuiz]+' &bull; Q'+(currentQ+1);
+  document.getElementById('q-text').innerHTML=q.q;
+  var optDiv=document.getElementById('options');
+  optDiv.innerHTML='';
+  q.opts.forEach(function(o,i){
+    var btn=document.createElement('button');
+    btn.className='option-btn';
+    btn.innerHTML=String.fromCharCode(65+i)+'. '+o;
+    btn.onclick=function(){checkAnswer(i)};
+    optDiv.appendChild(btn);
   });
-  var pct=Math.round(ok/total*100);
-  var badge=document.getElementById("fillScore");badge.textContent=pct+"%";badge.style.display="inline";
+  document.getElementById('explanation').className='explanation';
+  document.getElementById('explanation').innerHTML='';
+  document.getElementById('next-btn').className='next-btn';
+  answered=false;
 }
-function fillReset(){fillRender();}
-fillRender();
 
-/* ============ TRANSITIONS ============ */
-var transData=[
-  {start:"Si je devais identifier un moment fondateur, ce serait...",opts:["mon service civil","ma formation universitaire","mon premier emploi","un voyage a l'etranger"],correct:0},
-  {start:"Mon objectif est de faire reconnaitre...",opts:["mes diplomes academiques","les competences acquises sur le terrain","mon anciennete professionnelle","mes publications"],correct:1},
-  {start:"Je vais organiser ma presentation en...",opts:["deux grandes parties","quatre points reprenant les quatre DC","une seule demonstration","six chapitres thematiques"],correct:1},
-  {start:"Depuis le depot de mon dossier, j'ai poursuivi...",opts:["mes etudes","mon travail de reflexion","une autre VAE","un bilan de competences"],correct:1},
-  {start:"Ce que je retiens de cette demarche VAE, c'est qu'elle m'a profondement...",opts:["fatigue","transforme dans ma maniere de penser ma pratique","decu","eloigne du terrain"],correct:1},
-  {start:"Je suis maintenant disponible pour...",opts:["partir","echanger avec vous et repondre a vos questions","presenter un autre sujet","faire une pause"],correct:1}
-];
-var transIdx=0,transOk=0;
+function checkAnswer(idx){
+  if(answered)return;
+  answered=true;
+  var q=allQuizzes[currentQuiz][currentQ];
+  var btns=document.querySelectorAll('.option-btn');
+  btns.forEach(function(b,i){
+    b.classList.add('disabled');
+    if(i===q.correct)b.classList.add('correct');
+    if(i===idx&&idx!==q.correct)b.classList.add('wrong');
+  });
+  if(idx===q.correct)score++;
+  document.getElementById('explanation').innerHTML='<strong>&#128161;</strong> '+q.explain;
+  document.getElementById('explanation').className='explanation visible';
+  document.getElementById('next-btn').className='next-btn visible';
+}
 
-function transRender(){
-  var area=document.getElementById("transArea");
-  if(transIdx>=transData.length){transShowResults();return;}
-  var d=transData[transIdx];
-  var html='<div class="qcm-progress">Transition '+(transIdx+1)+' / '+transData.length+'</div>';
-  html+='<div class="trans-card active"><div class="trans-start">&#128172; &laquo; '+d.start+' &raquo;</div><div class="qcm-opts">';
-  for(var i=0;i<d.opts.length;i++){
-    html+='<div class="qcm-opt" onclick="transSelect('+i+')">'+d.opts[i]+'</div>';
+function nextQuestion(){
+  currentQ++;
+  if(currentQ>=allQuizzes[currentQuiz].length){showResults();return}
+  renderQuestion();
+}
+
+function showResults(){
+  document.getElementById('question-container').style.display='none';
+  document.getElementById('results').style.display='block';
+  var total=allQuizzes[currentQuiz].length;
+  var pct=Math.round(score/total*100);
+  document.getElementById('score-big').textContent=score+' / '+total;
+  var msg=pct>=80?'Excellent ! Tu es pr&ecirc;t pour le jury !':pct>=60?'Bien ! Encore un passage pour consolider.':'Continue de r&eacute;viser, tu progresses !';
+  document.getElementById('score-label').innerHTML=pct+'% &mdash; '+msg;
+  document.getElementById('progress-fill').style.width='100%';
+  scores[currentQuiz]=score;
+  updateTabScores();
+}
+
+function updateTabScores(){
+  for(var i=0;i<4;i++){
+    var el=document.getElementById('tab-score-'+i);
+    if(scores[i]!==null){el.textContent=' '+scores[i]+'/'+allQuizzes[i].length}
   }
-  html+='</div></div>';
-  area.innerHTML=html;
 }
-function transSelect(i){
-  var opts=document.querySelectorAll("#transArea .qcm-opt");
-  if(opts[0].classList.contains("disabled"))return;
-  opts.forEach(function(o){o.classList.add("disabled");});
-  var d=transData[transIdx];
-  if(i===d.correct){opts[i].classList.add("correct");transOk++;}
-  else{opts[i].classList.add("wrong");opts[d.correct].classList.add("correct");}
-  setTimeout(function(){transIdx++;transRender();},1200);
+
+function restartQuiz(){
+  currentQ=0;score=0;answered=false;
+  document.getElementById('results').style.display='none';
+  document.getElementById('question-container').style.display='block';
+  renderQuestion();
 }
-function transShowResults(){
-  var pct=Math.round(transOk/transData.length*100);
-  document.getElementById("transArea").innerHTML='<div class="results-box"><div class="score-big">'+pct+'%</div><div class="msg">'+transOk+' / '+transData.length+' correctes</div><button class="btn btn-primary" style="margin-top:12px" onclick="transReset()">Recommencer</button></div>';
-  var badge=document.getElementById("transScore");badge.textContent=pct+"%";badge.style.display="inline";
-}
-function transReset(){transIdx=0;transOk=0;transRender();}
-transRender();
+
+renderQuestion();
 </script>
+<script src="mentor.js"></script>
 </body>
 </html>
