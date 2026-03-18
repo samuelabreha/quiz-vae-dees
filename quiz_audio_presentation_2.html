@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Audio — DC1-DC4 (2/2)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;color:#1a1a2e;min-height:100vh}
+.header{background:linear-gradient(135deg,#d97706 0%,#b45309 100%);color:#fff;padding:24px 20px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.header h1{font-size:1.3rem;font-weight:700;margin-bottom:4px}
+.header p{font-size:.85rem;opacity:.9}
+.progress-bar{background:rgba(255,255,255,.2);height:6px;border-radius:3px;margin-top:12px;overflow:hidden}
+.progress-fill{height:100%;background:#fff;border-radius:3px;transition:width .4s ease}
+.stats{display:flex;justify-content:center;gap:20px;margin-top:10px;font-size:.8rem}
+.stats span{background:rgba(255,255,255,.15);padding:4px 12px;border-radius:20px}
+.container{max-width:700px;margin:0 auto;padding:20px}
+.card{background:#fff;border-radius:16px;box-shadow:0 2px 16px rgba(0,0,0,.08);overflow:hidden;margin-bottom:20px;transition:transform .2s}
+.card-header{padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center}
+.card-num{font-size:.75rem;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.question-section{padding:20px}
+.question-section h3{font-size:1.05rem;line-height:1.5;color:#1a1a2e;margin-bottom:12px}
+.options{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.opt{padding:12px 16px;border:2px solid #e5e7eb;border-radius:10px;cursor:pointer;font-size:.9rem;line-height:1.4;transition:all .2s;background:#fafafa}
+.opt:hover{border-color:#d97706;background:#fffbeb}
+.opt.correct{border-color:#059669;background:#d1fae5;font-weight:600}
+.opt.wrong{border-color:#dc2626;background:#fee2e2}
+.opt.disabled{pointer-events:none;opacity:.7}
+.opt.disabled:hover{background:inherit;border-color:#e5e7eb}
+.opt.disabled.correct{opacity:1}
+.answer-section{display:none;padding:0 20px 20px;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.answer-block{margin-bottom:14px;padding:12px 14px;border-radius:10px;border-left:4px solid}
+.answer-block h4{font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.answer-block p{font-size:.88rem;line-height:1.6;color:#333}
+.block-explication{background:#f0fdf4;border-color:#059669}
+.block-explication h4{color:#059669}
+.nav-buttons{display:flex;gap:10px;margin-top:10px}
+.nav-btn{flex:1;padding:12px;border:2px solid #d97706;background:#fff;color:#d97706;font-size:.9rem;font-weight:600;border-radius:10px;cursor:pointer;transition:all .2s}
+.nav-btn:hover{background:#d97706;color:#fff}
+.nav-btn:disabled{border-color:#ccc;color:#ccc;cursor:default;background:#fff}
+.welcome{text-align:center;padding:60px 20px}
+.welcome h2{font-size:1.5rem;margin-bottom:12px;color:#d97706}
+.welcome p{font-size:.95rem;color:#555;line-height:1.6;margin-bottom:8px}
+.start-btn{margin-top:24px;padding:16px 40px;background:linear-gradient(135deg,#d97706,#b45309);color:#fff;border:none;font-size:1.1rem;font-weight:700;border-radius:12px;cursor:pointer;transition:transform .2s}
+.start-btn:hover{transform:scale(1.05)}
+.results{text-align:center;padding:40px 20px}
+.results h2{font-size:1.6rem;color:#d97706;margin-bottom:16px}
+.results .score-big{font-size:3rem;font-weight:800;color:#059669;margin:20px 0}
+.results p{font-size:1rem;color:#555;margin-bottom:8px}
+.hidden{display:none}
+.shuffle-btn{padding:8px 16px;background:#fff;border:2px solid #d97706;color:#d97706;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;margin-top:12px}
+.shuffle-btn:hover{background:#d97706;color:#fff}
+.back-link{display:inline-block;margin-top:20px;padding:8px 16px;font-size:.82rem;color:#999;text-decoration:none;border:1px solid #ddd;border-radius:8px;transition:all .2s}
+.back-link:hover{color:#d97706;border-color:#d97706}
+.banner{background:#d97706;color:#fff;text-align:center;padding:6px 10px;font-size:.75rem;font-weight:700;letter-spacing:2px}
+</style>
+</head>
+<body>
+
+<div class="banner">CPOAPRER</div>
+
+<div class="header">
+  <h1>Quiz Audio &mdash; DC1-DC4 (2/2)</h1>
+  <p>10 questions QCM &bull; R&eacute;f&eacute;rentiel et D&eacute;veloppement</p>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="stats">
+    <span id="statCurrent">0 / 10</span>
+    <span id="statCorrect" style="color:#a7f3d0">&#10003; 0</span>
+    <span id="statWrong" style="color:#fca5a5">&#10007; 0</span>
+  </div>
+</div>
+
+<div class="container">
+  <div id="welcomeScreen" class="welcome">
+    <h2>R&eacute;f&eacute;rentiel DC1-DC4 &amp; D&eacute;veloppement</h2>
+    <p><strong>10 questions</strong> pour m&eacute;moriser les parties 4 et 5 de votre pr&eacute;sentation orale.</p>
+    <p>1. Lisez la question &rarr; 2. Cliquez sur la bonne r&eacute;ponse &rarr; 3. Lisez l'explication</p>
+    <button class="start-btn" onclick="startQuiz()">Commencer le quiz</button>
+    <br>
+    <button class="shuffle-btn" onclick="shuffleAndStart()">M&eacute;langer et commencer</button>
+    <br><a href="audio.html" class="back-link">&larr; Retour &agrave; la page Audio</a>
+  </div>
+
+  <div id="quizArea" class="hidden"></div>
+
+  <div id="resultsScreen" class="hidden results">
+    <h2>R&eacute;sultats</h2>
+    <div class="score-big" id="finalScore"></div>
+    <p id="finalMsg"></p>
+    <button class="start-btn" onclick="resetQuiz()" style="margin-top:20px;font-size:.95rem;padding:12px 30px">Recommencer</button>
+    <button class="shuffle-btn" onclick="shuffleAndStart()">M&eacute;langer et recommencer</button>
+    <br><a href="audio.html" class="back-link">&larr; Retour &agrave; la page Audio</a>
+  </div>
+</div>
+
+<script>
+var questions = [
+  {
+    q:"Combien de domaines de comp\u00e9tences comporte le r\u00e9f\u00e9rentiel du DEES ?",
+    options:["3","4","5","6"],
+    correct:1,
+    explanation:"Le r\u00e9f\u00e9rentiel comporte 4 domaines : DC1, DC2, DC3 et DC4."
+  },
+  {
+    q:"Que d\u00e9signe le DC1 ?",
+    options:["La communication professionnelle","La conception de projet","La relation \u00e9ducative sp\u00e9cialis\u00e9e","Les dynamiques interinstitutionnelles"],
+    correct:2,
+    explanation:"DC1 = la relation \u00e9ducative sp\u00e9cialis\u00e9e : \u00e9tablir une relation de confiance, s\u2019adapter \u00e0 la singularit\u00e9 de chaque personne."
+  },
+  {
+    q:"Que d\u00e9signe le DC2 ?",
+    options:["La relation \u00e9ducative","La conception et conduite de projet \u00e9ducatif sp\u00e9cialis\u00e9","Le travail en r\u00e9seau","La communication professionnelle"],
+    correct:1,
+    explanation:"DC2 = observer, analyser une situation, d\u00e9finir des objectifs et mettre en \u0153uvre des actions \u00e9ducatives adapt\u00e9es."
+  },
+  {
+    q:"Que d\u00e9signe le DC3 ?",
+    options:["Les partenariats et r\u00e9seaux","La relation \u00e9ducative","La communication professionnelle","La conduite de projet"],
+    correct:2,
+    explanation:"DC3 = travailler en \u00e9quipe pluriprofessionnelle, transmettre des informations pertinentes et rendre compte de sa pratique."
+  },
+  {
+    q:"Que d\u00e9signe le DC4 ?",
+    options:["La relation \u00e9ducative sp\u00e9cialis\u00e9e","La conception de projet","La communication professionnelle","Les dynamiques interinstitutionnelles, partenariats et r\u00e9seaux"],
+    correct:3,
+    explanation:"DC4 = s\u2019inscrire dans un cadre institutionnel, mobiliser les partenaires et comprendre les politiques sociales."
+  },
+  {
+    q:"Qu\u2019apportez-vous de plus par rapport \u00e0 ce qui est \u00e9crit dans le livret 2 ?",
+    options:["Une simple r\u00e9p\u00e9tition du livret","Un regard enrichi, plus mature, nourri par la r\u00e9flexion","De nouvelles situations professionnelles","Des corrections d\u2019erreurs du livret"],
+    correct:1,
+    explanation:"Vous apportez un regard enrichi, plus mature, nourri par le temps et la r\u00e9flexion qui a suivi la r\u00e9daction du livret."
+  },
+  {
+    q:"Pour le DC1, sur quoi est fond\u00e9e la relation de confiance que vous avez construite ?",
+    options:["L\u2019autorit\u00e9 et la discipline","Le respect inconditionnel, l\u2019\u00e9coute active et la continuit\u00e9 \u00e9ducative","Les r\u00e9compenses et les sanctions","Les activit\u00e9s ludiques uniquement"],
+    correct:1,
+    explanation:"Votre relation de confiance est fond\u00e9e sur le respect inconditionnel, l\u2019\u00e9coute active et la continuit\u00e9 \u00e9ducative."
+  },
+  {
+    q:"Pour le DC2, qu\u2019est-ce qui vous a permis de d\u00e9finir des objectifs partag\u00e9s ?",
+    options:["Les directives de la hi\u00e9rarchie","L\u2019observation fine du groupe","Les manuels th\u00e9oriques","Les demandes des parents"],
+    correct:1,
+    explanation:"L\u2019observation fine du groupe vous a permis de d\u00e9finir des objectifs partag\u00e9s avec l\u2019\u00e9quipe."
+  },
+  {
+    q:"Pour le DC3, qu\u2019avez-vous renforc\u00e9 depuis le d\u00e9p\u00f4t du livret ?",
+    options:["Vos comp\u00e9tences techniques","Vos transmissions orales et \u00e9crites qui nourrissent la r\u00e9flexion collective","Votre capacit\u00e9 \u00e0 travailler seul","Votre connaissance des lois"],
+    correct:1,
+    explanation:"Vous avez pris du recul sur l\u2019importance de vos transmissions orales et \u00e9crites, et comment elles nourrissent la r\u00e9flexion collective."
+  },
+  {
+    q:"Pour le DC4, avec quels partenaires travaillez-vous ?",
+    options:["Uniquement les familles","Le DIP, la coordination FINC, les familles et les sp\u00e9cialistes du r\u00e9seau","Uniquement l\u2019\u00e9quipe \u00e9ducative","Les autorit\u00e9s judiciaires"],
+    correct:1,
+    explanation:"Vous travaillez en partenariat avec le DIP, la coordination FINC, les familles et les sp\u00e9cialistes du r\u00e9seau."
+  }
+];
+
+var currentIndex = 0, score = 0, wrong = 0, answered = [];
+
+function shuffle(arr) {
+  for (var i = arr.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+  }
+  return arr;
+}
+
+function startQuiz() {
+  currentIndex = 0; score = 0; wrong = 0; answered = [];
+  for (var i = 0; i < questions.length; i++) answered.push(false);
+  document.getElementById("welcomeScreen").classList.add("hidden");
+  document.getElementById("resultsScreen").classList.add("hidden");
+  document.getElementById("quizArea").classList.remove("hidden");
+  renderAll();
+  updateStats();
+}
+
+function shuffleAndStart() {
+  shuffle(questions);
+  startQuiz();
+}
+
+function resetQuiz() {
+  startQuiz();
+}
+
+function renderAll() {
+  var area = document.getElementById("quizArea");
+  area.innerHTML = "";
+  for (var i = 0; i < questions.length; i++) {
+    var q = questions[i];
+    var card = document.createElement("div");
+    card.className = "card";
+    card.id = "card-" + i;
+    var labels = ["A","B","C","D"];
+    var optsHtml = "";
+    for (var j = 0; j < q.options.length; j++) {
+      optsHtml += "<div class=\"opt\" data-q=\"" + i + "\" data-idx=\"" + j + "\" onclick=\"selectAnswer(" + i + "," + j + ")\">" + labels[j] + ") " + q.options[j] + "</div>";
+    }
+    card.innerHTML =
+      "<div class=\"card-header\"><span class=\"card-num\">Question " + (i + 1) + " / " + questions.length + "</span></div>" +
+      "<div class=\"question-section\"><h3>" + q.q + "</h3><div class=\"options\">" + optsHtml + "</div></div>" +
+      "<div class=\"answer-section\" id=\"answer-" + i + "\"><div class=\"answer-block block-explication\"><h4>Explication</h4><p>" + q.explanation + "</p></div></div>";
+    area.appendChild(card);
+  }
+}
+
+function selectAnswer(qi, oi) {
+  if (answered[qi]) return;
+  answered[qi] = true;
+  var q = questions[qi];
+  var opts = document.querySelectorAll("[data-q=\"" + qi + "\"]");
+  for (var k = 0; k < opts.length; k++) {
+    opts[k].classList.add("disabled");
+    if (parseInt(opts[k].getAttribute("data-idx")) === q.correct) {
+      opts[k].classList.add("correct");
+    }
+  }
+  if (oi !== q.correct) {
+    var sel = document.querySelector("[data-q=\"" + qi + "\"][data-idx=\"" + oi + "\"]");
+    if (sel) sel.classList.add("wrong");
+    wrong++;
+  } else {
+    score++;
+  }
+  document.getElementById("answer-" + qi).style.display = "block";
+  updateStats();
+  checkEnd();
+}
+
+function updateStats() {
+  var answeredCount = 0;
+  for (var i = 0; i < answered.length; i++) { if (answered[i]) answeredCount++; }
+  document.getElementById("statCurrent").textContent = answeredCount + " / " + questions.length;
+  document.getElementById("statCorrect").innerHTML = "&#10003; " + score;
+  document.getElementById("statWrong").innerHTML = "&#10007; " + wrong;
+  var pct = questions.length > 0 ? Math.round((answeredCount / questions.length) * 100) : 0;
+  document.getElementById("progressFill").style.width = pct + "%";
+}
+
+function checkEnd() {
+  var all = true;
+  for (var i = 0; i < answered.length; i++) { if (!answered[i]) { all = false; break; } }
+  if (!all) return;
+  setTimeout(function() {
+    var pct = Math.round((score / questions.length) * 100);
+    document.getElementById("quizArea").classList.add("hidden");
+    document.getElementById("resultsScreen").classList.remove("hidden");
+    document.getElementById("finalScore").textContent = pct + "%";
+    var msg = "";
+    if (pct === 100) msg = "Parfait ! Vous ma\u00eetrisez le r\u00e9f\u00e9rentiel DC1-DC4.";
+    else if (pct >= 70) msg = "Bon travail ! Quelques points \u00e0 revoir.";
+    else if (pct >= 50) msg = "Passable. R\u00e9\u00e9coutez les parties 4 et 5 de la pr\u00e9sentation.";
+    else msg = "Insuffisant. Reprenez la pr\u00e9sentation orale pour consolider vos connaissances.";
+    document.getElementById("finalMsg").textContent = score + " / " + questions.length + " \u2014 " + msg;
+  }, 600);
+}
+</script>
+<script src="mentor.js"></script>
+</body>
+</html>

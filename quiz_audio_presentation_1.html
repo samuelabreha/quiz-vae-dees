@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Audio — Pr&eacute;sentation (1/2)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;color:#1a1a2e;min-height:100vh}
+.header{background:linear-gradient(135deg,#d97706 0%,#b45309 100%);color:#fff;padding:24px 20px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.header h1{font-size:1.3rem;font-weight:700;margin-bottom:4px}
+.header p{font-size:.85rem;opacity:.9}
+.progress-bar{background:rgba(255,255,255,.2);height:6px;border-radius:3px;margin-top:12px;overflow:hidden}
+.progress-fill{height:100%;background:#fff;border-radius:3px;transition:width .4s ease}
+.stats{display:flex;justify-content:center;gap:20px;margin-top:10px;font-size:.8rem}
+.stats span{background:rgba(255,255,255,.15);padding:4px 12px;border-radius:20px}
+.container{max-width:700px;margin:0 auto;padding:20px}
+.card{background:#fff;border-radius:16px;box-shadow:0 2px 16px rgba(0,0,0,.08);overflow:hidden;margin-bottom:20px;transition:transform .2s}
+.card-header{padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center}
+.card-num{font-size:.75rem;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.question-section{padding:20px}
+.question-section h3{font-size:1.05rem;line-height:1.5;color:#1a1a2e;margin-bottom:12px}
+.options{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.opt{padding:12px 16px;border:2px solid #e5e7eb;border-radius:10px;cursor:pointer;font-size:.9rem;line-height:1.4;transition:all .2s;background:#fafafa}
+.opt:hover{border-color:#d97706;background:#fffbeb}
+.opt.correct{border-color:#059669;background:#d1fae5;font-weight:600}
+.opt.wrong{border-color:#dc2626;background:#fee2e2}
+.opt.disabled{pointer-events:none;opacity:.7}
+.opt.disabled:hover{background:inherit;border-color:#e5e7eb}
+.opt.disabled.correct{opacity:1}
+.answer-section{display:none;padding:0 20px 20px;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.answer-block{margin-bottom:14px;padding:12px 14px;border-radius:10px;border-left:4px solid}
+.answer-block h4{font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.answer-block p{font-size:.88rem;line-height:1.6;color:#333}
+.block-explication{background:#fffbeb;border-color:#d97706}
+.block-explication h4{color:#d97706}
+.nav-buttons{display:flex;gap:10px;margin-top:10px}
+.nav-btn{flex:1;padding:12px;border:2px solid #d97706;background:#fff;color:#d97706;font-size:.9rem;font-weight:600;border-radius:10px;cursor:pointer;transition:all .2s}
+.nav-btn:hover{background:#d97706;color:#fff}
+.nav-btn:disabled{border-color:#ccc;color:#ccc;cursor:default;background:#fff}
+.welcome{text-align:center;padding:60px 20px}
+.welcome h2{font-size:1.5rem;margin-bottom:12px;color:#d97706}
+.welcome p{font-size:.95rem;color:#555;line-height:1.6;margin-bottom:8px}
+.start-btn{margin-top:24px;padding:16px 40px;background:linear-gradient(135deg,#d97706,#b45309);color:#fff;border:none;font-size:1.1rem;font-weight:700;border-radius:12px;cursor:pointer;transition:transform .2s}
+.start-btn:hover{transform:scale(1.05)}
+.results{text-align:center;padding:40px 20px}
+.results h2{font-size:1.6rem;color:#d97706;margin-bottom:16px}
+.results .score-big{font-size:3rem;font-weight:800;color:#059669;margin:20px 0}
+.results p{font-size:1rem;color:#555;margin-bottom:8px}
+.hidden{display:none}
+.shuffle-btn{padding:8px 16px;background:#fff;border:2px solid #d97706;color:#d97706;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;margin-top:12px}
+.shuffle-btn:hover{background:#d97706;color:#fff}
+.back-link{display:inline-block;margin-top:20px;padding:8px 16px;font-size:.82rem;color:#999;text-decoration:none;border:1px solid #ddd;border-radius:8px;transition:all .2s}
+.back-link:hover{color:#d97706;border-color:#d97706}
+.banner{background:#d97706;color:#fff;text-align:center;padding:6px 12px;font-size:.75rem;font-weight:700;letter-spacing:2px}
+</style>
+</head>
+<body>
+
+<div class="banner">CPOAPRER</div>
+
+<div class="header">
+  <h1>Quiz Audio &mdash; Pr&eacute;sentation (1/2)</h1>
+  <p>10 questions QCM &bull; M&eacute;moriser votre pr&eacute;sentation orale</p>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="stats">
+    <span id="statCurrent">0 / 10</span>
+    <span id="statCorrect" style="color:#a7f3d0">&#10003; 0</span>
+    <span id="statWrong" style="color:#fca5a5">&#10007; 0</span>
+  </div>
+</div>
+
+<div class="container">
+  <div id="welcomeScreen" class="welcome">
+    <h2>Pr&eacute;sentation orale &mdash; Parties 1 &agrave; 3</h2>
+    <p><strong>Pr&eacute;sentation, D&eacute;clic, D&eacute;marche VAE</strong></p>
+    <p>10 questions pour v&eacute;rifier que vous ma&icirc;trisez le contenu de votre introduction orale.</p>
+    <button class="start-btn" onclick="startQuiz()">Commencer le quiz</button>
+    <br>
+    <button class="shuffle-btn" onclick="shuffleAndStart()">M&eacute;langer et commencer</button>
+    <br><a href="audio.html" class="back-link">&larr; Retour &agrave; la page Audio</a>
+  </div>
+
+  <div id="quizArea" class="hidden"></div>
+
+  <div id="resultsScreen" class="hidden results">
+    <h2>R&eacute;sultats</h2>
+    <div class="score-big" id="finalScore"></div>
+    <p id="finalMsg"></p>
+    <button class="start-btn" onclick="resetQuiz()" style="margin-top:20px;font-size:.95rem;padding:12px 30px">Recommencer</button>
+    <button class="shuffle-btn" onclick="shuffleAndStart()">M&eacute;langer et recommencer</button>
+    <br><a href="audio.html" class="back-link">&larr; Retour &agrave; la page Audio</a>
+  </div>
+</div>
+
+<script>
+var questions = [
+  {
+    q:"Comment commencez-vous votre pr\u00e9sentation devant le jury ?",
+    options:[
+      "Je me pr\u00e9sente directement",
+      "Je m\u2019excuse pour l\u2019anonymisation imparfaite du dossier",
+      "Je lis mon livret 2",
+      "Je pr\u00e9sente le r\u00e9f\u00e9rentiel"
+    ],
+    correct:1,
+    explication:"Vous commencez par signaler que certains \u00e9l\u00e9ments n\u2019ont pas \u00e9t\u00e9 totalement anonymis\u00e9s, dans une d\u00e9marche de transparence."
+  },
+  {
+    q:"Quels sont les trois axes de votre parcours professionnel ?",
+    options:[
+      "AIS, moniteur FINC, entra\u00eeneur de basket-ball",
+      "AIS, \u00e9ducateur sp\u00e9cialis\u00e9, assistant social",
+      "Moniteur FINC, enseignant, coach sportif",
+      "Service civil, AIS, \u00e9ducateur"
+    ],
+    correct:0,
+    explication:"Vos trois axes : AIS au DIP \u00e0 Gen\u00e8ve, moniteur socio-culturel FINC en maison de quartier, et entra\u00eeneur de basket-ball."
+  },
+  {
+    q:"Dans quel cadre exercez-vous en tant qu\u2019AIS ?",
+    options:[
+      "La FASe",
+      "Le d\u00e9partement de l\u2019instruction publique \u00e0 Gen\u00e8ve",
+      "Une maison de quartier",
+      "Un centre sportif"
+    ],
+    correct:1,
+    explication:"Vous avez exerc\u00e9 en tant qu\u2019AIS au sein du d\u00e9partement de l\u2019instruction publique \u00e0 Gen\u00e8ve."
+  },
+  {
+    q:"Que signifie FINC dans votre parcours ?",
+    options:[
+      "Un dipl\u00f4me en travail social",
+      "Un dispositif d\u2019accompagnement en maison de quartier via la FASe",
+      "Une formation en int\u00e9gration",
+      "Un r\u00e9seau de partenaires sociaux"
+    ],
+    correct:1,
+    explication:"Les dispositifs FINC s\u2019inscrivent dans le cadre de la FASe, en maison de quartier."
+  },
+  {
+    q:"Quel est votre moment fondateur, votre d\u00e9clic professionnel ?",
+    options:[
+      "Votre premier poste d\u2019AIS",
+      "Votre exp\u00e9rience en maison de quartier",
+      "Votre service civil",
+      "Votre entra\u00eenement de basket"
+    ],
+    correct:2,
+    explication:"C\u2019est lors du service civil que vous avez pris conscience de votre attrait pour l\u2019accompagnement \u00e9ducatif."
+  },
+  {
+    q:"Qu\u2019est-ce qui a confirm\u00e9 votre vocation lors du service civil ?",
+    options:[
+      "Le salaire et les conditions de travail",
+      "Le contact, le quotidien, la relation de confiance dans le temps",
+      "La formation th\u00e9orique re\u00e7ue",
+      "Les recommandations de vos coll\u00e8gues"
+    ],
+    correct:1,
+    explication:"Le contact avec les personnes accompagn\u00e9es, le travail au quotidien, la relation de confiance qui se construit dans le temps."
+  },
+  {
+    q:"En quelle ann\u00e9e avez-vous effectu\u00e9 votre service civil ?",
+    options:[
+      "2010",
+      "2015",
+      "2013",
+      "2018"
+    ],
+    correct:2,
+    explication:"Vous avez effectu\u00e9 deux affectations en 2013 dans des \u00e9coles du canton de Gen\u00e8ve."
+  },
+  {
+    q:"Quel est l\u2019objectif principal de votre d\u00e9marche VAE ?",
+    options:[
+      "Obtenir une augmentation de salaire",
+      "Faire reconna\u00eetre les comp\u00e9tences acquises sur le terrain",
+      "Changer compl\u00e8tement de m\u00e9tier",
+      "Valider un stage"
+    ],
+    correct:1,
+    explication:"Votre objectif est de faire reconna\u00eetre les comp\u00e9tences acquises sur le terrain, \u00e0 travers vos exp\u00e9riences professionnelles."
+  },
+  {
+    q:"Que vous a permis la d\u00e9marche VAE ?",
+    options:[
+      "Uniquement un dipl\u00f4me",
+      "Structurer mes actions, identifier comp\u00e9tences et limites",
+      "Trouver un nouvel emploi",
+      "Apprendre de nouvelles th\u00e9ories"
+    ],
+    correct:1,
+    explication:"La VAE vous a permis de structurer vos actions, identifier vos comp\u00e9tences et limites, et formaliser des situations en lien avec le r\u00e9f\u00e9rentiel."
+  },
+  {
+    q:"Quelle posture adoptez-vous dans vos diff\u00e9rents contextes professionnels ?",
+    options:[
+      "Une posture autoritaire et directive",
+      "Une posture \u00e9ducative adapt\u00e9e au cadre et aux besoins",
+      "Une posture de retrait et d\u2019observation",
+      "Une posture uniquement technique"
+    ],
+    correct:1,
+    explication:"Vous veillez \u00e0 adopter une posture \u00e9ducative adapt\u00e9e, en tenant compte du cadre institutionnel et des besoins."
+  }
+];
+
+var currentIndex = 0, correctCount = 0, wrongCount = 0, answered = [];
+
+function shuffle(arr) {
+  for (var i = arr.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+  }
+  return arr;
+}
+
+function startQuiz() {
+  currentIndex = 0; correctCount = 0; wrongCount = 0; answered = [];
+  document.getElementById("welcomeScreen").classList.add("hidden");
+  document.getElementById("resultsScreen").classList.add("hidden");
+  document.getElementById("quizArea").classList.remove("hidden");
+  renderAll();
+  updateStats();
+}
+
+function shuffleAndStart() {
+  shuffle(questions);
+  startQuiz();
+}
+
+function resetQuiz() {
+  startQuiz();
+}
+
+function renderAll() {
+  var html = "";
+  for (var i = 0; i < questions.length; i++) {
+    var q = questions[i];
+    html += "<div class=\"card\" id=\"card-" + i + "\" style=\"" + (i !== 0 ? "display:none" : "") + "\">";
+    html += "<div class=\"card-header\"><span class=\"card-num\">Question " + (i + 1) + " / " + questions.length + "</span></div>";
+    html += "<div class=\"question-section\"><h3>" + q.q + "</h3>";
+    html += "<div class=\"options\">";
+    var labels = ["A", "B", "C", "D"];
+    for (var j = 0; j < q.options.length; j++) {
+      html += "<div class=\"opt\" id=\"opt-" + i + "-" + j + "\" onclick=\"selectOption(" + i + "," + j + ")\">" + labels[j] + ") " + q.options[j] + "</div>";
+    }
+    html += "</div></div>";
+    html += "<div class=\"answer-section\" id=\"answer-" + i + "\">";
+    html += "<div class=\"answer-block block-explication\"><h4>Explication</h4><p>" + q.explication + "</p></div>";
+    html += "</div>";
+    html += "<div style=\"padding:0 20px 20px\"><div class=\"nav-buttons\">";
+    if (i > 0) {
+      html += "<button class=\"nav-btn\" onclick=\"goTo(" + (i - 1) + ")\">&larr; Pr&eacute;c&eacute;dent</button>";
+    }
+    if (i < questions.length - 1) {
+      html += "<button class=\"nav-btn\" onclick=\"goTo(" + (i + 1) + ")\">Suivant &rarr;</button>";
+    } else {
+      html += "<button class=\"nav-btn\" onclick=\"showResults()\">Voir les r&eacute;sultats</button>";
+    }
+    html += "</div></div></div>";
+  }
+  document.getElementById("quizArea").innerHTML = html;
+}
+
+function selectOption(qi, oi) {
+  if (answered.indexOf(qi) !== -1) return;
+  answered.push(qi);
+  var q = questions[qi];
+  var opts = document.querySelectorAll("#card-" + qi + " .opt");
+  for (var k = 0; k < opts.length; k++) {
+    opts[k].classList.add("disabled");
+    if (k === q.correct) opts[k].classList.add("correct");
+  }
+  if (oi !== q.correct) {
+    document.getElementById("opt-" + qi + "-" + oi).classList.add("wrong");
+    wrongCount++;
+  } else {
+    correctCount++;
+  }
+  document.getElementById("answer-" + qi).style.display = "block";
+  updateStats();
+}
+
+function goTo(idx) {
+  for (var i = 0; i < questions.length; i++) {
+    document.getElementById("card-" + i).style.display = (i === idx) ? "" : "none";
+  }
+  currentIndex = idx;
+  window.scrollTo({top: 0, behavior: "smooth"});
+}
+
+function updateStats() {
+  var total = questions.length;
+  var done = answered.length;
+  document.getElementById("statCurrent").textContent = done + " / " + total;
+  document.getElementById("statCorrect").innerHTML = "&#10003; " + correctCount;
+  document.getElementById("statWrong").innerHTML = "&#10007; " + wrongCount;
+  document.getElementById("progressFill").style.width = Math.round((done / total) * 100) + "%";
+}
+
+function showResults() {
+  document.getElementById("quizArea").classList.add("hidden");
+  document.getElementById("resultsScreen").classList.remove("hidden");
+  var pct = Math.round((correctCount / questions.length) * 100);
+  document.getElementById("finalScore").textContent = pct + "%";
+  var msg = "";
+  if (pct === 100) msg = "Parfait ! Vous ma\u00eetrisez votre pr\u00e9sentation !";
+  else if (pct >= 70) msg = "Bien ! Quelques points \u00e0 revoir.";
+  else if (pct >= 50) msg = "Moyen. R\u00e9\u00e9coutez les parties 1 \u00e0 3 de l\u2019audio.";
+  else msg = "Il faut r\u00e9viser. R\u00e9\u00e9coutez votre pr\u00e9sentation orale.";
+  document.getElementById("finalMsg").textContent = correctCount + " / " + questions.length + " \u2014 " + msg;
+  window.scrollTo({top: 0, behavior: "smooth"});
+}
+</script>
+<script src="mentor.js"></script>
+</body>
+</html>
