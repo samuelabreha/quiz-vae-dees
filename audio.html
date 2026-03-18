@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audio &mdash; Pr&eacute;sentation Orale VAE DEES</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 20px 40px}
+
+/* ===== BARRE DE NAVIGATION ===== */
+.navbar{width:100vw;margin:0 -20px 32px;padding:14px 24px;background:linear-gradient(135deg,#1a1a2e 0%,#2d2d5e 100%);display:flex;justify-content:center;gap:6px;box-shadow:0 4px 20px rgba(0,0,0,.15)}
+.navbar a{text-decoration:none;color:rgba(255,255,255,.7);font-weight:700;font-size:.95rem;padding:10px 28px;border-radius:10px;transition:all .2s;display:flex;align-items:center;gap:8px}
+.navbar a:hover{color:#fff;background:rgba(255,255,255,.1)}
+.navbar a.active{color:#fff;background:rgba(255,255,255,.15);box-shadow:inset 0 -3px 0 #d97706}
+.navbar .nav-icon{font-size:1.1rem}
+
+/* ===== HEADER ===== */
+.page-header{text-align:center;margin:20px 0 28px}
+.page-header h1{font-size:1.8rem;color:#1a1a2e;display:flex;align-items:center;justify-content:center;gap:12px}
+.page-header h1::before{content:"";display:inline-block;width:32px;height:32px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:50%}
+.page-header p{font-size:.95rem;color:#888;margin-top:6px}
+
+/* ===== CONTENU ===== */
+.audio-container{display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap;max-width:920px;width:100%}
+.audio-list{flex:1;min-width:300px;display:flex;flex-direction:column;gap:0}
+.audio-row{display:flex;align-items:center;gap:14px;padding:14px 18px;background:#fff;border-left:4px solid #d97706;position:relative}
+.audio-row:first-child{border-radius:16px 16px 0 0}
+.audio-row:last-child{border-radius:0 0 16px 16px}
+.audio-row:not(:last-child){border-bottom:1px solid #f0f0f0}
+.audio-dot{width:12px;height:12px;border-radius:50%;background:#d97706;flex-shrink:0}
+.audio-dot.no-audio{background:#cbd5e1}
+.audio-info{flex:1;min-width:0}
+.audio-info .audio-label{font-size:.88rem;font-weight:700;color:#1a1a2e;margin-bottom:2px}
+.audio-info .audio-sub{font-size:.72rem;color:#888}
+.audio-player{width:100%;max-width:220px;height:36px}
+.audio-player audio{width:100%;height:36px;border-radius:8px}
+.audio-pending{font-size:.72rem;color:#aaa;font-style:italic}
+
+/* ===== ORGANIGRAMME ===== */
+.organigramme{flex:0 0 280px;background:#fff;border-radius:16px;box-shadow:0 6px 28px rgba(0,0,0,.08);padding:24px 20px;text-align:center}
+.organigramme h3{font-size:.92rem;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;color:#d97706;margin-bottom:18px}
+.org-tree{display:flex;flex-direction:column;align-items:center;gap:0}
+.org-node{position:relative;padding:8px 14px;font-size:.78rem;font-weight:600;color:#1a1a2e;background:#fef3c7;border-radius:8px;border:2px solid #d97706;width:100%;text-align:left;display:flex;align-items:center;gap:8px}
+.org-node.has-audio{background:#fef3c7}
+.org-node.no-audio{background:#f1f5f9;border-color:#cbd5e1;color:#64748b}
+.org-node .org-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.org-node.has-audio .org-dot{background:#d97706}
+.org-node.no-audio .org-dot{background:#cbd5e1}
+.org-line{width:2px;height:10px;background:#d97706;margin:0 auto}
+.org-title{font-size:.95rem;font-weight:900;color:#d97706;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;padding:10px;background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:10px;border:2px solid #d97706}
+
+.footer{margin-top:48px;font-size:.8rem;color:#aaa;text-align:center}
+
+@media(max-width:640px){
+  body{padding:0 12px 24px}
+  .navbar a{padding:8px 16px;font-size:.85rem}
+  .audio-container{flex-direction:column-reverse}
+  .organigramme{flex:none;width:100%}
+  .audio-list{width:100%}
+  .audio-player{max-width:100%}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="index.html"><span class="nav-icon">&#128221;</span> Quiz</a>
+  <a href="audio.html" class="active"><span class="nav-icon">&#127911;</span> Audio</a>
+</nav>
+
+<div class="page-header">
+  <h1>Audio &mdash; Pr&eacute;sentation Orale</h1>
+  <p>&Eacute;coutez et r&eacute;visez chaque partie de votre pr&eacute;sentation</p>
+</div>
+
+<div class="audio-container">
+
+  <!-- GAUCHE : liste des audios -->
+  <div class="audio-list">
+
+    <div class="audio-row">
+      <span class="audio-dot"></span>
+      <div class="audio-info">
+        <div class="audio-label">1. Pr&eacute;sentation</div>
+        <div class="audio-sub">Bonjour + parcours &bull; &asymp; 30 sec</div>
+      </div>
+      <div class="audio-player"><audio controls preload="none" src="audio/01) PRESENTATION.wav"></audio></div>
+    </div>
+
+    <div class="audio-row">
+      <span class="audio-dot"></span>
+      <div class="audio-info">
+        <div class="audio-label">2. D&eacute;clic professionnel</div>
+        <div class="audio-sub">Service civil &bull; &asymp; 30 sec</div>
+      </div>
+      <div class="audio-player"><audio controls preload="none" src="audio/02) D%C3%89CLIC PROFESSIONNEL.wav"></audio></div>
+    </div>
+
+    <div class="audio-row">
+      <span class="audio-dot"></span>
+      <div class="audio-info">
+        <div class="audio-label">3. D&eacute;marche VAE + Service civil</div>
+        <div class="audio-sub">Parcours VAE &bull; &asymp; 30 sec</div>
+      </div>
+      <div class="audio-player"><audio controls preload="none" src="audio/03) D%C3%89MARCHE VAE %2B SERVICE CIVIL.wav"></audio></div>
+    </div>
+
+    <div class="audio-row">
+      <span class="audio-dot"></span>
+      <div class="audio-info">
+        <div class="audio-label">4. Plan + D&eacute;veloppement DC1-DC4</div>
+        <div class="audio-sub">R&eacute;f&eacute;rentiel + annonce du plan &bull; &asymp; 2 min 15</div>
+      </div>
+      <div class="audio-player"><audio controls preload="none" src="audio/04) PLAN %2B D%C3%89VELOPPEMENT DC1-DC4.wav"></audio></div>
+    </div>
+
+    <div class="audio-row">
+      <span class="audio-dot no-audio"></span>
+      <div class="audio-info">
+        <div class="audio-label" style="color:#94a3b8">5. DC1 &mdash; Relation &eacute;ducative</div>
+      </div>
+      <span class="audio-pending">&Agrave; enregistrer</span>
+    </div>
+
+    <div class="audio-row">
+      <span class="audio-dot no-audio"></span>
+      <div class="audio-info">
+        <div class="audio-label" style="color:#94a3b8">6. DC2 &mdash; Conception et conduite de projet</div>
+      </div>
+      <span class="audio-pending">&Agrave; enregistrer</span>
+    </div>
+
+    <div class="audio-row">
+      <span class="audio-dot no-audio"></span>
+      <div class="audio-info">
+        <div class="audio-label" style="color:#94a3b8">7. DC3 &mdash; Communication professionnelle</div>
+      </div>
+      <span class="audio-pending">&Agrave; enregistrer</span>
+    </div>
+
+    <div class="audio-row">
+      <span class="audio-dot no-audio"></span>
+      <div class="audio-info">
+        <div class="audio-label" style="color:#94a3b8">8. DC4 &mdash; Dynamiques interinstitutionnelles</div>
+      </div>
+      <span class="audio-pending">&Agrave; enregistrer</span>
+    </div>
+
+    <div class="audio-row">
+      <span class="audio-dot"></span>
+      <div class="audio-info">
+        <div class="audio-label">9. Remerciement</div>
+        <div class="audio-sub">Conclusion &bull; &asymp; 5 sec</div>
+      </div>
+      <div class="audio-player"><audio controls preload="none" src="audio/05) REMERCIEMENT.wav"></audio></div>
+    </div>
+
+  </div>
+
+  <!-- DROITE : organigramme -->
+  <div class="organigramme">
+    <h3>Structure</h3>
+    <div class="org-title">Pr&eacute;sentation Orale</div>
+    <div class="org-tree">
+      <div class="org-line"></div>
+      <div class="org-node has-audio"><span class="org-dot"></span>Pr&eacute;sentation.wav</div>
+      <div class="org-line"></div>
+      <div class="org-node has-audio"><span class="org-dot"></span>D&eacute;clic professionnel.wav</div>
+      <div class="org-line"></div>
+      <div class="org-node has-audio"><span class="org-dot"></span>D&eacute;marche VAE + Service civil.wav</div>
+      <div class="org-line"></div>
+      <div class="org-node has-audio"><span class="org-dot"></span>Plan + DC1-DC4.wav</div>
+      <div class="org-line"></div>
+      <div class="org-node no-audio"><span class="org-dot"></span>DC1 &mdash; Relation &eacute;ducative</div>
+      <div class="org-line" style="background:#cbd5e1"></div>
+      <div class="org-node no-audio"><span class="org-dot"></span>DC2 &mdash; Conception de projet</div>
+      <div class="org-line" style="background:#cbd5e1"></div>
+      <div class="org-node no-audio"><span class="org-dot"></span>DC3 &mdash; Communication pro.</div>
+      <div class="org-line" style="background:#cbd5e1"></div>
+      <div class="org-node no-audio"><span class="org-dot"></span>DC4 &mdash; Dynamiques interinst.</div>
+      <div class="org-line"></div>
+      <div class="org-node has-audio"><span class="org-dot"></span>Remerciement.wav</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">Oral VAE DEES &mdash; 26 mars 2026</div>
+
+</body>
+</html>
