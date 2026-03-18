@@ -92,6 +92,7 @@ h1{font-size:1.8rem;color:#1a1a2e;margin:12px 0 6px;text-align:center}
 <button onclick="selectQuiz(3)">&#128736; Posture &amp; DC<span class="tab-score" id="tab-score-3"></span></button>
 <button onclick="selectQuiz(4)">&#127891; Simulation jury<span class="tab-score" id="tab-score-4"></span></button>
 <button onclick="selectQuiz(5)">&#128270; Livret &amp; Jury<span class="tab-score" id="tab-score-5"></span></button>
+<button onclick="selectQuiz(6)">&#9888; Pi&egrave;ges jury<span class="tab-score" id="tab-score-6"></span></button>
 </div>
 
 <div class="quiz-area" id="quiz-area">
@@ -445,11 +446,63 @@ explain:"Le jury distingue inclusion r&eacute;elle (participation, reconnaissanc
 opts:["Je transmettais les informations par l'interm&eacute;diaire de la coordinatrice","J'ai construit un lien de confiance avec les parents par des &eacute;changes quotidiens lors des accueils, en valorisant les r&eacute;ussites de l'enfant et en partageant les difficult&eacute;s. Cette transparence assure la continuit&eacute; &eacute;ducative entre la structure et le foyer","Les familles n'&eacute;taient pas impliqu&eacute;es dans mon dispositif","J'envoyais un rapport mensuel &eacute;crit"],
 correct:1,
 explain:"DC4 + loi 2002-2 : place des familles. Le jury veut : &eacute;changes r&eacute;guliers, transparence, valorisation, continuit&eacute; &eacute;ducative. Pas une communication descendante."}
+],
+
+[
+{q:"&laquo; Comment savez-vous quand vous retirer de l'accompagnement ? &raquo;",
+opts:["Quand l'enfant me dit qu'il n'a plus besoin de moi","Le retrait s'appuie sur des indicateurs observables : l'enfant initie des interactions seul et g&egrave;re les transitions sans soutien. C'est un processus progressif &eacute;valu&eacute; en &eacute;quipe, pas une d&eacute;cision intuitive","Quand la direction me le demande","Quand l'ann&eacute;e scolaire se termine"],
+correct:1,
+explain:"Le jury teste votre capacit&eacute; d'analyse. Cl&eacute; : indicateurs observables + d&eacute;cision collective, pas du ressenti."},
+
+{q:"&laquo; Vous dites agir par l'observation fine. Donnez un d&eacute;clencheur concret que vous avez rep&eacute;r&eacute;. &raquo;",
+opts:["Je voyais que l'enfant n'allait pas bien","Un changement de rythme respiratoire ou un retrait du regard signalent une surcharge sensorielle imminente. Rep&eacute;rer ces signaux pr&eacute;curseurs permet d'intervenir avant la crise par un ajustement du cadre","Il pleurait souvent","Je le sentais tendu"],
+correct:1,
+explain:"Observation fine = signaux non verbaux pr&eacute;cis (regard, respiration, posture). Le jury veut du concret, pas du vague."},
+
+{q:"&laquo; Comment g&eacute;rez-vous vos propres &eacute;motions face &agrave; la violence d'un enfant ? &raquo;",
+opts:["Je reste calme naturellement","Ma stabilit&eacute; &eacute;motionnelle est un outil professionnel : elle sert de rep&egrave;re implicite &agrave; l'enfant. Je m'appuie sur la r&eacute;gulation en &eacute;quipe et les temps d'analyse de pratique pour prendre du recul","Je demande &agrave; un coll&egrave;gue de g&eacute;rer &agrave; ma place","Je mets l'enfant &agrave; l'&eacute;cart le temps de me calmer"],
+correct:1,
+explain:"Concept cl&eacute; : r&eacute;gulation &eacute;motionnelle comme outil pro + analyse de pratique. Pas &laquo; je suis calme &raquo; mais &laquo; je travaille ma posture &raquo;."},
+
+{q:"&laquo; L'approche par les ressources : que faites-vous quand &ccedil;a ne marche pas ? &raquo;",
+opts:["Je change de m&eacute;thode compl&egrave;tement","Je r&eacute;&eacute;value les objectifs en &eacute;quipe et j'ajuste les micro-&eacute;tapes. L'absence de progr&egrave;s visible n'est pas un &eacute;chec mais un indicateur qui r&eacute;oriente l'intervention","J'insiste avec la m&ecirc;me approche","Je signale que l'enfant n'est pas adapt&eacute; au dispositif"],
+correct:1,
+explain:"Posture r&eacute;flexive : l'&eacute;chec n'existe pas, il y a des indicateurs. R&eacute;&eacute;valuation + ajustement + &eacute;quipe."},
+
+{q:"&laquo; Quels indicateurs mesurables utilisez-vous pour &eacute;valuer votre action ? &raquo;",
+opts:["Je sens que l'enfant va mieux","Fr&eacute;quence des interactions initi&eacute;es par l'enfant, dur&eacute;e de participation aux activit&eacute;s collectives, nombre de conflits n&eacute;cessitant une m&eacute;diation adulte. Ces donn&eacute;es sont consign&eacute;es dans les grilles d'observation et crois&eacute;es en &eacute;quipe","Les retours positifs des parents","L'enfant sourit plus souvent"],
+correct:1,
+explain:"Le jury veut des indicateurs quantifiables, pas des impressions. Fr&eacute;quence, dur&eacute;e, nombre = langage professionnel."},
+
+{q:"&laquo; Quel cadre th&eacute;orique soutient votre pratique avec un enfant impulsif ? &raquo;",
+opts:["Mon exp&eacute;rience de terrain","L'approche comportementale (renforcement positif, ABA) et la zone proximale de d&eacute;veloppement de Vygotsky : je fixe des micro-objectifs atteignables qui soutiennent la motivation et l'estime de soi","La psychanalyse","Je n'utilise pas de th&eacute;orie, je m'adapte"],
+correct:1,
+explain:"Le jury teste vos r&eacute;f&eacute;rences th&eacute;oriques. Cl&eacute;s : ABA (renforcement), Vygotsky (ZPD), Bowlby (attachement). Nommez-les."},
+
+{q:"&laquo; Racontez une situation o&ugrave; vous avez arbitr&eacute; entre confidentialit&eacute; et protection. &raquo;",
+opts:["Je n'ai jamais eu ce dilemme","Le secret professionnel n'est pas absolu : l'article 226-14 du code p&eacute;nal autorise la lev&eacute;e du secret en cas de danger pour un mineur. Je transmets en &eacute;quipe les informations n&eacute;cessaires &agrave; la protection, en restant transparent avec l'enfant","Je garde toujours le secret pour la confiance","Je pr&eacute;viens directement les parents"],
+correct:1,
+explain:"Argument l&eacute;gal : article 226-14 (lev&eacute;e du secret). Argument &eacute;ducatif : transparence + protection. Pas un choix binaire."},
+
+{q:"&laquo; Votre autonomie a-t-elle atteint ses limites ? Quand ? &raquo;",
+opts:["Non, j'ai toujours su g&eacute;rer seul","Oui, face &agrave; des situations de souffrance familiale d&eacute;passant mon champ de comp&eacute;tences. La limite de l'autonomie marque le d&eacute;but du travail en r&eacute;seau : je transmets et j'oriente vers les professionnels comp&eacute;tents","Oui, quand j'&eacute;tais fatigu&eacute;","Oui, quand la direction n'&eacute;tait pas d'accord avec moi"],
+correct:1,
+explain:"Nommer ses limites = force professionnelle. Limite = relais vers le r&eacute;seau (DC4). Le jury valorise la lucidit&eacute;, pas l'autosuffisance."},
+
+{q:"&laquo; Pourquoi avoir choisi le basketball comme 3e exp&eacute;rience si elle est peu d&eacute;velopp&eacute;e ? &raquo;",
+opts:["Je n'avais pas d'autre exp&eacute;rience","Le sport collectif mobilise des comp&eacute;tences transversales d'ES : gestion de groupe h&eacute;t&eacute;rog&egrave;ne, adaptation des r&egrave;gles aux capacit&eacute;s de chacun, inclusion par le collectif. C'est un contexte diff&eacute;rent qui &eacute;largit mon champ d'analyse &eacute;ducative","J'aime le basketball","On m'a conseill&eacute; de mettre trois exp&eacute;riences"],
+correct:1,
+explain:"Le jury attend : transversalit&eacute; des comp&eacute;tences + compl&eacute;mentarit&eacute; des contextes. Pas une justification d&eacute;fensive."},
+
+{q:"&laquo; Comment savez-vous que c'est votre action et pas juste le temps qui passe ? &raquo;",
+opts:["Je ne peux pas le prouver","Le croisement des observations d'&eacute;quipe, des retours familiaux et des grilles de suivi permet d'identifier les leviers sp&eacute;cifiques de l'&eacute;volution. Un progr&egrave;s li&eacute; au temps serait lin&eacute;aire, alors que les avanc&eacute;es observ&eacute;es correspondent aux ajustements &eacute;ducatifs mis en place","L'enfant me l'a dit","Les parents confirment que c'est gr&acirc;ce &agrave; moi"],
+correct:1,
+explain:"Question pi&egrave;ge classique. R&eacute;ponse : croisement des sources + corr&eacute;lation ajustements/progr&egrave;s. Posture d'analyse, pas d'autosatisfaction."}
 ]
 ];
 
 var currentQuiz=0,currentQ=0,score=0,answered=false;
-var scores=[null,null,null,null,null,null];
+var scores=[null,null,null,null,null,null,null];
 
 function selectQuiz(idx){
   currentQuiz=idx;currentQ=0;score=0;answered=false;
@@ -465,8 +518,8 @@ function renderQuestion(){
   var total=quiz.length;
   document.getElementById('progress-fill').style.width=((currentQ)/total*100)+'%';
   document.getElementById('progress-text').textContent=(currentQ+1)+' / '+total;
-  var colors=['#d97706','#2563eb','#059669','#7c3aed','#dc2626','#0891b2'];
-  var labels=['Jury','Livret 2','Lois','Posture','Simulation','Livret &amp; Jury'];
+  var colors=['#d97706','#2563eb','#059669','#7c3aed','#dc2626','#0891b2','#b91c1c'];
+  var labels=['Jury','Livret 2','Lois','Posture','Simulation','Livret &amp; Jury','Pi&egrave;ges jury'];
   document.getElementById('q-badge').style.background=colors[currentQuiz];
   document.getElementById('q-badge').innerHTML=labels[currentQuiz]+' &bull; Q'+(currentQ+1);
   document.getElementById('q-text').innerHTML=q.q;
