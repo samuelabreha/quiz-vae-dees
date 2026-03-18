@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R&eacute;vision Active &mdash; Oral VAE DEES</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 20px 40px}
+
+.navbar{width:100vw;margin:0 -20px 24px;padding:14px 24px;background:linear-gradient(135deg,#1a1a2e 0%,#2d2d5e 100%);display:flex;justify-content:center;gap:6px;box-shadow:0 4px 20px rgba(0,0,0,.15)}
+.navbar a{text-decoration:none;color:rgba(255,255,255,.7);font-weight:700;font-size:.95rem;padding:10px 28px;border-radius:10px;transition:all .2s;display:flex;align-items:center;gap:8px}
+.navbar a:hover{color:#fff;background:rgba(255,255,255,.1)}
+.navbar a.active{color:#fff;background:rgba(255,255,255,.15);box-shadow:inset 0 -3px 0 #d97706}
+.navbar .nav-icon{font-size:1.1rem}
+
+.cpoaprer{background:linear-gradient(135deg,#0d9488 0%,#0f766e 100%);color:#fff;border-radius:14px;padding:14px 18px;margin-bottom:14px;box-shadow:0 4px 16px rgba(13,148,136,.25);max-width:920px;width:100%}
+.cpoaprer .title{font-size:.75rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;opacity:.85}
+.cpoaprer .steps{display:flex;flex-wrap:wrap;gap:4px 3px;align-items:center;font-size:.82rem;font-weight:700}
+.cpoaprer .steps span.step{background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px}
+.cpoaprer .steps span.arrow{opacity:.6}
+
+h1{font-size:1.8rem;color:#1a1a2e;margin:12px 0 6px;text-align:center}
+.sub{font-size:.95rem;color:#666;margin-bottom:16px;text-align:center}
+
+.global-progress{max-width:920px;width:100%;background:#fff;border-radius:14px;padding:16px 20px;box-shadow:0 4px 16px rgba(0,0,0,.06);margin-bottom:24px}
+.global-progress .bar-bg{height:10px;background:#e5e7eb;border-radius:5px;overflow:hidden;margin-top:8px}
+.global-progress .bar-fill{height:100%;background:linear-gradient(90deg,#d97706,#f59e0b);border-radius:5px;transition:width .4s}
+.global-progress .label{font-size:.9rem;font-weight:700;color:#1a1a2e}
+.timer-box{float:right;font-size:.85rem;color:#d97706;font-weight:700}
+
+.phase{max-width:920px;width:100%;margin-bottom:28px}
+.phase-header{padding:18px 22px;border-radius:14px 14px 0 0;color:#fff;font-weight:800;font-size:1.1rem;display:flex;align-items:center;gap:10px}
+.phase-header .emoji{font-size:1.4rem}
+.phase-body{background:#fff;border-radius:0 0 14px 14px;box-shadow:0 4px 16px rgba(0,0,0,.06);overflow:hidden}
+
+.step{border-bottom:1px solid #f0f2f5}
+.step:last-child{border-bottom:none}
+.step-header{display:flex;align-items:center;gap:12px;padding:16px 20px;cursor:pointer;transition:background .2s;user-select:none}
+.step-header:hover{background:#fafafa}
+.step-header input[type=checkbox]{width:20px;height:20px;accent-color:#d97706;cursor:pointer;flex-shrink:0}
+.step-header .step-title{font-weight:700;font-size:.95rem;color:#1a1a2e;flex:1}
+.step-header .step-badge{font-size:.75rem;color:#fff;padding:3px 10px;border-radius:12px;font-weight:700}
+.step-header .chevron{font-size:1.2rem;color:#aaa;transition:transform .3s}
+.step.open .chevron{transform:rotate(90deg)}
+
+.step-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.step.open .step-content{max-height:5000px}
+
+.exercise{padding:20px;background:#fafbfc;border-top:1px solid #eee}
+.exercise h3{font-size:1rem;color:#1a1a2e;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.exercise .score-badge{font-size:.8rem;background:#059669;color:#fff;padding:2px 10px;border-radius:10px;font-weight:700}
+
+/* QCM */
+.qcm-card{background:#fff;border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.05);display:none}
+.qcm-card.active{display:block}
+.qcm-q{font-weight:700;font-size:.95rem;margin-bottom:12px;color:#1a1a2e;line-height:1.5}
+.qcm-opts{display:flex;flex-direction:column;gap:8px}
+.qcm-opt{padding:12px 16px;border:2px solid #e5e7eb;border-radius:10px;cursor:pointer;font-size:.9rem;transition:all .2s;background:#fff}
+.qcm-opt:hover{border-color:#d97706;background:#fffbeb}
+.qcm-opt.correct{border-color:#059669;background:#ecfdf5;font-weight:700}
+.qcm-opt.wrong{border-color:#dc2626;background:#fef2f2}
+.qcm-opt.disabled{pointer-events:none;opacity:.7}
+.qcm-expl{margin-top:12px;padding:12px;background:#f0fdf4;border-left:4px solid #059669;border-radius:8px;font-size:.85rem;color:#065f46;display:none}
+.qcm-nav{display:flex;justify-content:space-between;margin-top:12px}
+.qcm-progress{text-align:center;font-size:.85rem;color:#888;margin-bottom:10px;font-weight:600}
+
+/* Fill blanks */
+.fill-card{background:#fff;border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.fill-sentence{font-size:.95rem;line-height:1.8;color:#1a1a2e;margin-bottom:8px}
+.fill-sentence input{border:2px solid #e5e7eb;border-radius:8px;padding:4px 10px;font-size:.9rem;width:140px;text-align:center;transition:border-color .3s}
+.fill-sentence input.correct{border-color:#059669;background:#ecfdf5}
+.fill-sentence input.wrong{border-color:#dc2626;background:#fef2f2}
+.fill-hint{font-size:.8rem;color:#888;font-style:italic;margin-bottom:6px}
+
+/* Match */
+.match-area{display:flex;gap:20px;flex-wrap:wrap}
+.match-terms{flex:1;min-width:200px;display:flex;flex-direction:column;gap:8px}
+.match-term{padding:10px 14px;background:#fff;border:2px solid #e5e7eb;border-radius:10px;cursor:pointer;font-size:.85rem;transition:all .2s;text-align:center}
+.match-term:hover{border-color:#d97706}
+.match-term.selected{border-color:#d97706;background:#fffbeb;font-weight:700}
+.match-term.matched{border-color:#059669;background:#ecfdf5;pointer-events:none;opacity:.7}
+.match-term.wrong-shake{animation:shake .4s}
+.match-bins{display:flex;flex-direction:column;gap:8px;flex:0 0 120px}
+.match-bin{padding:14px;border:2px dashed #d1d5db;border-radius:12px;text-align:center;font-weight:800;font-size:.9rem;cursor:pointer;transition:all .2s;min-height:50px}
+.match-bin:hover{border-color:#d97706;background:#fffbeb}
+.match-bin.dc1{color:#2563eb}.match-bin.dc2{color:#059669}.match-bin.dc3{color:#d97706}.match-bin.dc4{color:#7c3aed}
+.match-bin .count{font-size:.75rem;font-weight:400;color:#888;display:block;margin-top:2px}
+
+/* DC identification */
+.dc-card{background:#fff;border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.05);display:none}
+.dc-card.active{display:block}
+.dc-situation{font-size:.95rem;line-height:1.6;color:#1a1a2e;margin-bottom:14px;padding:12px;background:#f8fafc;border-radius:8px;border-left:4px solid #d97706}
+.dc-opts{display:flex;gap:8px;flex-wrap:wrap}
+.dc-opt{flex:1;min-width:100px;padding:12px;border:2px solid #e5e7eb;border-radius:10px;text-align:center;font-weight:800;font-size:.95rem;cursor:pointer;transition:all .2s}
+.dc-opt:hover{border-color:#d97706}
+.dc-opt.correct{border-color:#059669;background:#ecfdf5}
+.dc-opt.wrong{border-color:#dc2626;background:#fef2f2}
+.dc-opt.disabled{pointer-events:none;opacity:.6}
+
+/* Transitions */
+.trans-card{background:#fff;border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.05);display:none}
+.trans-card.active{display:block}
+.trans-start{font-size:.95rem;color:#1a1a2e;font-weight:700;margin-bottom:12px;line-height:1.5}
+
+/* Buttons */
+.btn{padding:10px 22px;border:none;border-radius:10px;font-weight:700;font-size:.9rem;cursor:pointer;transition:all .2s}
+.btn-primary{background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(217,119,6,.3)}
+.btn-secondary{background:#e5e7eb;color:#1a1a2e}
+.btn-secondary:hover{background:#d1d5db}
+.btn-sm{padding:6px 14px;font-size:.8rem}
+
+.results-box{text-align:center;padding:20px;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.results-box .score-big{font-size:2.5rem;font-weight:900;color:#d97706}
+.results-box .msg{font-size:.95rem;color:#555;margin:8px 0 14px}
+
+.link-audio{display:inline-flex;align-items:center;gap:6px;color:#d97706;font-weight:700;text-decoration:none;font-size:.9rem;margin-top:8px}
+.link-audio:hover{text-decoration:underline}
+
+.footer{margin-top:40px;font-size:.8rem;color:#aaa;text-align:center}
+
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+@media(max-width:768px){
+  .navbar a{padding:10px 18px;font-size:.88rem}
+  .match-area{flex-direction:column}
+  .match-bins{flex-direction:row;flex-wrap:wrap}
+  .match-bin{flex:1;min-width:60px;padding:10px}
+}
+@media(max-width:640px){
+  body{padding:0 10px 24px}
+  .navbar a{padding:8px 12px;font-size:.82rem}
+  h1{font-size:1.4rem}
+  .phase-header{font-size:1rem;padding:14px 16px}
+  .step-header{padding:12px 14px}
+  .exercise{padding:14px}
+  .dc-opts{flex-direction:column}
+  .dc-opt{min-width:auto}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="index.html"><span class="nav-icon">&#128203;</span> Quiz</a>
+  <a href="audio.html"><span class="nav-icon">&#127925;</span> Audio</a>
+  <a href="revision.html" class="active"><span class="nav-icon">&#128640;</span> R&eacute;vision</a>
+</nav>
+
+<div class="cpoaprer">
+  <div class="title">M&eacute;thode universelle (CPOAPRER)</div>
+  <div class="steps">
+    <span class="step">Contexte</span><span class="arrow">&rarr;</span>
+    <span class="step">Probl&eacute;matique</span><span class="arrow">&rarr;</span>
+    <span class="step">Objectifs</span><span class="arrow">&rarr;</span>
+    <span class="step">Actions</span><span class="arrow">&rarr;</span>
+    <span class="step">Posture</span><span class="arrow">&rarr;</span>
+    <span class="step">R&eacute;seau</span><span class="arrow">&rarr;</span>
+    <span class="step">&Eacute;valuation</span><span class="arrow">&rarr;</span>
+    <span class="step">R&eacute;f&eacute;rentiel</span>
+  </div>
+</div>
+
+<h1>&#128170; R&eacute;vision Active</h1>
+<p class="sub">Exercices interactifs pour ancrer ta pr&eacute;sentation orale</p>
+
+<div class="global-progress" id="globalProgress">
+  <span class="label" id="progressLabel">0 / 9 &eacute;tapes</span>
+  <span class="timer-box" id="sessionTimer">00:00</span>
+  <div class="bar-bg"><div class="bar-fill" id="progressBar" style="width:0%"></div></div>
+</div>
+
+<!-- ==================== PHASE 1 ==================== -->
+<div class="phase">
+  <div class="phase-header" style="background:linear-gradient(135deg,#d97706,#f59e0b)">
+    <span class="emoji">&#127769;</span> Phase 1 : Mercredi soir &mdash; L'Ancrage (20h &ndash; 01h)
+  </div>
+  <div class="phase-body">
+
+    <!-- Step 1 -->
+    <div class="step" data-step="1">
+      <div class="step-header" onclick="toggleStep(this)">
+        <input type="checkbox" onclick="event.stopPropagation();saveCheck(1,this.checked)">
+        <span class="step-title">1. Lire &agrave; voix haute (3x) + &Eacute;couter les audios</span>
+        <span class="step-badge" style="background:#d97706">20h &ndash; 21h</span>
+        <span class="chevron">&#9654;</span>
+      </div>
+      <div class="step-content">
+        <div class="exercise">
+          <h3>&#127911; &Eacute;coute tes enregistrements</h3>
+          <p style="font-size:.9rem;color:#555;margin-bottom:12px">Lis le texte &agrave; voix haute en m&ecirc;me temps que l'audio pour caler ton rythme.</p>
+          <a href="audio.html" class="link-audio">&#127925; Aller &agrave; la page Audio &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: QCM Eclair -->
+    <div class="step" data-step="2">
+      <div class="step-header" onclick="toggleStep(this)">
+        <input type="checkbox" onclick="event.stopPropagation();saveCheck(2,this.checked)">
+        <span class="step-title">2. Quiz &Eacute;clair &mdash; 10 QCM sur ta pr&eacute;sentation</span>
+        <span class="step-badge" style="background:#d97706">21h &ndash; 21h30</span>
+        <span class="chevron">&#9654;</span>
+      </div>
+      <div class="step-content">
+        <div class="exercise" id="exQcm">
+          <h3>&#9889; QCM &Eacute;clair <span class="score-badge" id="qcmScore" style="display:none"></span></h3>
+          <div id="qcmArea"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Mots-piliers -->
+    <div class="step" data-step="3">
+      <div class="step-header" onclick="toggleStep(this)">
+        <input type="checkbox" onclick="event.stopPropagation();saveCheck(3,this.checked)">
+        <span class="step-title">3. Mots-Piliers &mdash; Associe chaque terme au bon DC</span>
+        <span class="step-badge" style="background:#d97706">21h30 &ndash; 21h45</span>
+        <span class="chevron">&#9654;</span>
+      </div>
+      <div class="step-content">
+        <div class="exercise" id="exMatch">
+          <h3>&#128279; Mots-Piliers &rarr; DC <span class="score-badge" id="matchScore" style="display:none"></span></h3>
+          <p style="font-size:.85rem;color:#666;margin-bottom:14px">Tape un terme, puis tape le DC correspondant.</p>
+          <div class="match-area" id="matchArea"></div>
+          <div style="margin-top:14px;text-align:center">
+            <button class="btn btn-primary btn-sm" onclick="matchReset()">Recommencer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4: Identification DC -->
+    <div class="step" data-step="4">
+      <div class="step-header" onclick="toggleStep(this)">
+        <input type="checkbox" onclick="event.stopPropagation();saveCheck(4,this.checked)">
+        <span class="step-title">4. Identification DC &mdash; Quelle situation = quel DC ?</span>
+        <span class="step-badge" style="background:#d97706">22h15 &ndash; 23h</span>
+        <span class="chevron">&#9654;</span>
+      </div>
+      <div class="step-content">
+        <div class="exercise" id="exDc">
+          <h3>&#127919; Identification DC <span class="score-badge" id="dcScore" style="display:none"></span></h3>
+          <div id="dcArea"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 5: Simulation -->
+    <div class="step" data-step="5">
+      <div class="step-header" onclick="toggleStep(this)">
+        <input type="checkbox" onclick="event.stopPropagation();saveCheck(5,this.checked)">
+        <span class="step-title">5. Simulation Grand Oral &mdash; Debout, chrono 8 min</span>
+        <span class="step-badge" style="background:#d97706">23h30 &ndash; 00h30</span>
+        <span class="chevron">&#9654;</span>
+      </div>
+      <div class="step-content">
+        <div class="exercise">
+          <h3>&#127908; Simulation chrono</h3>
+          <p style="font-size:.9rem;color:#555;margin-bottom:14px">L&egrave;ve-toi, mets le chrono et r&eacute;cite face &agrave; une chaise vide. Objectif : 4 min 50.</p>
+          <div style="text-align:center;margin:16px 0">
+            <div id="simTimer" style="font-size:2.5rem;font-weight:900;color:#d97706">00:00</div>
+            <div style="margin-top:10px;display:flex;gap:8px;justify-content:center">
+              <button class="btn btn-primary" onclick="simStart()">D&eacute;marrer</button>
+              <button class="btn btn-secondary" onclick="simStop()">Arr&ecirc;ter</button>
+              <button class="btn btn-secondary" onclick="simReset()">Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== PHASE 2 ==================== -->
+<div class="phase">
+  <div class="phase-header" style="background:linear-gradient(135deg,#059669,#10b981)">
+    <span class="emoji">&#9728;&#65039;</span> Phase 2 : Jeudi matin &mdash; La Ma&icirc;trise (08h &ndash; 12h)
+  </div>
+  <div class="phase-body">
+
+    <!-- Step 6 -->
+    <div class="step" data-step="6">
+      <div class="step-header" onclick="toggleStep(this)">
+        <input type="checkbox" onclick="event.stopPropagation();saveCheck(6,this.checked)">
+        <span class="step-title">6. &Eacute;coute passive des audios (petit-d&eacute;j, douche)</span>
+        <span class="step-badge" style="background:#059669">08h &ndash; 09h30</span>
+        <span class="chevron">&#9654;</span>
+      </div>
+      <div class="step-content">
+        <div class="exercise">
+          <h3>&#127911; &Eacute;coute passive</h3>
+          <p style="font-size:.9rem;color:#555;margin-bottom:12px">Laisse tourner tes audios en boucle pendant tes activit&eacute;s du matin.</p>
+          <a href="audio.html" class="link-audio">&#127925; Aller &agrave; la page Audio &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 7: Texte a trous -->
+    <div class="step" data-step="7">
+      <div class="step-header" onclick="toggleStep(this)">
+        <input type="checkbox" onclick="event.stopPropagation();saveCheck(7,this.checked)">
+        <span class="step-title">7. Texte &agrave; trous &mdash; Compl&egrave;te les phrases cl&eacute;s</span>
+        <span class="step-badge" style="background:#059669">09h30 &ndash; 10h30</span>
+        <span class="chevron">&#9654;</span>
+      </div>
+      <div class="step-content">
+        <div class="exercise" id="exFill">
+          <h3>&#9999;&#65039; Texte &agrave; trous <span class="score-badge" id="fillScore" style="display:none"></span></h3>
+          <div id="fillArea"></div>
+          <div style="margin-top:14px;text-align:center">
+            <button class="btn btn-primary" onclick="fillCheck()">V&eacute;rifier</button>
+            <button class="btn btn-secondary btn-sm" onclick="fillReset()">Recommencer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 8: Transitions -->
+    <div class="step" data-step="8">
+      <div class="step-header" onclick="toggleStep(this)">
+        <input type="checkbox" onclick="event.stopPropagation();saveCheck(8,this.checked)">
+        <span class="step-title">8. Phrases de transition &mdash; Compl&egrave;te les encha&icirc;nements</span>
+        <span class="step-badge" style="background:#059669">10h30 &ndash; 11h</span>
+        <span class="chevron">&#9654;</span>
+      </div>
+      <div class="step-content">
+        <div class="exercise" id="exTrans">
+          <h3>&#128260; Transitions <span class="score-badge" id="transScore" style="display:none"></span></h3>
+          <div id="transArea"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 9 -->
+    <div class="step" data-step="9">
+      <div class="step-header" onclick="toggleStep(this)">
+        <input type="checkbox" onclick="event.stopPropagation();saveCheck(9,this.checked)">
+        <span class="step-title">9. Check-up final &mdash; STOP &agrave; 12h !</span>
+        <span class="step-badge" style="background:#059669">11h &ndash; 12h</span>
+        <span class="chevron">&#9654;</span>
+      </div>
+      <div class="step-content">
+        <div class="exercise">
+          <h3>&#9989; Check-up final</h3>
+          <p style="font-size:.9rem;color:#555;margin-bottom:10px">V&eacute;rifie ces points essentiels :</p>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <label style="font-size:.9rem;display:flex;align-items:center;gap:8px"><input type="checkbox"> Je connais les 4 DC par coeur</label>
+            <label style="font-size:.9rem;display:flex;align-items:center;gap:8px"><input type="checkbox"> Je ma&icirc;trise les transitions entre sections</label>
+            <label style="font-size:.9rem;display:flex;align-items:center;gap:8px"><input type="checkbox"> Je tiens en moins de 5 minutes</label>
+            <label style="font-size:.9rem;display:flex;align-items:center;gap:8px"><input type="checkbox"> L'effet surprise est fluide</label>
+            <label style="font-size:.9rem;display:flex;align-items:center;gap:8px"><input type="checkbox"> Je parle en "je" naturellement</label>
+            <label style="font-size:.9rem;display:flex;align-items:center;gap:8px"><input type="checkbox"> CPOAPRER est un r&eacute;flexe</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<p class="footer">Oral VAE DEES &mdash; R&eacute;vision active &mdash; 26 mars 2026</p>
+
+<script src="mentor.js"></script>
+<script>
+/* ============ GLOBAL ============ */
+var sessionStart=Date.now();
+setInterval(function(){
+  var d=Math.floor((Date.now()-sessionStart)/1000);
+  var m=String(Math.floor(d/60)).padStart(2,"0");
+  var s=String(d%60).padStart(2,"0");
+  document.getElementById("sessionTimer").textContent=m+":"+s;
+},1000);
+
+function toggleStep(el){
+  var step=el.closest(".step");
+  step.classList.toggle("open");
+}
+function saveCheck(n,v){
+  localStorage.setItem("rev_check_"+n,v?"1":"0");
+  updateGlobal();
+}
+function updateGlobal(){
+  var c=0;
+  for(var i=1;i<=9;i++){if(localStorage.getItem("rev_check_"+i)==="1")c++;}
+  document.getElementById("progressLabel").textContent=c+" / 9 etapes";
+  document.getElementById("progressBar").style.width=Math.round(c/9*100)+"%";
+}
+function loadChecks(){
+  for(var i=1;i<=9;i++){
+    var el=document.querySelector('[data-step="'+i+'"] input[type=checkbox]');
+    if(el&&localStorage.getItem("rev_check_"+i)==="1")el.checked=true;
+  }
+  updateGlobal();
+}
+loadChecks();
+
+/* ============ SIMULATION TIMER ============ */
+var simInterval=null,simSec=0;
+function simStart(){
+  if(simInterval)return;
+  simInterval=setInterval(function(){
+    simSec++;
+    var m=String(Math.floor(simSec/60)).padStart(2,"0");
+    var s=String(simSec%60).padStart(2,"0");
+    document.getElementById("simTimer").textContent=m+":"+s;
+    if(simSec>=290)document.getElementById("simTimer").style.color="#dc2626";
+  },1000);
+}
+function simStop(){if(simInterval){clearInterval(simInterval);simInterval=null;}}
+function simReset(){simStop();simSec=0;document.getElementById("simTimer").textContent="00:00";document.getElementById("simTimer").style.color="#d97706";}
+
+/* ============ QCM ECLAIR ============ */
+var qcmData=[
+  {q:"Combien de parties comporte votre presentation orale ?",opts:["4","5","6","7"],correct:2,expl:"6 enregistrements : Presentation, Declic, Demarche VAE, Plan+DC, (DC1-DC4 dans le plan), Remerciement."},
+  {q:"Quelle est la duree cible totale de votre presentation ?",opts:["3 min","4 min 50","8 min","10 min"],correct:1,expl:"La presentation dure environ 4 min 50 au total."},
+  {q:"Quel mot-cle resume le DC1 ?",opts:["Projet collectif","Relation educative","Communication","Partenariat"],correct:1,expl:"DC1 = relation educative specialisee."},
+  {q:"Quel est le moment fondateur de votre parcours ?",opts:["Le basket","Le service civil","La formation DEES","Le poste AIS"],correct:1,expl:"Le service civil est le declic professionnel."},
+  {q:"Quels 3 termes decrivent votre posture DC1 ?",opts:["Autorite, cadre, sanction","Respect inconditionnel, ecoute active, continuite educative","Observation, analyse, evaluation","Transmission, redaction, synthese"],correct:1,expl:"DC1 : respect inconditionnel, ecoute active, continuite educative."},
+  {q:"Le DC2 s'illustre par quel type de projet ?",opts:["Projet sportif en club","Projet educatif collectif en maison de quartier","Projet de recherche universitaire","Projet de construction"],correct:1,expl:"DC2 : conception du projet educatif collectif en maison de quartier."},
+  {q:"En DC3, que soulignez-vous depuis le depot ?",opts:["Vos diplomes","Vos transmissions orales et ecrites","Votre salaire","Vos conges"],correct:1,expl:"DC3 : importance des transmissions orales et ecrites."},
+  {q:"Quels partenaires nommez-vous en DC4 ?",opts:["FIFA, UEFA, CIO","DIP, coordination FINC, FASe","ONU, UNICEF, OMS","Parents uniquement"],correct:1,expl:"DC4 : DIP, coordination FINC, FASe, familles, specialistes du reseau."},
+  {q:"Que signifie 'l effet surprise' dans votre plan ?",opts:["Un tour de magie","Un regard enrichi et muri depuis le depot","Un changement de sujet","Une nouvelle situation inventee"],correct:1,expl:"Pas une repetition du livret, mais un regard enrichi par la reflexion."},
+  {q:"Comment concluez-vous votre presentation ?",opts:["Par une citation philosophique","Par un remerciement pour l'ecoute","Par une chanson","Par une liste de diplomes"],correct:1,expl:"Je vous remercie pour votre ecoute."}
+];
+var qcmIdx=0,qcmOk=0,qcmDone=0;
+
+function qcmRender(){
+  var area=document.getElementById("qcmArea");
+  var html='<div class="qcm-progress">Question '+(qcmIdx+1)+' / '+qcmData.length+'</div>';
+  var d=qcmData[qcmIdx];
+  html+='<div class="qcm-card active"><div class="qcm-q">'+d.q+'</div><div class="qcm-opts">';
+  for(var i=0;i<d.opts.length;i++){
+    html+='<div class="qcm-opt" onclick="qcmSelect('+i+')">'+d.opts[i]+'</div>';
+  }
+  html+='</div><div class="qcm-expl" id="qcmExpl">'+d.expl+'</div></div>';
+  html+='<div class="qcm-nav">';
+  if(qcmIdx>0)html+='<button class="btn btn-secondary btn-sm" onclick="qcmPrev()">&larr; Pr&eacute;c&eacute;dent</button>';
+  else html+='<span></span>';
+  html+='</div>';
+  area.innerHTML=html;
+}
+function qcmSelect(i){
+  var opts=document.querySelectorAll("#qcmArea .qcm-opt");
+  if(opts[0].classList.contains("disabled"))return;
+  var d=qcmData[qcmIdx];
+  for(var j=0;j<opts.length;j++){opts[j].classList.add("disabled");}
+  if(i===d.correct){opts[i].classList.add("correct");qcmOk++;}
+  else{opts[i].classList.add("wrong");opts[d.correct].classList.add("correct");}
+  qcmDone++;
+  document.getElementById("qcmExpl").style.display="block";
+  setTimeout(function(){
+    if(qcmIdx<qcmData.length-1){qcmIdx++;qcmRender();}
+    else{qcmShowResults();}
+  },1800);
+}
+function qcmPrev(){if(qcmIdx>0){qcmIdx--;qcmRender();}}
+function qcmShowResults(){
+  var pct=Math.round(qcmOk/qcmData.length*100);
+  var msg=pct>=80?"Excellent ! Tu maitrises ta presentation.":pct>=60?"Bien ! Relis les parties faibles.":"A revoir. Reecoute tes audios.";
+  document.getElementById("qcmArea").innerHTML='<div class="results-box"><div class="score-big">'+pct+'%</div><div class="msg">'+msg+'</div><p>'+qcmOk+' / '+qcmData.length+' correctes</p><button class="btn btn-primary" style="margin-top:12px" onclick="qcmReset()">Recommencer</button></div>';
+  var badge=document.getElementById("qcmScore");badge.textContent=pct+"%";badge.style.display="inline";
+}
+function qcmReset(){qcmIdx=0;qcmOk=0;qcmDone=0;qcmRender();}
+qcmRender();
+
+/* ============ MATCH MOTS-PILIERS ============ */
+var matchData=[
+  {terme:"Respect inconditionnel",dc:"DC1"},
+  {terme:"Ecoute active",dc:"DC1"},
+  {terme:"Continuite educative",dc:"DC1"},
+  {terme:"Projet collectif maison de quartier",dc:"DC2"},
+  {terme:"Objectifs partages",dc:"DC2"},
+  {terme:"Observation fine",dc:"DC2"},
+  {terme:"Transmissions orales et ecrites",dc:"DC3"},
+  {terme:"Integration rapide dans equipes",dc:"DC3"},
+  {terme:"Reflexion collective",dc:"DC3"},
+  {terme:"Coordination FINC",dc:"DC4"},
+  {terme:"DIP et FASe",dc:"DC4"},
+  {terme:"Politiques inclusion canton",dc:"DC4"}
+];
+var matchSelected=null,matchOk=0,matchTotal=matchData.length;
+
+function matchShuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+
+function matchRender(){
+  matchSelected=null;matchOk=0;
+  var shuffled=matchShuffle(matchData.slice());
+  var html='<div class="match-terms" id="matchTerms">';
+  for(var i=0;i<shuffled.length;i++){
+    html+='<div class="match-term" data-dc="'+shuffled[i].dc+'" onclick="matchSelectTerm(this)">'+shuffled[i].terme+'</div>';
+  }
+  html+='</div><div class="match-bins">';
+  html+='<div class="match-bin dc1" onclick="matchSelectBin(this,\'DC1\')">DC1<span class="count">Relation &eacute;ducative</span></div>';
+  html+='<div class="match-bin dc2" onclick="matchSelectBin(this,\'DC2\')">DC2<span class="count">Projet &eacute;ducatif</span></div>';
+  html+='<div class="match-bin dc3" onclick="matchSelectBin(this,\'DC3\')">DC3<span class="count">Communication</span></div>';
+  html+='<div class="match-bin dc4" onclick="matchSelectBin(this,\'DC4\')">DC4<span class="count">Partenariats</span></div>';
+  html+='</div>';
+  document.getElementById("matchArea").innerHTML=html;
+}
+function matchSelectTerm(el){
+  if(el.classList.contains("matched"))return;
+  document.querySelectorAll(".match-term").forEach(function(t){t.classList.remove("selected");});
+  el.classList.add("selected");
+  matchSelected=el;
+}
+function matchSelectBin(bin,dc){
+  if(!matchSelected)return;
+  if(matchSelected.getAttribute("data-dc")===dc){
+    matchSelected.classList.add("matched");
+    matchSelected.classList.remove("selected");
+    matchOk++;
+    matchSelected=null;
+    if(matchOk===matchTotal){
+      var badge=document.getElementById("matchScore");
+      badge.textContent=matchOk+"/"+matchTotal;badge.style.display="inline";
+    }
+  }else{
+    matchSelected.classList.add("wrong-shake");
+    var el=matchSelected;
+    setTimeout(function(){el.classList.remove("wrong-shake");},400);
+  }
+}
+function matchReset(){matchRender();}
+matchRender();
+
+/* ============ DC IDENTIFICATION ============ */
+var dcData=[
+  {sit:"Vous accompagnez un eleve en dispositif FINC, construisant une relation de confiance sur la duree fondee sur le respect inconditionnel.",correct:"DC1",expl:"La relation de confiance = DC1 relation educative."},
+  {sit:"Vous concevez un projet educatif collectif en maison de quartier avec des objectifs ajustes aux dynamiques des enfants.",correct:"DC2",expl:"Concevoir un projet educatif = DC2."},
+  {sit:"En tant que remplacant AIS, vous vous integrez rapidement dans l'equipe et assurez des transmissions ecrites claires.",correct:"DC3",expl:"Transmissions et travail en equipe = DC3 communication."},
+  {sit:"Vous articulez votre intervention avec les orientations de la FASe et les politiques d'inclusion du canton.",correct:"DC4",expl:"Politiques institutionnelles et partenariats = DC4."},
+  {sit:"Vous adaptez votre posture en tenant compte de la singularite de chaque personne et des enjeux relationnels.",correct:"DC1",expl:"Posture adaptee a la singularite = DC1."},
+  {sit:"Vous mobilisez le DIP, la coordination FINC et les familles pour securiser le parcours d'un jeune.",correct:"DC4",expl:"Mobilisation des partenaires = DC4."}
+];
+var dcIdx=0,dcOk=0;
+
+function dcRender(){
+  var area=document.getElementById("dcArea");
+  if(dcIdx>=dcData.length){dcShowResults();return;}
+  var d=dcData[dcIdx];
+  var html='<div class="qcm-progress">Situation '+(dcIdx+1)+' / '+dcData.length+'</div>';
+  html+='<div class="dc-card active"><div class="dc-situation">'+d.sit+'</div><div class="dc-opts">';
+  var dcs=["DC1","DC2","DC3","DC4"];
+  for(var i=0;i<dcs.length;i++){
+    html+='<div class="dc-opt" onclick="dcSelect(this,\''+dcs[i]+'\')">'+dcs[i]+'</div>';
+  }
+  html+='</div><div class="qcm-expl" id="dcExpl">'+d.expl+'</div></div>';
+  area.innerHTML=html;
+}
+function dcSelect(el,dc){
+  var opts=document.querySelectorAll("#dcArea .dc-opt");
+  if(opts[0].classList.contains("disabled"))return;
+  opts.forEach(function(o){o.classList.add("disabled");});
+  var d=dcData[dcIdx];
+  if(dc===d.correct){el.classList.add("correct");dcOk++;}
+  else{el.classList.add("wrong");opts.forEach(function(o){if(o.textContent===d.correct)o.classList.add("correct");});}
+  document.getElementById("dcExpl").style.display="block";
+  setTimeout(function(){dcIdx++;dcRender();},1500);
+}
+function dcShowResults(){
+  var pct=Math.round(dcOk/dcData.length*100);
+  document.getElementById("dcArea").innerHTML='<div class="results-box"><div class="score-big">'+pct+'%</div><div class="msg">'+dcOk+' / '+dcData.length+' correctes</div><button class="btn btn-primary" style="margin-top:12px" onclick="dcReset()">Recommencer</button></div>';
+  var badge=document.getElementById("dcScore");badge.textContent=pct+"%";badge.style.display="inline";
+}
+function dcReset(){dcIdx=0;dcOk=0;dcRender();}
+dcRender();
+
+/* ============ TEXTE A TROUS ============ */
+var fillData=[
+  {parts:["Mon parcours s'est construit autour de trois axes : AIS, moniteur ","____"," en maison de quartier, et entraineur de ","____","."],blanks:["FINC","basket-ball"],hint:"Un dispositif FASe et un sport"},
+  {parts:["Le DC1 concerne la ","____"," educative specialisee."],blanks:["relation"],hint:"Le coeur du metier"},
+  {parts:["Mon moment fondateur est le ","____"," civil."],blanks:["service"],hint:"Un engagement citoyen"},
+  {parts:["La VAE m'a permis de ","____"," mes actions et d'identifier mes ","____","."],blanks:["structurer","limites"],hint:"Organiser + zones de progression"},
+  {parts:["En DC2, l'","____"," fine du groupe m'a permis de definir des objectifs ","____","."],blanks:["observation","partages"],hint:"Regarder attentivement + avec l'equipe"},
+  {parts:["En DC4, j'inscris mon action dans les politiques d'","____"," du canton."],blanks:["inclusion"],hint:"Le contraire de l'exclusion"},
+  {parts:["Je ne presente pas une simple ","____"," de ce qui est ecrit, mais un regard ","____","."],blanks:["repetition","enrichi"],hint:"Pas du copier-coller, quelque chose de plus"},
+  {parts:["Le DC3 concerne la ","____"," professionnelle."],blanks:["communication"],hint:"Transmettre, ecrire, echanger"}
+];
+
+function fillRender(){
+  var html="";
+  for(var i=0;i<fillData.length;i++){
+    var d=fillData[i];
+    html+='<div class="fill-card"><div class="fill-hint">Indice : '+d.hint+'</div><div class="fill-sentence">';
+    var bIdx=0;
+    for(var j=0;j<d.parts.length;j++){
+      if(d.parts[j]==="____"){
+        html+='<input type="text" data-fill="'+i+'-'+bIdx+'" data-answer="'+d.blanks[bIdx]+'" placeholder="...">';
+        bIdx++;
+      }else{
+        html+=d.parts[j];
+      }
+    }
+    html+='</div></div>';
+  }
+  document.getElementById("fillArea").innerHTML=html;
+}
+function normalize(s){return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();}
+function fillCheck(){
+  var inputs=document.querySelectorAll("#fillArea input[data-fill]");
+  var ok=0,total=inputs.length;
+  inputs.forEach(function(inp){
+    var answer=normalize(inp.getAttribute("data-answer"));
+    var val=normalize(inp.value);
+    if(val===answer){inp.classList.add("correct");inp.classList.remove("wrong");ok++;}
+    else{inp.classList.add("wrong");inp.classList.remove("correct");inp.value=inp.getAttribute("data-answer");}
+  });
+  var pct=Math.round(ok/total*100);
+  var badge=document.getElementById("fillScore");badge.textContent=pct+"%";badge.style.display="inline";
+}
+function fillReset(){fillRender();}
+fillRender();
+
+/* ============ TRANSITIONS ============ */
+var transData=[
+  {start:"Si je devais identifier un moment fondateur, ce serait...",opts:["mon service civil","ma formation universitaire","mon premier emploi","un voyage a l'etranger"],correct:0},
+  {start:"Mon objectif est de faire reconnaitre...",opts:["mes diplomes academiques","les competences acquises sur le terrain","mon anciennete professionnelle","mes publications"],correct:1},
+  {start:"Je vais organiser ma presentation en...",opts:["deux grandes parties","quatre points reprenant les quatre DC","une seule demonstration","six chapitres thematiques"],correct:1},
+  {start:"Depuis le depot de mon dossier, j'ai poursuivi...",opts:["mes etudes","mon travail de reflexion","une autre VAE","un bilan de competences"],correct:1},
+  {start:"Ce que je retiens de cette demarche VAE, c'est qu'elle m'a profondement...",opts:["fatigue","transforme dans ma maniere de penser ma pratique","decu","eloigne du terrain"],correct:1},
+  {start:"Je suis maintenant disponible pour...",opts:["partir","echanger avec vous et repondre a vos questions","presenter un autre sujet","faire une pause"],correct:1}
+];
+var transIdx=0,transOk=0;
+
+function transRender(){
+  var area=document.getElementById("transArea");
+  if(transIdx>=transData.length){transShowResults();return;}
+  var d=transData[transIdx];
+  var html='<div class="qcm-progress">Transition '+(transIdx+1)+' / '+transData.length+'</div>';
+  html+='<div class="trans-card active"><div class="trans-start">&#128172; &laquo; '+d.start+' &raquo;</div><div class="qcm-opts">';
+  for(var i=0;i<d.opts.length;i++){
+    html+='<div class="qcm-opt" onclick="transSelect('+i+')">'+d.opts[i]+'</div>';
+  }
+  html+='</div></div>';
+  area.innerHTML=html;
+}
+function transSelect(i){
+  var opts=document.querySelectorAll("#transArea .qcm-opt");
+  if(opts[0].classList.contains("disabled"))return;
+  opts.forEach(function(o){o.classList.add("disabled");});
+  var d=transData[transIdx];
+  if(i===d.correct){opts[i].classList.add("correct");transOk++;}
+  else{opts[i].classList.add("wrong");opts[d.correct].classList.add("correct");}
+  setTimeout(function(){transIdx++;transRender();},1200);
+}
+function transShowResults(){
+  var pct=Math.round(transOk/transData.length*100);
+  document.getElementById("transArea").innerHTML='<div class="results-box"><div class="score-big">'+pct+'%</div><div class="msg">'+transOk+' / '+transData.length+' correctes</div><button class="btn btn-primary" style="margin-top:12px" onclick="transReset()">Recommencer</button></div>';
+  var badge=document.getElementById("transScore");badge.textContent=pct+"%";badge.style.display="inline";
+}
+function transReset(){transIdx=0;transOk=0;transRender();}
+transRender();
+</script>
+</body>
+</html>
