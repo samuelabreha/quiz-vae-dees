@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Situations — Enfant L &amp; &Eacute;l&egrave;ve R</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;min-height:100vh}
+.container{max-width:700px;margin:0 auto;padding:24px 16px}
+.back-link{display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;color:#1e3a5f;text-decoration:none;font-size:.9rem}
+.back-link:hover{text-decoration:underline}
+h1{font-size:1.5rem;color:#1e3a5f;margin-bottom:4px;text-align:center}
+.subtitle{font-size:.9rem;color:#666;margin-bottom:24px;text-align:center}
+.hidden{display:none}
+.welcome-card{background:#fff;border-radius:16px;padding:32px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.06);border-top:4px solid #1e3a5f}
+.welcome-card h2{margin:12px 0 8px;font-size:1.3rem;color:#1e3a5f}
+.welcome-card p{color:#666;font-size:.9rem;margin-bottom:6px;line-height:1.5}
+.badge-blue{display:inline-block;padding:5px 16px;border-radius:20px;font-size:.75rem;font-weight:700;color:#fff;background:#1e3a5f}
+.info-row{display:flex;justify-content:center;gap:20px;margin:16px 0;font-size:.85rem;color:#666}
+.info-row span{display:flex;align-items:center;gap:4px}
+.btn-start{display:inline-block;margin-top:20px;padding:14px 36px;background:#1e3a5f;color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;transition:background .2s}
+.btn-start:hover{background:#15304f}
+.progress-bar{height:6px;background:#e5e7eb;border-radius:3px;margin-bottom:8px;overflow:hidden}
+.progress-fill{height:100%;background:#1e3a5f;border-radius:3px;transition:width .3s}
+.progress-text{font-size:.8rem;color:#999;margin-bottom:16px;text-align:right}
+.timer{font-size:.8rem;color:#1e3a5f;text-align:center;margin-bottom:12px;font-weight:600}
+.q-card{background:#fff;border-radius:16px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,.06)}
+.q-number{font-size:.8rem;color:#1e3a5f;font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.dc-badge{display:inline-block;padding:4px 12px;border-radius:8px;font-size:.75rem;font-weight:700;color:#fff;margin-bottom:8px}
+.situation-label{display:inline-block;padding:3px 10px;border-radius:8px;font-size:.75rem;font-weight:700;color:#fff;background:#1e3a5f;margin-bottom:12px;margin-left:6px}
+.q-text{font-size:1.05rem;color:#1a1a2e;line-height:1.7;margin-bottom:20px;font-style:italic}
+.btn-reveal{display:inline-block;padding:12px 28px;background:#1e3a5f;color:#fff;border:none;border-radius:12px;font-size:.95rem;cursor:pointer;transition:background .2s;font-weight:600}
+.btn-reveal:hover{background:#15304f}
+.answer-section{display:none;margin-top:20px;padding:20px;background:#fffbeb;border-radius:12px;border-left:4px solid #d97706}
+.answer-section h3{font-size:.9rem;color:#d97706;margin-bottom:10px;font-weight:700}
+.answer-section p{font-size:.9rem;color:#333;line-height:1.7;margin-bottom:6px}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:12px}
+.btn-nav{padding:10px 22px;border:2px solid #1e3a5f;color:#1e3a5f;background:#fff;border-radius:10px;font-size:.9rem;cursor:pointer;transition:all .2s;font-weight:600}
+.btn-nav:hover{background:#eef2f7}
+.btn-nav.primary{background:#1e3a5f;color:#fff;border-color:#1e3a5f}
+.btn-nav.primary:hover{background:#15304f}
+.result-card{background:#fff;border-radius:16px;padding:36px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.06);border-top:4px solid #1e3a5f}
+.result-emoji{font-size:3rem;margin:12px 0}
+.score-label{font-size:1rem;color:#666;margin-bottom:20px}
+.autocheck{margin-top:24px;padding:16px 20px;background:#fffbeb;border-radius:12px;border-left:4px solid #d97706;text-align:left}
+.autocheck h3{font-size:.85rem;color:#d97706;margin-bottom:8px}
+.autocheck p{font-size:.85rem;color:#555;line-height:1.6}
+.btn-row{display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="container">
+<a href="situations_referentiel_jury.html" class="back-link">&larr; Retour aux situations</a>
+<h1>Quiz Situations &mdash; Enfant L &amp; &Eacute;l&egrave;ve R</h1>
+<p class="subtitle">AIS &mdash; R&eacute;pondez &agrave; voix haute, puis r&eacute;v&eacute;lez la r&eacute;ponse</p>
+
+<div style="background:linear-gradient(135deg,#0d9488 0%,#0f766e 100%);color:#fff;border-radius:14px;padding:16px 20px;margin:0 auto 22px;max-width:860px;box-shadow:0 4px 16px rgba(13,148,136,.25)">
+  <div style="font-size:.8rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;opacity:.85">Methode universelle (CPOAPRER)</div>
+  <div style="display:flex;flex-wrap:wrap;gap:6px 4px;align-items:center;font-size:.88rem;font-weight:700">
+    <span style="background:rgba(255,255,255,.2);padding:4px 10px;border-radius:8px">1. Contexte</span>
+    <span style="opacity:.6">&rarr;</span>
+    <span style="background:rgba(255,255,255,.2);padding:4px 10px;border-radius:8px">2. Problematique</span>
+    <span style="opacity:.6">&rarr;</span>
+    <span style="background:rgba(255,255,255,.2);padding:4px 10px;border-radius:8px">3. Objectifs</span>
+    <span style="opacity:.6">&rarr;</span>
+    <span style="background:rgba(255,255,255,.2);padding:4px 10px;border-radius:8px">4. Actions</span>
+    <span style="opacity:.6">&rarr;</span>
+    <span style="background:rgba(255,255,255,.2);padding:4px 10px;border-radius:8px">5. Posture</span>
+    <span style="opacity:.6">&rarr;</span>
+    <span style="background:rgba(255,255,255,.2);padding:4px 10px;border-radius:8px">6. Reseau</span>
+    <span style="opacity:.6">&rarr;</span>
+    <span style="background:rgba(255,255,255,.2);padding:4px 10px;border-radius:8px">7. Evaluation</span>
+    <span style="opacity:.6">&rarr;</span>
+    <span style="background:rgba(255,255,255,.2);padding:4px 10px;border-radius:8px">8. Referentiel</span>
+  </div>
+</div>
+
+<div id="welcomeScreen">
+<div class="welcome-card">
+  <span class="badge-blue">Quiz Situations</span>
+  <h2>Enfant L &amp; &Eacute;l&egrave;ve R &mdash; AIS</h2>
+  <p>2 situations &times; 4 DC = 8 questions pour ancrer vos r&eacute;ponses jury.</p>
+  <div class="info-row">
+    <span>&#128221; 8 questions</span>
+    <span>&#9201; 5-8 min</span>
+    <span>&#127908; Voix haute</span>
+  </div>
+  <p style="font-size:.85rem;color:#1e3a5f;font-weight:600;margin-top:12px">R&eacute;pondez &agrave; voix haute, puis r&eacute;v&eacute;lez la r&eacute;ponse mod&egrave;le.</p>
+  <button class="btn-start" onclick="startQuiz()">Commencer le quiz</button>
+</div>
+</div>
+
+<div id="quizArea" class="hidden">
+<div class="timer" id="timer">00:00</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div class="progress-text" id="progressText">1 / 8</div>
+<div class="q-card" id="questionCard"></div>
+<div class="nav-row">
+  <button class="btn-nav" onclick="prevQ()">&larr; Pr&eacute;c&eacute;dente</button>
+  <button class="btn-nav primary" onclick="nextQ()">Suivante &rarr;</button>
+</div>
+</div>
+
+<div id="resultScreen" class="hidden">
+<div class="result-card">
+  <span class="badge-blue">Termin&eacute; !</span>
+  <div class="result-emoji">&#127919;</div>
+  <div class="score-label">8 questions r&eacute;vis&eacute;es &mdash; Enfant L &amp; &Eacute;l&egrave;ve R</div>
+  <div class="autocheck">
+    <h3>&#9989; Auto-check</h3>
+    <p>Si vous pouvez r&eacute;pondre &agrave; chaque question en moins de 45 secondes avec la structure CPOAPRER, la m&eacute;morisation active progresse bien.</p>
+    <p style="margin-top:8px">Si vous bloquez, reprenez le fil : <strong>DC &rarr; situation &rarr; action &rarr; posture &rarr; r&eacute;seau</strong>.</p>
+  </div>
+  <div style="margin-top:16px;padding:14px 18px;background:#f0fdfa;border-radius:12px;border-left:4px solid #0d9488;text-align:left">
+    <p style="font-size:.85rem;color:#333;line-height:1.6"><strong style="color:#0d9488">&#128172; Besoin d'aide pour structurer vos r&eacute;ponses ?</strong><br>Le <strong>Coach Interactif</strong> vous guide question par question avec des indices progressifs si vous bloquez.</p>
+    <a href="agent_pedagogique.html" style="display:inline-block;margin-top:8px;padding:8px 20px;background:#0d9488;color:#fff;border-radius:10px;font-size:.85rem;font-weight:600;text-decoration:none;transition:background .2s">Lancer le Coach Interactif &rarr;</a>
+  </div>
+  <div class="btn-row">
+    <button class="btn-nav" onclick="resetQuiz()">&#128260; Recommencer</button>
+    <a href="situations_referentiel_jury.html" class="btn-nav primary" style="text-decoration:none">Retour aux situations</a>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+var questions = [
+  {
+    id: 1,
+    situation: "A.2.1 \u2014 Enfant L",
+    dc: "DC1 \u2014 Relation \u00e9ducative",
+    dcColor: "#e10600",
+    question: "Comment construisez-vous la relation \u00e9ducative avec Enfant L ?",
+    answer: "DC vis\u00e9 : DC1\n\nJ\u2019ai construit la relation avec L. en m\u2019adaptant \u00e0 sa maladie de Perthes \u2014 fatigue, douleur, m\u00e9fiance initiale.\n\nJ\u2019ai instaur\u00e9 un climat s\u00e9curisant en \u00e9tant constant dans ma posture et en respectant son rythme.\n\nJ\u2019ai cherch\u00e9 \u00e0 cr\u00e9er un lien de confiance progressif, sans forcer la relation.\n\nR\u00e9sultat : L. s\u2019est engag\u00e9e dans l\u2019accompagnement et a repris confiance dans l\u2019adulte."
+  },
+  {
+    id: 2,
+    situation: "A.2.1 \u2014 Enfant L",
+    dc: "DC2 \u2014 Projet \u00e9ducatif",
+    dcColor: "#2563eb",
+    question: "Comment avez-vous analys\u00e9 la situation \u00e9ducative de L. ?",
+    answer: "DC vis\u00e9 : DC2\n\nJ\u2019ai observ\u00e9 L. dans diff\u00e9rents temps du quotidien pour identifier ses besoins et ses ressources.\n\nJ\u2019ai crois\u00e9 mes observations avec celles de l\u2019\u00e9quipe pluridisciplinaire.\n\nJ\u2019ai d\u00e9fini des objectifs op\u00e9rationnels dans le cadre du projet personnalis\u00e9.\n\nL\u2019\u00e9valuation r\u00e9guli\u00e8re m\u2019a permis d\u2019ajuster mes interventions en fonction de son \u00e9volution."
+  },
+  {
+    id: 3,
+    situation: "A.2.1 \u2014 Enfant L",
+    dc: "DC3 \u2014 Communication professionnelle",
+    dcColor: "#059669",
+    question: "Comment communiquez-vous avec l\u2019\u00e9quipe au sujet de L. ?",
+    answer: "DC vis\u00e9 : DC3\n\nJe transmets mes observations de mani\u00e8re claire et objective, \u00e0 l\u2019oral comme \u00e0 l\u2019\u00e9crit.\n\nJe participe aux r\u00e9unions d\u2019\u00e9quipe et aux synth\u00e8ses pour assurer la coh\u00e9rence de l\u2019accompagnement.\n\nJe veille au respect du secret professionnel dans le partage d\u2019informations.\n\nCela permet \u00e0 l\u2019\u00e9quipe d\u2019ajuster collectivement les pratiques autour de L."
+  },
+  {
+    id: 4,
+    situation: "A.2.1 \u2014 Enfant L",
+    dc: "DC4 \u2014 Dynamiques institutionnelles",
+    dcColor: "#7c3aed",
+    question: "Comment inscrivez-vous votre action dans le cadre institutionnel pour L. ?",
+    answer: "DC vis\u00e9 : DC4\n\nJ\u2019inscris mon action dans le cadre du dispositif AIS et des missions du DIP.\n\nJe m\u2019appuie sur le projet d\u2019\u00e9tablissement et je travaille avec les partenaires ext\u00e9rieurs \u2014 m\u00e9decins, enseignants, famille.\n\nJ\u2019identifie les limites de mon intervention et j\u2019oriente vers les ressources adapt\u00e9es.\n\nCela s\u00e9curise la prise en charge et assure la continuit\u00e9 du parcours de L."
+  },
+  {
+    id: 5,
+    situation: "A.2.2 \u2014 \u00c9l\u00e8ve R",
+    dc: "DC1 \u2014 Relation \u00e9ducative",
+    dcColor: "#e10600",
+    question: "Comment construisez-vous la relation \u00e9ducative avec \u00c9l\u00e8ve R ?",
+    answer: "DC vis\u00e9 : DC1\n\nJ\u2019ai construit la relation avec R. en \u00e9tant attentif \u00e0 ses difficult\u00e9s d\u2019attention et \u00e0 son besoin de cadre.\n\nJ\u2019ai adopt\u00e9 une posture contenante mais bienveillante, en valorisant ses r\u00e9ussites.\n\nJ\u2019ai utilis\u00e9 les temps informels pour renforcer le lien de confiance.\n\nR\u00e9sultat : R. a progressivement accept\u00e9 l\u2019accompagnement et s\u2019est montr\u00e9 plus engag\u00e9 en classe."
+  },
+  {
+    id: 6,
+    situation: "A.2.2 \u2014 \u00c9l\u00e8ve R",
+    dc: "DC2 \u2014 Projet \u00e9ducatif",
+    dcColor: "#2563eb",
+    question: "Comment avez-vous con\u00e7u le projet \u00e9ducatif pour R. ?",
+    answer: "DC vis\u00e9 : DC2\n\nJ\u2019ai observ\u00e9 R. pour comprendre ses besoins sp\u00e9cifiques et ses freins \u00e0 l\u2019apprentissage.\n\nJ\u2019ai co-construit des objectifs avec l\u2019enseignante \u2014 autonomie, concentration, socialisation.\n\nJ\u2019ai mis en place des actions adapt\u00e9es : routines, supports visuels, temps de r\u00e9gulation.\n\nL\u2019\u00e9valuation continue m\u2019a permis de r\u00e9ajuster le projet en fonction de ses progr\u00e8s."
+  },
+  {
+    id: 7,
+    situation: "A.2.2 \u2014 \u00c9l\u00e8ve R",
+    dc: "DC3 \u2014 Communication professionnelle",
+    dcColor: "#059669",
+    question: "Comment communiquez-vous avec l\u2019\u00e9quipe au sujet de R. ?",
+    answer: "DC vis\u00e9 : DC3\n\nJe fais des transmissions cibl\u00e9es \u00e0 l\u2019enseignante apr\u00e8s chaque temps d\u2019accompagnement.\n\nJe participe aux r\u00e9unions de r\u00e9seau pour partager mon analyse et \u00e9couter les autres regards.\n\nJe r\u00e9dige des notes d\u2019observation pour garder une trace \u00e9crite de l\u2019\u00e9volution de R.\n\nCela renforce la coh\u00e9rence \u00e9ducative entre les diff\u00e9rents intervenants."
+  },
+  {
+    id: 8,
+    situation: "A.2.2 \u2014 \u00c9l\u00e8ve R",
+    dc: "DC4 \u2014 Dynamiques institutionnelles",
+    dcColor: "#7c3aed",
+    question: "Comment inscrivez-vous votre action dans le cadre institutionnel pour R. ?",
+    answer: "DC vis\u00e9 : DC4\n\nJe m\u2019inscris dans le cadre du DIP et du dispositif d\u2019int\u00e9gration scolaire.\n\nJe respecte les orientations institutionnelles et j\u2019articule mon intervention avec le projet d\u2019\u00e9cole.\n\nJe mobilise les partenaires du r\u00e9seau \u2014 psychologue scolaire, logop\u00e9diste, famille.\n\nCela permet d\u2019inscrire l\u2019accompagnement de R. dans une dynamique partenariale coh\u00e9rente."
+  }
+];
+
+var currentIndex = 0;
+var answered = false;
+var timerInterval = null;
+var seconds = 0;
+
+function startQuiz() {
+  currentIndex = 0; answered = false; seconds = 0;
+  document.getElementById('welcomeScreen').classList.add('hidden');
+  document.getElementById('quizArea').classList.remove('hidden');
+  document.getElementById('resultScreen').classList.add('hidden');
+  timerInterval = setInterval(function() {
+    seconds++;
+    var m = Math.floor(seconds / 60), s = seconds % 60;
+    document.getElementById('timer').textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  }, 1000);
+  renderQuestion();
+}
+
+function renderQuestion() {
+  answered = false;
+  var q = questions[currentIndex];
+  var paragraphs = q.answer.split('\n\n');
+  var html = '<div class="q-number">Question ' + (currentIndex + 1) + ' / ' + questions.length + '</div>';
+  html += '<span class="dc-badge" style="background:' + q.dcColor + '">' + q.dc + '</span>';
+  html += '<span class="situation-label">' + q.situation + '</span>';
+  html += '<div class="q-text">' + q.question + '</div>';
+  html += '<button class="btn-reveal" onclick="revealAnswer()">Afficher la r\u00e9ponse mod\u00e8le</button>';
+  html += '<div class="answer-section" id="answerSection">';
+  html += '<h3>R\u00e9ponse mod\u00e8le</h3>';
+  for (var i = 0; i < paragraphs.length; i++) {
+    html += '<p>' + paragraphs[i] + '</p>';
+  }
+  html += '</div>';
+  document.getElementById('questionCard').innerHTML = html;
+  document.getElementById('progressFill').style.width = ((currentIndex + 1) / questions.length * 100) + '%';
+  document.getElementById('progressText').textContent = (currentIndex + 1) + ' / ' + questions.length;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+  if(window.Mentor) Mentor.onQuestionShown(q);
+}
+
+function revealAnswer() {
+  answered = true;
+  document.getElementById('answerSection').style.display = 'block';
+  var btn = document.querySelector('.btn-reveal');
+  if (btn) btn.style.display = 'none';
+  if(window.Mentor) Mentor.onAnswerCorrect(questions[currentIndex]);
+  setTimeout(function() { document.getElementById('answerSection').scrollIntoView({behavior: 'smooth', block: 'nearest'}); }, 150);
+}
+
+function prevQ() {
+  if (currentIndex === 0) {
+    clearInterval(timerInterval);
+    document.getElementById('quizArea').classList.add('hidden');
+    document.getElementById('welcomeScreen').classList.remove('hidden');
+    return;
+  }
+  currentIndex--;
+  renderQuestion();
+}
+
+function nextQ() {
+  if (currentIndex >= questions.length - 1) { showResults(); return; }
+  currentIndex++;
+  renderQuestion();
+}
+
+function showResults() {
+  clearInterval(timerInterval);
+  document.getElementById('quizArea').classList.add('hidden');
+  document.getElementById('resultScreen').classList.remove('hidden');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function resetQuiz() {
+  document.getElementById('resultScreen').classList.add('hidden');
+  startQuiz();
+}
+</script>
+<script src="mentor.js"></script>
+</body>
+</html>
