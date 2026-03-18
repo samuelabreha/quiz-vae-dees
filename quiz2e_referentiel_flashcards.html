@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz R&eacute;f&eacute;rentiel &mdash; Flashcards (Partie 2/3)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;color:#1a1a2e;min-height:100vh}
+.header{background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);color:#fff;padding:24px 20px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.header h1{font-size:1.3rem;font-weight:700;margin-bottom:4px}
+.header p{font-size:.85rem;opacity:.9}
+.progress-bar{background:rgba(255,255,255,.2);height:6px;border-radius:3px;margin-top:12px;overflow:hidden}
+.progress-fill{height:100%;background:#fff;border-radius:3px;transition:width .4s ease}
+.stats{display:flex;justify-content:center;gap:20px;margin-top:10px;font-size:.8rem}
+.stats span{background:rgba(255,255,255,.15);padding:4px 12px;border-radius:20px}
+.container{max-width:720px;margin:0 auto;padding:20px}
+.card{background:#fff;border-radius:16px;box-shadow:0 2px 16px rgba(0,0,0,.08);overflow:hidden;margin-bottom:20px}
+.fc-card-header{padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center}
+.card-num{font-size:.75rem;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.dc-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700;color:#fff}
+.dc1{background:#e10600}
+.dc2{background:#2563eb}
+.dc3{background:#059669}
+.dc4{background:#7c3aed}
+.dc-multi{background:linear-gradient(135deg,#e10600,#2563eb)}
+.question-section{padding:20px}
+.question-section h3{font-size:1.02rem;line-height:1.5;margin-bottom:16px}
+.reveal-btn{display:block;width:100%;padding:14px;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border:none;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .2s;border-radius:0 0 16px 16px}
+.reveal-btn:hover{background:linear-gradient(135deg,#1d4ed8,#1e40af)}
+.reveal-btn:disabled{background:#ccc;cursor:default}
+.answer-section{display:none;padding:0 20px 20px;animation:fadeIn .4s ease}
+.answer-block{margin-bottom:12px;padding:12px 14px;border-radius:10px;border-left:4px solid}
+.answer-block h4{font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.answer-block p,.answer-block li{font-size:.88rem;line-height:1.6;color:#333}
+.block-structure{background:#eff6ff;border-color:#2563eb}
+.block-structure h4{color:#2563eb}
+.block-piege{background:#fef2f2;border-color:#dc2626}
+.block-piege h4{color:#dc2626}
+.score-section{display:flex;gap:8px;margin-top:10px;justify-content:center}
+.score-btn{padding:6px 14px;border:none;border-radius:8px;font-size:.8rem;cursor:pointer;font-weight:600;color:#fff}
+.score-btn.ok{background:#059669}
+.score-btn.fail{background:#dc2626}
+.nav-buttons{display:flex;gap:10px;margin-top:10px}
+.nav-btn{flex:1;padding:12px;border:2px solid #2563eb;background:#fff;color:#2563eb;font-size:.9rem;font-weight:600;border-radius:10px;cursor:pointer;transition:all .2s}
+.nav-btn:hover{background:#2563eb;color:#fff}
+.nav-btn:disabled{border-color:#ccc;color:#ccc;cursor:default;background:#fff}
+.nav-btn.primary{background:#fff;color:#2563eb}
+.nav-btn.primary:hover{background:#2563eb;color:#fff}
+.welcome{text-align:center;padding:60px 20px}
+.welcome h2{font-size:1.5rem;margin-bottom:12px;color:#2563eb}
+.welcome p{font-size:.95rem;color:#555;line-height:1.6;margin-bottom:8px}
+.start-btn{margin-top:24px;padding:16px 40px;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border:none;font-size:1.1rem;font-weight:700;border-radius:12px;cursor:pointer;transition:transform .2s}
+.start-btn:hover{transform:scale(1.05)}
+.results{text-align:center;padding:40px 20px}
+.results h2{font-size:1.6rem;color:#2563eb;margin-bottom:16px}
+.results .score-big{font-size:3rem;font-weight:800;color:#059669;margin:20px 0}
+.hidden{display:none}
+.shuffle-btn{padding:8px 16px;background:#fff;border:2px solid #2563eb;color:#2563eb;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;margin-top:12px}
+.shuffle-btn:hover{background:#2563eb;color:#fff}
+.back-link{display:inline-block;margin-top:20px;padding:8px 16px;font-size:.82rem;color:#999;text-decoration:none;border:1px solid #ddd;border-radius:8px;transition:all .2s}
+.back-link:hover{color:#2563eb;border-color:#2563eb}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Quiz R&eacute;f&eacute;rentiel &mdash; Flashcards (Partie 2/3)</h1>
+  <p>8 questions &bull; Pr&eacute;paration VAE DEES</p>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="stats">
+    <span id="statCurrent">0 / 8</span>
+    <span id="statCorrect" style="color:#a7f3d0">&#10003; 0</span>
+    <span id="statWrong" style="color:#fca5a5">&#10007; 0</span>
+  </div>
+</div>
+
+<div class="container">
+  <div style="background:linear-gradient(135deg,#0d9488 0%,#0f766e 100%);color:#fff;border-radius:14px;padding:14px 18px;margin-bottom:14px;box-shadow:0 4px 16px rgba(13,148,136,.25)">
+    <div style="font-size:.75rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;opacity:.85">M&eacute;thode universelle (CPOAPRER)</div>
+    <div style="display:flex;flex-wrap:wrap;gap:4px 3px;align-items:center;font-size:.82rem;font-weight:700">
+      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Contexte</span>
+      <span style="opacity:.6">&rarr;</span>
+      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Probl&eacute;matique</span>
+      <span style="opacity:.6">&rarr;</span>
+      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Objectifs</span>
+      <span style="opacity:.6">&rarr;</span>
+      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Actions</span>
+      <span style="opacity:.6">&rarr;</span>
+      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Posture</span>
+      <span style="opacity:.6">&rarr;</span>
+      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">R&eacute;seau</span>
+      <span style="opacity:.6">&rarr;</span>
+      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">&Eacute;valuation</span>
+      <span style="opacity:.6">&rarr;</span>
+      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">R&eacute;f&eacute;rentiel</span>
+    </div>
+  </div>
+
+  <div id="welcomeScreen" class="welcome">
+    <h2>Quiz R&eacute;f&eacute;rentiel &mdash; Flashcards (Partie 2/3)</h2>
+    <p><strong>8 Flashcards</strong> &mdash; automatismes de r&eacute;ponse orale</p>
+    <p style="margin-top:16px;font-size:.85rem;color:#888">DC1, DC2, DC3, DC4</p>
+    <button class="start-btn" onclick="startQuiz()">Commencer</button>
+    <br>
+    <button class="shuffle-btn" onclick="shuffleAndStart()">M&eacute;langer et commencer</button>
+    <br><a href="index.html" class="back-link">&larr; Retour &agrave; l'accueil</a>
+  </div>
+
+  <div id="quizArea" class="hidden"></div>
+
+  <div id="resultsScreen" class="hidden results">
+    <h2>R&eacute;sultats</h2>
+    <div class="score-big" id="finalScore"></div>
+    <p id="finalMsg"></p>
+    <div style="margin:20px auto 0;max-width:420px;padding:14px 18px;background:#f0fdfa;border-radius:12px;border-left:4px solid #0d9488;text-align:left">
+      <p style="font-size:.85rem;color:#333;line-height:1.6"><strong style="color:#0d9488">&#128172; Besoin d'aide pour structurer vos r&eacute;ponses ?</strong><br>Le <strong>Coach Interactif</strong> vous guide question par question avec des indices progressifs si vous bloquez.</p>
+      <a href="agent_pedagogique.html" style="display:inline-block;margin-top:8px;padding:8px 20px;background:#0d9488;color:#fff;border-radius:10px;font-size:.85rem;font-weight:600;text-decoration:none;transition:background .2s">Lancer le Coach Interactif &rarr;</a>
+    </div>
+    <button class="start-btn" onclick="resetQuiz()" style="margin-top:20px;font-size:.95rem;padding:12px 30px">Recommencer</button>
+    <button class="shuffle-btn" onclick="shuffleAndStart()">M&eacute;langer</button>
+  </div>
+</div>
+
+<script>
+const fcData = [
+  {q:"Comment adaptez-vous vos \u00e9crits professionnels en fonction du destinataire ?",dc:"DC3",dcClass:"dc3",structure:"1. L'\u00e9crit est adapt\u00e9 \u00e0 son destinataire et respectueux des droits\n2. Secret professionnel, loi 2002-2 (vie priv\u00e9e)\n3. Rapport pour juge vs note interne vs courrier famille\n4. S\u00e9lection, vocabulaire adapt\u00e9, cadre \u00e9thique\n5. L'\u00e9crit influence les d\u00e9cisions",piege:"Dire \u00ab j'adapte mon langage \u00bb sans expliquer ce qui change concr\u00e8tement."},
+  {q:"Comment mobilisez-vous le r\u00e9seau partenarial ?",dc:"DC4",dcClass:"dc4",structure:"1. L'\u00e9ducateur ne travaille pas isol\u00e9ment\n2. Politiques publiques, conventions partenariales\n3. Exemple de mobilisation concr\u00e8te\n4. Identification \u2192 contact \u2192 coordination \u2192 suivi\n5. Le partenariat enrichit l'accompagnement",piege:"Confondre r\u00e9seau (informel) et partenariat (formalis\u00e9)."},
+  {q:"Comment prenez-vous en compte la singularit\u00e9 de chaque personne ?",dc:"DC1",dcClass:"dc1",structure:"1. Chaque personne est unique\n2. Loi 2002-2 (individualisation)\n3. Deux personnes similaires, accompagnements diff\u00e9rents\n4. Observation individualis\u00e9e, \u00e9coute, adaptation\n5. La structure est la m\u00eame, la mise en oeuvre varie",piege:"Rester g\u00e9n\u00e9rique \u00ab chacun est diff\u00e9rent \u00bb sans concr\u00e9tiser."},
+  {q:"Quelle est la place du quotidien dans votre pratique ?",dc:"DC1",dcClass:"dc1",structure:"1. Le quotidien est un espace \u00e9ducatif majeur\n2. Projet d'\u00e9tablissement, vie collective\n3. Exemple d'un moment transform\u00e9 en support \u00e9ducatif\n4. Autonomie, r\u00e8gles de vie, interactions sociales\n5. Le quotidien est un outil professionnel",piege:"R\u00e9duire le quotidien \u00e0 la gestion logistique."},
+  {q:"Comment vous positionnez-vous face \u00e0 une demande de l'usager qui va \u00e0 l'encontre de son int\u00e9r\u00eat ?",dc:"DC1+DC2",dcClass:"dc-multi",structure:"1. Tension autonomie / protection = constitutive du m\u00e9tier\n2. Loi 2002-2 (libre choix), responsabilit\u00e9 professionnelle\n3. \u00c9coute \u2192 explication des risques \u2192 compromis \u2192 d\u00e9cision partag\u00e9e\n4. R\u00e9flexion \u00e9thique permanente\n5. Ni toute-puissance ni laisser-faire",piege:"Trancher autoritairement ou tout accepter sans analyse."},
+  {q:"Comment la loi du 2 janvier 2002 influence-t-elle votre pratique ?",dc:"DC4 + tous",dcClass:"dc4",structure:"1. L'usager au centre du dispositif\n2. 7 droits fondamentaux, 7 outils\n3. Exemples : livret d'accueil, CVS, contrat de s\u00e9jour\n4. Transform\u00e9 le rapport institution/usager\n5. Conna\u00eetre le cadre l\u00e9gal = devoir professionnel",piege:"R\u00e9citer la loi sans montrer l'impact concret."},
+  {q:"Pouvez-vous me parler d'un projet que vous avez men\u00e9 de A \u00e0 Z ?",dc:"DC2",dcClass:"dc2",structure:"1. M\u00e9thodologie rigoureuse, implication de la personne\n2. Projet d'\u00e9tablissement, cadre r\u00e9glementaire\n3. TOUTES les \u00e9tapes : constat \u2192 analyse \u2192 diagnostic \u2192 objectifs \u2192 planification \u2192 mise en oeuvre \u2192 \u00e9valuation \u2192 bilan\n4. Ce qui a fonctionn\u00e9, ce qui a \u00e9t\u00e9 r\u00e9ajust\u00e9\n5. Socle du technicien du projet \u00e9ducatif",piege:"Raconter comme une histoire sans rigueur m\u00e9thodologique. Oublier l'\u00e9valuation."},
+  {q:"Comment vous situez-vous par rapport au secret professionnel ?",dc:"DC3",dcClass:"dc3",structure:"1. Le secret prot\u00e8ge la personne\n2. Art. 226-13 CP, secret partag\u00e9 (L.226-2-2 CASF)\n3. Exemple de tension (juge, \u00e9quipe, partenaire)\n4. S\u00e9lection + cadre l\u00e9gal + tra\u00e7abilit\u00e9\n5. Le secret n'est pas absolu \u2014 il est partag\u00e9 dans un cadre strict",piege:"\u00ab Je partage tout \u00bb ou \u00ab je ne dis rien \u00bb \u2014 les deux extr\u00eames sont faux."}
+];
+
+let order = [];
+let idx = 0;
+let score = 0;
+let errors = 0;
+
+function init(){order = fcData.map((_,i)=>i);}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function updateStats(){
+  document.getElementById('statCurrent').textContent=(idx+1)+' / '+fcData.length;
+  document.getElementById('statCorrect').innerHTML='&#10003; '+score;
+  document.getElementById('statWrong').innerHTML='&#10007; '+errors;
+  document.getElementById('progressFill').style.width=((idx+1)/fcData.length*100)+'%';
+}
+
+function startQuiz(){
+  if(order.length===0)init();
+  idx=0;score=0;errors=0;
+  document.getElementById('welcomeScreen').classList.add('hidden');
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('quizArea').classList.remove('hidden');
+  renderFc();
+}
+
+function shuffleAndStart(){
+  order=shuffle(fcData.map((_,i)=>i));
+  idx=0;score=0;errors=0;
+  document.getElementById('welcomeScreen').classList.add('hidden');
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('quizArea').classList.remove('hidden');
+  renderFc();
+}
+
+function resetQuiz(){
+  init();
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('welcomeScreen').classList.remove('hidden');
+  document.getElementById('progressFill').style.width='0%';
+  document.getElementById('statCurrent').textContent='0 / '+fcData.length;
+  document.getElementById('statCorrect').innerHTML='&#10003; 0';
+  document.getElementById('statWrong').innerHTML='&#10007; 0';
+}
+
+function renderFc(){
+  var fc=fcData[order[idx]];
+  updateStats();
+  document.getElementById('quizArea').innerHTML=
+    '<div class="card">'+
+      '<div class="fc-card-header">'+
+        '<span class="card-num">Flashcard '+(idx+1)+' / '+fcData.length+'</span>'+
+        '<span class="dc-badge '+fc.dcClass+'">'+fc.dc+'</span>'+
+      '</div>'+
+      '<div class="question-section">'+
+        '<h3>\u00ab '+fc.q+' \u00bb</h3>'+
+      '</div>'+
+      '<button class="reveal-btn" id="revealBtn" onclick="revealFc()">Voir la r\u00e9ponse</button>'+
+      '<div class="answer-section" id="answerSection">'+
+        '<div class="answer-block block-structure">'+
+          '<h4>Structure de r\u00e9ponse attendue</h4>'+
+          '<p style="white-space:pre-line">'+fc.structure+'</p>'+
+        '</div>'+
+        '<div class="answer-block block-piege">'+
+          '<h4>Pi\u00e8ge \u00e0 \u00e9viter</h4>'+
+          '<p>'+fc.piege+'</p>'+
+        '</div>'+
+        '<div class="score-section">'+
+          '<button class="score-btn ok" onclick="markFc(true)">&#10003; Je savais</button>'+
+          '<button class="score-btn fail" onclick="markFc(false)">&#10007; \u00c0 revoir</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="nav-buttons">'+
+      '<button class="nav-btn" onclick="prevFc()">\u2190 Pr\u00e9c\u00e9dente</button>'+
+      '<button class="nav-btn primary" onclick="nextFc()">Suivante \u2192</button>'+
+    '</div>';
+  if(window.Mentor) Mentor.onQuestionShown(fc);
+}
+
+function revealFc(){
+  document.getElementById('answerSection').style.display='block';
+  document.getElementById('revealBtn').disabled=true;
+  document.getElementById('revealBtn').textContent='R\u00e9ponse affich\u00e9e';
+  if(window.Mentor) Mentor.onAnswerCorrect(fcData[order[idx]]);
+}
+
+function markFc(ok){
+  if(ok)score++;else errors++;
+  updateStats();
+  if(idx<fcData.length-1)nextFc();else showResults();
+}
+
+function nextFc(){if(idx<fcData.length-1){idx++;renderFc();}}
+function prevFc(){
+  if(idx>0){idx--;renderFc();}
+  else{document.getElementById('quizArea').classList.add('hidden');document.getElementById('welcomeScreen').classList.remove('hidden');}
+}
+
+function showResults(){
+  document.getElementById('quizArea').classList.add('hidden');
+  var rs=document.getElementById('resultsScreen');
+  rs.classList.remove('hidden');
+  var total=score+errors;
+  var pct=total>0?Math.round(score/total*100):0;
+  document.getElementById('finalScore').textContent=pct+'%';
+  var msg='';
+  if(pct>=80)msg='Excellent ! Ma\u00eetrise solide du r\u00e9f\u00e9rentiel.';
+  else if(pct>=60)msg='Bon niveau. Continuez sur les points faibles.';
+  else msg='\u00c0 retravailler. Reprenez les questions \u00e9chou\u00e9es.';
+  document.getElementById('finalMsg').textContent='Flashcards : '+score+' r\u00e9ussies, '+errors+' \u00e0 revoir \u2014 '+msg;
+  document.getElementById('progressFill').style.width='100%';
+}
+
+init();
+</script>
+<script src="mentor.js"></script>
+</body>
+</html>

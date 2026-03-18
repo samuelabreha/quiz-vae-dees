@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz R&eacute;f&eacute;rentiel &mdash; QCM (Partie 1/3)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;color:#1a1a2e;min-height:100vh}
+.header{background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);color:#fff;padding:24px 20px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.header h1{font-size:1.3rem;font-weight:700;margin-bottom:4px}
+.header p{font-size:.85rem;opacity:.9}
+.progress-bar{background:rgba(255,255,255,.2);height:6px;border-radius:3px;margin-top:12px;overflow:hidden}
+.progress-fill{height:100%;background:#fff;border-radius:3px;transition:width .4s ease}
+.stats{display:flex;justify-content:center;gap:20px;margin-top:10px;font-size:.8rem}
+.stats span{background:rgba(255,255,255,.15);padding:4px 12px;border-radius:20px}
+.container{max-width:720px;margin:0 auto;padding:20px}
+.card{background:#fff;border-radius:16px;box-shadow:0 2px 16px rgba(0,0,0,.08);overflow:hidden;margin-bottom:20px}
+.card-header{padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center}
+.card-num{font-size:.75rem;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.level-badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:.7rem;font-weight:700;color:#fff}
+.lvl1{background:#059669}
+.lvl2{background:#d97706}
+.lvl3{background:#dc2626}
+.question-section{padding:20px}
+.question-section h3{font-size:1.02rem;line-height:1.5;margin-bottom:16px}
+.options{display:flex;flex-direction:column;gap:8px}
+.opt{padding:12px 16px;border:2px solid #e5e7eb;border-radius:10px;cursor:pointer;font-size:.9rem;line-height:1.4;transition:all .2s;background:#fafafa}
+.opt:hover{border-color:#2563eb;background:#eff6ff}
+.opt.selected{border-color:#2563eb;background:#dbeafe;font-weight:600}
+.opt.correct{border-color:#059669;background:#d1fae5;font-weight:600}
+.opt.wrong{border-color:#dc2626;background:#fee2e2}
+.opt.disabled{pointer-events:none;opacity:.7}
+.opt.disabled.correct{opacity:1}
+.explanation{display:none;margin-top:14px;padding:12px 14px;border-radius:10px;background:#f8fafc;border-left:4px solid #2563eb;font-size:.88rem;line-height:1.6;color:#333}
+.explanation.show{display:block;animation:fadeIn .3s ease}
+.explanation strong{color:#2563eb}
+.nav-buttons{display:flex;gap:10px;margin-top:10px}
+.nav-btn{flex:1;padding:12px;border:2px solid #2563eb;background:#fff;color:#2563eb;font-size:.9rem;font-weight:600;border-radius:10px;cursor:pointer;transition:all .2s}
+.nav-btn:hover{background:#2563eb;color:#fff}
+.nav-btn:disabled{border-color:#ccc;color:#ccc;cursor:default;background:#fff}
+.nav-btn.primary{background:#fff;color:#2563eb}
+.nav-btn.primary:hover{background:#2563eb;color:#fff}
+.welcome{text-align:center;padding:60px 20px}
+.welcome h2{font-size:1.5rem;margin-bottom:12px;color:#2563eb}
+.welcome p{font-size:.95rem;color:#555;line-height:1.6;margin-bottom:8px}
+.start-btn{margin-top:24px;padding:16px 40px;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border:none;font-size:1.1rem;font-weight:700;border-radius:12px;cursor:pointer;transition:transform .2s}
+.start-btn:hover{transform:scale(1.05)}
+.results{text-align:center;padding:40px 20px}
+.results h2{font-size:1.6rem;color:#2563eb;margin-bottom:16px}
+.results .score-big{font-size:3rem;font-weight:800;color:#059669;margin:20px 0}
+.hidden{display:none}
+.shuffle-btn{padding:8px 16px;background:#fff;border:2px solid #2563eb;color:#2563eb;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;margin-top:12px}
+.shuffle-btn:hover{background:#2563eb;color:#fff}
+.back-link{display:inline-block;margin-top:20px;padding:8px 16px;font-size:.82rem;color:#999;text-decoration:none;border:1px solid #ddd;border-radius:8px;transition:all .2s}
+.back-link:hover{color:#2563eb;border-color:#2563eb}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Quiz R&eacute;f&eacute;rentiel &mdash; QCM (Partie 1/3)</h1>
+  <p>10 questions &bull; Pr&eacute;paration VAE DEES</p>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="stats">
+    <span id="statCurrent">0 / 10</span>
+    <span id="statCorrect" style="color:#a7f3d0">&#10003; 0</span>
+    <span id="statWrong" style="color:#fca5a5">&#10007; 0</span>
+  </div>
+</div>
+
+<div class="container">
+  <div style="background:linear-gradient(135deg,#0d9488 0%,#0f766e 100%);color:#fff;border-radius:14px;padding:14px 18px;margin-bottom:14px;box-shadow:0 4px 16px rgba(13,148,136,.25)">
+    <div style="font-size:.75rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;opacity:.85">M&eacute;thode universelle (CPOAPRER)</div>
+    <div style="display:flex;flex-wrap:wrap;gap:4px 3px;align-items:center;font-size:.82rem;font-weight:700">
+      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Contexte</span>
+      <span style="opacity:.6">&rarr;</span>
+      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Probl&eacute;matique</span>
+      <span style="opacity:.6">&rarr;</span>
+      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Objectifs</span>
+      <span style="opacity:.6">&rarr;</span>
+      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Actions</span>
+      <span style="opacity:.6">&rarr;</span>
+      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Posture</span>
+      <span style="opacity:.6">&rarr;</span>
+      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">R&eacute;seau</span>
+      <span style="opacity:.6">&rarr;</span>
+      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">&Eacute;valuation</span>
+      <span style="opacity:.6">&rarr;</span>
+      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">R&eacute;f&eacute;rentiel</span>
+    </div>
+  </div>
+
+  <div id="welcomeScreen" class="welcome">
+    <h2>Quiz R&eacute;f&eacute;rentiel &mdash; QCM (Partie 1/3)</h2>
+    <p><strong>10 QCM</strong> &mdash; identifier le bon DC en 3 secondes</p>
+    <p style="margin-top:16px;font-size:.85rem;color:#888">3 niveaux de difficult&eacute; &bull; DC1, DC2, DC3, DC4</p>
+    <button class="start-btn" onclick="startQuiz()">Commencer</button>
+    <br>
+    <button class="shuffle-btn" onclick="shuffleAndStart()">M&eacute;langer et commencer</button>
+    <br><a href="index.html" class="back-link">&larr; Retour &agrave; l'accueil</a>
+  </div>
+
+  <div id="quizArea" class="hidden"></div>
+
+  <div id="resultsScreen" class="hidden results">
+    <h2>R&eacute;sultats</h2>
+    <div class="score-big" id="finalScore"></div>
+    <p id="finalMsg"></p>
+    <div style="margin:20px auto 0;max-width:420px;padding:14px 18px;background:#f0fdfa;border-radius:12px;border-left:4px solid #0d9488;text-align:left">
+      <p style="font-size:.85rem;color:#333;line-height:1.6"><strong style="color:#0d9488">&#128172; Besoin d'aide pour structurer vos r&eacute;ponses ?</strong><br>Le <strong>Coach Interactif</strong> vous guide question par question avec des indices progressifs si vous bloquez.</p>
+      <a href="agent_pedagogique.html" style="display:inline-block;margin-top:8px;padding:8px 20px;background:#0d9488;color:#fff;border-radius:10px;font-size:.85rem;font-weight:600;text-decoration:none;transition:background .2s">Lancer le Coach Interactif &rarr;</a>
+    </div>
+    <button class="start-btn" onclick="resetQuiz()" style="margin-top:20px;font-size:.95rem;padding:12px 30px">Recommencer</button>
+    <button class="shuffle-btn" onclick="shuffleAndStart()">M&eacute;langer</button>
+  </div>
+</div>
+
+<script>
+const qcmData = [
+  {q:"Un \u00e9ducateur observe les interactions d'un jeune pendant le repas collectif pour ajuster sa posture d'accompagnement.",opts:["DC2 \u2014 Conception et conduite de projets","DC1 \u2014 La relation \u00e9ducative sp\u00e9cialis\u00e9e","DC3 \u2014 Communication professionnelle","DC4 \u2014 Dynamiques interinstitutionnelles"],correct:1,why:"L'observation dans le quotidien pour ajuster l'accompagnement rel\u00e8ve de DC1. Le repas est un temps du quotidien utilis\u00e9 comme support \u00e9ducatif.",lvl:1},
+  {q:"Un \u00e9ducateur r\u00e9dige un compte-rendu de synth\u00e8se \u00e0 destination du juge des enfants.",opts:["DC1 \u2014 La relation \u00e9ducative","DC4 \u2014 Dynamiques interinstitutionnelles","DC3 \u2014 Communication professionnelle","DC2 \u2014 Conception et conduite de projets"],correct:2,why:"La r\u00e9daction d'\u00e9crits professionnels adapt\u00e9s au destinataire rel\u00e8ve de DC3.",lvl:1},
+  {q:"Un \u00e9ducateur co-construit avec un jeune les objectifs de son projet personnalis\u00e9.",opts:["DC1 \u2014 La relation \u00e9ducative","DC2 \u2014 Conception et conduite de projets","DC3 \u2014 Communication professionnelle","DC4 \u2014 Dynamiques interinstitutionnelles"],correct:1,why:"La co-construction du projet avec la personne et la d\u00e9finition des objectifs rel\u00e8vent de DC2.",lvl:1},
+  {q:"Un \u00e9ducateur contacte un partenaire associatif pour organiser un atelier d'insertion.",opts:["DC2 \u2014 Conception et conduite de projets","DC3 \u2014 Communication professionnelle","DC1 \u2014 La relation \u00e9ducative","DC4 \u2014 Dynamiques interinstitutionnelles"],correct:3,why:"La mobilisation de partenaires ext\u00e9rieurs et la coop\u00e9ration interinstitutionnelle rel\u00e8vent de DC4.",lvl:1},
+  {q:"Un \u00e9ducateur utilise un temps informel (trajet en voiture) pour approfondir le lien avec un adolescent qui refuse les entretiens.",opts:["DC3 \u2014 Communication","DC2 \u2014 Projet \u00e9ducatif","DC1 \u2014 Relation \u00e9ducative","DC4 \u2014 Partenariats"],correct:2,why:"L'utilisation des espaces et temps non formalis\u00e9s pour construire la relation est un indicateur central de DC1.",lvl:1},
+  {q:"Un \u00e9ducateur participe \u00e0 une r\u00e9union d'\u00e9quipe pour assurer la coh\u00e9rence de l'accompagnement.",opts:["DC1 \u2014 Relation \u00e9ducative","DC2 \u2014 Projet \u00e9ducatif","DC4 \u2014 Partenariats","DC3 \u2014 Communication professionnelle"],correct:3,why:"Le travail d'\u00e9quipe et la coh\u00e9rence de l'action socio-\u00e9ducative rel\u00e8vent de DC3.",lvl:1},
+  {q:"Un \u00e9ducateur \u00e9value les effets d'un atelier collectif en s'appuyant sur des crit\u00e8res d\u00e9finis en amont.",opts:["DC1 \u2014 Relation \u00e9ducative","DC3 \u2014 Communication","DC4 \u2014 Partenariats","DC2 \u2014 Conception et conduite de projets"],correct:3,why:"L'\u00e9valuation d'un projet avec indicateurs et crit\u00e8res rel\u00e8ve de DC2.",lvl:1},
+  {q:"Un \u00e9ducateur analyse les politiques publiques en mati\u00e8re de protection de l'enfance.",opts:["DC4 \u2014 Dynamiques interinstitutionnelles","DC2 \u2014 Projet \u00e9ducatif","DC3 \u2014 Communication","DC1 \u2014 Relation \u00e9ducative"],correct:0,why:"L'actualisation des connaissances sur les politiques publiques rel\u00e8ve de DC4.",lvl:1},
+  {q:"Un \u00e9ducateur accompagne un usager \u00e0 la MDPH et la CAF pour acc\u00e9der \u00e0 ses droits.",opts:["DC4 \u2014 Partenariats","DC2 \u2014 Projet \u00e9ducatif","DC3 \u2014 Communication","DC1 \u2014 Relation \u00e9ducative"],correct:3,why:"L'acc\u00e8s aux droits, l'autonomie et la citoyennet\u00e9 rel\u00e8vent de DC1.",lvl:1},
+  {q:"Un \u00e9ducateur pr\u00e9sente le projet de service lors d'une journ\u00e9e portes ouvertes.",opts:["DC2 \u2014 Projet \u00e9ducatif","DC4 \u2014 Partenariats","DC3 \u2014 Communication professionnelle","DC1 \u2014 Relation \u00e9ducative"],correct:2,why:"La pr\u00e9sentation d'un projet et la repr\u00e9sentation du service rel\u00e8vent de DC3.",lvl:1}
+];
+
+let order = [];
+let idx = 0;
+let score = 0;
+let errors = 0;
+let answered = false;
+
+function init(){order = qcmData.map((_,i)=>i);}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function updateStats(){
+  document.getElementById('statCurrent').textContent=(idx+1)+' / '+qcmData.length;
+  document.getElementById('statCorrect').innerHTML='&#10003; '+score;
+  document.getElementById('statWrong').innerHTML='&#10007; '+errors;
+  document.getElementById('progressFill').style.width=((idx+1)/qcmData.length*100)+'%';
+}
+
+function startQuiz(){
+  if(order.length===0)init();
+  idx=0;score=0;errors=0;answered=false;
+  document.getElementById('welcomeScreen').classList.add('hidden');
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('quizArea').classList.remove('hidden');
+  renderQcm();
+}
+
+function shuffleAndStart(){
+  order=shuffle(qcmData.map((_,i)=>i));
+  idx=0;score=0;errors=0;answered=false;
+  document.getElementById('welcomeScreen').classList.add('hidden');
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('quizArea').classList.remove('hidden');
+  renderQcm();
+}
+
+function resetQuiz(){
+  init();
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('welcomeScreen').classList.remove('hidden');
+  document.getElementById('progressFill').style.width='0%';
+  document.getElementById('statCurrent').textContent='0 / '+qcmData.length;
+  document.getElementById('statCorrect').innerHTML='&#10003; 0';
+  document.getElementById('statWrong').innerHTML='&#10007; 0';
+}
+
+function renderQcm(){
+  answered=false;
+  const q=qcmData[order[idx]];
+  updateStats();
+  const lvlLabel=['','Niveau 1','Niveau 2','Niveau 3'];
+  const lvlClass=['','lvl1','lvl2','lvl3'];
+  let optsHtml='';
+  q.opts.forEach((o,i)=>{
+    optsHtml+='<div class="opt" id="opt'+i+'" onclick="selectQcm('+i+')">'+String.fromCharCode(65+i)+'. '+o+'</div>';
+  });
+  document.getElementById('quizArea').innerHTML=
+    '<div class="card">'+
+      '<div class="card-header">'+
+        '<span class="card-num">Question '+(idx+1)+' / '+qcmData.length+'</span>'+
+        '<span class="level-badge '+lvlClass[q.lvl]+'">'+lvlLabel[q.lvl]+'</span>'+
+      '</div>'+
+      '<div class="question-section">'+
+        '<h3>'+q.q+'</h3>'+
+        '<div class="options">'+optsHtml+'</div>'+
+        '<div class="explanation" id="explanation"><strong>Explication :</strong> '+q.why+'</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="nav-buttons">'+
+      '<button class="nav-btn" onclick="prevQ()">\u2190 Pr\u00e9c\u00e9dente</button>'+
+      '<button class="nav-btn primary" id="nextBtn" onclick="nextQ()" disabled>Suivante \u2192</button>'+
+    '</div>';
+  if(window.Mentor) Mentor.onQuestionShown(q);
+}
+
+function selectQcm(i){
+  if(answered)return;
+  answered=true;
+  const q=qcmData[order[idx]];
+  document.querySelectorAll('.opt').forEach(function(el,j){
+    el.classList.add('disabled');
+    if(j===q.correct)el.classList.add('correct');
+  });
+  if(i===q.correct){score++;}
+  else{errors++;document.getElementById('opt'+i).classList.add('wrong');}
+  document.getElementById('explanation').classList.add('show');
+  document.getElementById('nextBtn').disabled=false;
+  updateStats();
+  if(window.Mentor){
+    if(i===q.correct) Mentor.onAnswerCorrect(q);
+    else Mentor.onAnswerWrong(q, i);
+  }
+}
+
+function nextQ(){
+  if(idx<qcmData.length-1){idx++;renderQcm();}
+  else showResults();
+}
+function prevQ(){
+  if(idx>0){idx--;renderQcm();}
+  else{document.getElementById('quizArea').classList.add('hidden');document.getElementById('welcomeScreen').classList.remove('hidden');}
+}
+
+function showResults(){
+  document.getElementById('quizArea').classList.add('hidden');
+  var rs=document.getElementById('resultsScreen');
+  rs.classList.remove('hidden');
+  var total=score+errors;
+  var pct=total>0?Math.round(score/total*100):0;
+  document.getElementById('finalScore').textContent=pct+'%';
+  var msg='';
+  if(pct>=80)msg='Excellent ! Ma\u00eetrise solide du r\u00e9f\u00e9rentiel.';
+  else if(pct>=60)msg='Bon niveau. Continuez sur les points faibles.';
+  else msg='\u00c0 retravailler. Reprenez les questions \u00e9chou\u00e9es.';
+  document.getElementById('finalMsg').textContent='QCM : '+score+' r\u00e9ussies, '+errors+' \u00e0 revoir \u2014 '+msg;
+  document.getElementById('progressFill').style.width='100%';
+}
+
+init();
+</script>
+<script src="mentor.js"></script>
+</body>
+</html>

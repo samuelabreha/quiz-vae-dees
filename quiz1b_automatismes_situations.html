@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 1b — Automatismes Situation / Analyse (2/3) (VAE DEES)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;color:#1a1a2e;min-height:100vh}
+.header{background:linear-gradient(135deg,#e10600 0%,#b30000 100%);color:#fff;padding:24px 20px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.header h1{font-size:1.3rem;font-weight:700;margin-bottom:4px}
+.header p{font-size:.85rem;opacity:.9}
+.progress-bar{background:rgba(255,255,255,.2);height:6px;border-radius:3px;margin-top:12px;overflow:hidden}
+.progress-fill{height:100%;background:#fff;border-radius:3px;transition:width .4s ease}
+.stats{display:flex;justify-content:center;gap:20px;margin-top:10px;font-size:.8rem}
+.stats span{background:rgba(255,255,255,.15);padding:4px 12px;border-radius:20px}
+.container{max-width:700px;margin:0 auto;padding:20px}
+.card{background:#fff;border-radius:16px;box-shadow:0 2px 16px rgba(0,0,0,.08);overflow:hidden;margin-bottom:20px;transition:transform .2s}
+.card-header{padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center}
+.card-num{font-size:.75rem;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.dc-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700;color:#fff}
+.dc1{background:#e10600}
+.dc2{background:#2563eb}
+.dc3{background:#059669}
+.dc4{background:#7c3aed}
+.dc-multi{background:linear-gradient(135deg,#e10600,#2563eb)}
+.question-section{padding:20px}
+.question-section h3{font-size:1.05rem;line-height:1.5;color:#1a1a2e;margin-bottom:12px}
+.competence-tag{display:inline-block;background:#f8f9fa;border:1px solid #e0e0e0;padding:4px 10px;border-radius:8px;font-size:.78rem;color:#555;margin-bottom:10px}
+.situation-tag{display:inline-block;background:#fff3cd;border:1px solid #ffc107;padding:4px 10px;border-radius:8px;font-size:.78rem;color:#856404;margin-top:4px}
+.options{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.opt{padding:12px 16px;border:2px solid #e5e7eb;border-radius:10px;cursor:pointer;font-size:.9rem;line-height:1.4;transition:all .2s;background:#fafafa}
+.opt:hover{border-color:#e10600;background:#fff5f5}
+.opt.correct{border-color:#059669;background:#d1fae5;font-weight:600}
+.opt.wrong{border-color:#dc2626;background:#fee2e2}
+.opt.disabled{pointer-events:none;opacity:.7}
+.opt.disabled:hover{background:inherit;border-color:#e5e7eb}
+.opt.disabled.correct{opacity:1}
+.answer-section{display:none;padding:0 20px 20px;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.answer-block{margin-bottom:14px;padding:12px 14px;border-radius:10px;border-left:4px solid}
+.answer-block h4{font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.answer-block p,.answer-block li{font-size:.88rem;line-height:1.6;color:#333}
+.answer-block ul{padding-left:18px}
+.answer-block li{margin-bottom:2px}
+.block-reponse{background:#f0fdf4;border-color:#059669}
+.block-reponse h4{color:#059669}
+.block-loi{background:#eff6ff;border-color:#2563eb}
+.block-loi h4{color:#2563eb}
+.block-theorie{background:#faf5ff;border-color:#7c3aed}
+.block-theorie h4{color:#7c3aed}
+.block-analyse{background:#fff7ed;border-color:#ea580c}
+.block-analyse h4{color:#ea580c}
+.nav-buttons{display:flex;gap:10px;margin-top:10px}
+.nav-btn{flex:1;padding:12px;border:2px solid #e10600;background:#fff;color:#e10600;font-size:.9rem;font-weight:600;border-radius:10px;cursor:pointer;transition:all .2s}
+.nav-btn:hover{background:#e10600;color:#fff}
+.nav-btn:disabled{border-color:#ccc;color:#ccc;cursor:default;background:#fff}
+.nav-btn.primary{background:#fff;color:#e10600}
+.nav-btn.primary:hover{background:#e10600;color:#fff}
+.score-btn{padding:8px 16px;background:#059669;color:#fff;border:none;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .15s}
+.score-btn:hover{opacity:.9;transform:scale(1.02)}
+.score-btn.fail{background:#e10600}
+.score-section{display:flex;gap:10px;margin-top:14px;justify-content:center}
+.welcome{text-align:center;padding:60px 20px}
+.welcome h2{font-size:1.5rem;margin-bottom:12px;color:#e10600}
+.welcome p{font-size:.95rem;color:#555;line-height:1.6;margin-bottom:8px}
+.start-btn{margin-top:24px;padding:16px 40px;background:linear-gradient(135deg,#e10600,#b30000);color:#fff;border:none;font-size:1.1rem;font-weight:700;border-radius:12px;cursor:pointer;transition:transform .2s}
+.start-btn:hover{transform:scale(1.05)}
+.results{text-align:center;padding:40px 20px}
+.results h2{font-size:1.6rem;color:#e10600;margin-bottom:16px}
+.results .score-big{font-size:3rem;font-weight:800;color:#059669;margin:20px 0}
+.results p{font-size:1rem;color:#555;margin-bottom:8px}
+.hidden{display:none}
+.shuffle-btn{padding:8px 16px;background:#fff;border:2px solid #e10600;color:#e10600;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;margin-top:12px}
+.shuffle-btn:hover{background:#e10600;color:#fff}
+.back-link{display:inline-block;margin-top:20px;padding:8px 16px;font-size:.82rem;color:#999;text-decoration:none;border:1px solid #ddd;border-radius:8px;transition:all .2s}
+.back-link:hover{color:#e10600;border-color:#e10600}
+.qcm-instruction{margin-top:8px;font-size:.85rem;color:#999;font-style:italic}
+.separator{height:1px;background:#f0f0f0;margin:16px 0 0}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Quiz 1b &mdash; Automatismes Situation / Analyse (2/3)</h1>
+  <p>10 questions QCM + flashcards &bull; Entra&icirc;nement oral VAE DEES</p>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="stats">
+    <span id="statCurrent">0 / 10</span>
+    <span id="statCorrect" style="color:#a7f3d0">&#10003; 0</span>
+    <span id="statWrong" style="color:#fca5a5">&#10007; 0</span>
+  </div>
+</div>
+
+<div class="container">
+  <div id="welcomeScreen" class="welcome">
+    <h2>Pr&eacute;paration Oral VAE DEES</h2>
+    <p><strong>Mode hybride :</strong> QCM interactif + fiche de r&eacute;vision compl&egrave;te</p>
+    <p>1. Lisez la question &rarr; 2. R&eacute;pondez au QCM &rarr; 3. D&eacute;couvrez la fiche d&eacute;taill&eacute;e</p>
+    <p style="margin-top:16px;font-size:.85rem;color:#888">10 questions &bull; Partie 2/3 &bull; Situations : N (Perthes), R (Vergers), Amir (FINC)</p>
+    <button class="start-btn" onclick="startQuiz()">Commencer le quiz</button>
+    <br>
+    <button class="shuffle-btn" onclick="shuffleAndStart()">M&eacute;langer et commencer</button>
+    <br><a href="index.html" class="back-link">&larr; Retour &agrave; l'accueil</a>
+  </div>
+
+  <div id="quizArea" class="hidden"></div>
+
+  <div id="resultsScreen" class="hidden results">
+    <h2>R&eacute;sultats</h2>
+    <div class="score-big" id="finalScore"></div>
+    <p id="finalMsg"></p>
+    <div style="margin:20px auto 0;max-width:420px;padding:14px 18px;background:#f0fdfa;border-radius:12px;border-left:4px solid #0d9488;text-align:left">
+      <p style="font-size:.85rem;color:#333;line-height:1.6"><strong style="color:#0d9488">&#128172; Besoin d'aide pour structurer vos r&eacute;ponses ?</strong><br>Le <strong>Coach Interactif</strong> vous guide question par question avec des indices progressifs si vous bloquez.</p>
+      <a href="agent_pedagogique.html" style="display:inline-block;margin-top:8px;padding:8px 20px;background:#0d9488;color:#fff;border-radius:10px;font-size:.85rem;font-weight:600;text-decoration:none;transition:background .2s">Lancer le Coach Interactif &rarr;</a>
+    </div>
+    <button class="start-btn" onclick="resetQuiz()" style="margin-top:20px;font-size:.95rem;padding:12px 30px">Recommencer</button>
+    <button class="shuffle-btn" onclick="shuffleAndStart()">M&eacute;langer et recommencer</button>
+  </div>
+</div>
+
+<script>
+const flashcards = [
+  {
+    q:"Comment vous positionnez-vous face \u00e0 un d\u00e9saccord en \u00e9quipe ?",
+    options:[
+      "En me rangeant \u00e0 l'avis du chef de service pour maintenir la coh\u00e9rence",
+      "En argumentant en r\u00e9union avec des observations et r\u00e9f\u00e9rences pour construire une position commune",
+      "En \u00e9vitant le conflit et en appliquant ma propre m\u00e9thode en silence",
+      "En imposant mon point de vue car je connais mieux la situation"
+    ],correct:1,
+    dc:"DC3",dcLabel:"DC3 \u2014 Coh\u00e9rence",dcClass:"dc3",
+    comp:"Coh\u00e9rence de l'action socio-\u00e9ducative, dynamique institutionnelle",
+    situation:"R (Vergers) \u2014 d\u00e9saccord sur la r\u00e9ponse \u00e9ducative",
+    reponse:"L'\u00e9quipe \u00e9tait partag\u00e9e entre approche contenante stricte et souple. J'ai argument\u00e9 en m'appuyant sur mes observations et r\u00e9f\u00e9rences th\u00e9oriques. D\u00e9saccord trait\u00e9 en r\u00e9union, position commune trouv\u00e9e. Le d\u00e9saccord est un signe de vitalit\u00e9 institutionnelle.",
+    loi:"Loi 2002-2 (projet d'\u00e9tablissement comme cadre commun)",
+    theorie:"Rouzel (transfert institutionnel, conflictualit\u00e9 productive)",
+    analyse:"L'\u00e9ducateur argumente sans imposer. La coh\u00e9rence d'\u00e9quipe se construit dans le d\u00e9bat, pas dans le silence."
+  },
+  {
+    q:"Comment accompagnez-vous un enfant dans l'acc\u00e8s \u00e0 ses droits ?",
+    options:[
+      "En g\u00e9rant les d\u00e9marches administratives \u00e0 sa place pour aller plus vite",
+      "En d\u00e9l\u00e9guant l'acc\u00e8s aux droits aux services juridiques comp\u00e9tents",
+      "En attendant que l'enfant soit en \u00e2ge de comprendre pleinement ses droits",
+      "En l'informant de mani\u00e8re adapt\u00e9e et en l'accompagnant dans les d\u00e9marches concr\u00e8tes"
+    ],correct:3,
+    dc:"DC1",dcLabel:"DC1 \u2014 Acc\u00e8s aux droits",dcClass:"dc1",
+    comp:"Acc\u00e8s aux droits, citoyennet\u00e9, autonomie",
+    situation:"N (Perthes) \u2014 droit \u00e0 la scolarit\u00e9, droit \u00e0 l'information",
+    reponse:"N avait droit \u00e0 la continuit\u00e9 scolaire. Lien avec l'enseignant r\u00e9f\u00e9rent, information adapt\u00e9e \u00e0 son \u00e2ge sur sa situation. L'acc\u00e8s aux droits est un accompagnement \u00e9ducatif qui d\u00e9veloppe la citoyennet\u00e9.",
+    loi:"Loi 2005 (scolarisation) \u2014 CIDE art. 28 (\u00e9ducation) \u2014 CIDE art. 12 (\u00eatre entendu)",
+    theorie:"Freire (l'\u00e9ducation comme pratique de la libert\u00e9)",
+    analyse:"L'\u00e9ducateur est garant des droits de la personne. L'acc\u00e8s aux droits est un levier d'autonomie, pas une formalit\u00e9."
+  },
+  {
+    q:"Comment intervenez-vous dans une situation de crise ?",
+    options:[
+      "En s\u00e9curisant le groupe, attendant le retour au calme, puis en analysant les d\u00e9clencheurs en \u00e9quipe",
+      "En isolant imm\u00e9diatement l'enfant et en le sanctionnant",
+      "En appelant syst\u00e9matiquement les parents pour qu'ils g\u00e8rent la crise",
+      "En r\u00e9agissant fermement pour montrer l'autorit\u00e9 de l'\u00e9ducateur"
+    ],correct:0,
+    dc:"DC2",dcLabel:"DC2 \u2014 Gestion de crise",dcClass:"dc2",
+    comp:"Pr\u00e9vention des dysfonctionnements, gestion de conflit",
+    situation:"R (Vergers) \u2014 passages \u00e0 l'acte, situations de crise",
+    reponse:"S\u00e9curisation du groupe et de R, attente du retour au calme, verbalisation. Analyse des d\u00e9clencheurs en \u00e9quipe, mesures pr\u00e9ventives : rep\u00e9rage des signes, am\u00e9nagement, protocole de retour au calme. La crise est une information \u00e9ducative.",
+    loi:"Loi 2002-2 (s\u00e9curit\u00e9) \u2014 Loi 2007 (signalement, protection)",
+    theorie:"Winnicott (contenance) \u2014 Vygotski (\u00e9tayage dans la zone proximale de r\u00e9gulation)",
+    analyse:"Pr\u00e9vention (avant), intervention (pendant), analyse (apr\u00e8s). L'\u00e9ducateur agit dans un cadre professionnel, pas dans l'\u00e9motion."
+  },
+  {
+    q:"Comment articulez-vous observation et action \u00e9ducative ?",
+    options:[
+      "En agissant d'abord selon mon exp\u00e9rience puis en ajustant si n\u00e9cessaire",
+      "En suivant les directives de l'\u00e9quipe sans observation pr\u00e9alable personnelle",
+      "En observant de mani\u00e8re intentionnelle avant d'intervenir, pour fonder l'action sur des \u00e9l\u00e9ments concrets",
+      "En utilisant uniquement les \u00e9valuations psychologiques pour guider l'action"
+    ],correct:2,
+    dc:"DC1",dcLabel:"DC1 \u2014 Observation",dcClass:"dc1",
+    comp:"Observation, \u00e9coute, analyse des besoins",
+    situation:"Amir (FINC) \u2014 observation avant intervention",
+    reponse:"Avant toute intervention, temps d'observation : centres d'int\u00e9r\u00eat, modes de communication, moments de repli et d'ouverture. L'intervention a \u00e9t\u00e9 fond\u00e9e sur ce que j'observais, pas sur ce que je pensais qu'il fallait faire.",
+    loi:"Loi 2002-2 (accompagnement adapt\u00e9 aux besoins)",
+    theorie:"Rogers (\u00e9coute active, compr\u00e9hension empathique) \u2014 Piaget (observation comme m\u00e9thode clinique)",
+    analyse:"L'observation est un acte professionnel intentionnel. L'\u00e9ducateur qui observe avant d'agir construit un accompagnement sur mesure."
+  },
+  {
+    q:"Comment travaillez-vous la notion de cadre avec les enfants ?",
+    options:[
+      "En imposant des r\u00e8gles strictes sans possibilit\u00e9 de n\u00e9gociation",
+      "En posant un cadre clair et explicite, en donnant du sens aux r\u00e8gles et en les ajustant",
+      "En laissant les enfants d\u00e9finir eux-m\u00eames les r\u00e8gles du groupe",
+      "En appliquant des sanctions automatiques \u00e0 chaque transgression"
+    ],correct:1,
+    dc:"DC1",dcLabel:"DC1 \u2014 Cadre",dcClass:"dc1",
+    comp:"Cadre et r\u00e8gles, fonction d'\u00e9tayage",
+    situation:"R (Vergers) \u2014 cadre structurant face \u00e0 l'impulsivit\u00e9",
+    reponse:"Cadre clair, explicite et constant. R\u00e8gles expliqu\u00e9es, pas impos\u00e9es. Retour syst\u00e9matique sur le sens lors des transgressions. Le cadre est ferme et bienveillant. Il s\u00e9curise en donnant des rep\u00e8res pr\u00e9visibles.",
+    loi:"CIDE art. 19 (protection) \u2014 Loi 2002-2 (droits dans le cadre institutionnel)",
+    theorie:"Winnicott (enveloppe psychique s\u00e9curisante) \u2014 Korczak (respect de l'enfant)",
+    analyse:"Le cadre est un outil \u00e9ducatif de s\u00e9curit\u00e9. L'\u00e9ducateur tient le cadre avec constance et donne du sens."
+  },
+  {
+    q:"Comment favorisez-vous l'expression de l'enfant ?",
+    options:[
+      "En diversifiant les supports d'expression (jeu, dessin, parole) adapt\u00e9s \u00e0 chaque enfant",
+      "En organisant des entretiens individuels obligatoires chaque semaine",
+      "En attendant que l'enfant vienne spontan\u00e9ment exprimer ses besoins",
+      "En posant uniquement des questions ferm\u00e9es pour faciliter la r\u00e9ponse"
+    ],correct:0,
+    dc:"DC1",dcLabel:"DC1 \u2014 Expression",dcClass:"dc1",
+    comp:"Expression, participation de la personne",
+    situation:"N (Perthes) \u2014 enfant qui verbalise peu face \u00e0 la maladie",
+    reponse:"Supports m\u00e9diatis\u00e9s (dessin, jeu) pour offrir des espaces d'expression indirects. Progressivement, la parole est venue dans les temps informels. L'expression ne passe pas toujours par la parole \u2014 diversifier les canaux.",
+    loi:"CIDE art. 12 (exprimer son opinion) \u2014 CIDE art. 13 (libert\u00e9 d'expression) \u2014 Loi 2002-2",
+    theorie:"Winnicott (jeu comme espace transitionnel) \u2014 Dolto (l'enfant a des choses \u00e0 dire)",
+    analyse:"L'expression est un droit et un besoin. La comp\u00e9tence est dans la diversification des supports adapt\u00e9s \u00e0 chaque personne."
+  },
+  {
+    q:"Comment travaillez-vous en partenariat avec d'autres professionnels ?",
+    options:[
+      "En d\u00e9l\u00e9guant les aspects hors de ma comp\u00e9tence aux autres professionnels",
+      "En communiquant uniquement par des rapports \u00e9crits formels",
+      "En gardant la ma\u00eetrise du projet \u00e9ducatif sans interf\u00e9rence ext\u00e9rieure",
+      "En coordonnant les objectifs avec les partenaires dans le respect des comp\u00e9tences de chacun"
+    ],correct:3,
+    dc:"DC4",dcLabel:"DC4 \u2014 Partenariat",dcClass:"dc4",
+    comp:"Partenariat, r\u00e9seau, coop\u00e9ration",
+    situation:"N (Perthes) \u2014 \u00e9quipe m\u00e9dicale, enseignant, famille",
+    reponse:"Plusieurs partenaires mobilis\u00e9s. Coordination de l'information \u00e9ducative, respect des comp\u00e9tences de chacun. Temps d'\u00e9change r\u00e9guliers, coh\u00e9rence des objectifs \u00e9ducatifs avec le projet m\u00e9dical et scolaire.",
+    loi:"Loi 2002-2 (coordination) \u2014 Loi 2005 (\u00e9quipe pluridisciplinaire)",
+    theorie:"Partenariat : objectifs communs, engagements r\u00e9ciproques, reconnaissance des comp\u00e9tences",
+    analyse:"Le partenariat est une co-construction autour de la personne. L'\u00e9ducateur apporte son regard sp\u00e9cifique."
+  },
+  {
+    q:"Comment prenez-vous en compte le contexte institutionnel dans votre pratique ?",
+    options:[
+      "En appliquant mes propres m\u00e9thodes ind\u00e9pendamment du projet d'\u00e9tablissement",
+      "En suivant uniquement les consignes de mon sup\u00e9rieur hi\u00e9rarchique",
+      "En inscrivant mon action dans le projet institutionnel et en participant aux temps collectifs",
+      "En ignorant les contraintes institutionnelles pour me concentrer sur l'accompagnement"
+    ],correct:2,
+    dc:"DC4",dcLabel:"DC4 \u2014 Institution",dcClass:"dc4",
+    comp:"Connaissance et analyse des contextes institutionnels",
+    situation:"Amir (FINC) \u2014 maison de quartier, ses missions et valeurs",
+    reponse:"\u00c0 la FINC, l'institution porte des valeurs d'ouverture, inclusion, participation citoyenne. Mon accompagnement s'inscrivait dans ce cadre. Objectifs coh\u00e9rents avec le projet de la structure. Participation aux temps institutionnels pour faire remonter mes observations.",
+    loi:"Loi 2002-2 (projet d'\u00e9tablissement) \u2014 CASF",
+    theorie:"Rouzel (l'institution comme cadre symbolique)",
+    analyse:"L'\u00e9ducateur inscrit son action dans un projet institutionnel dont il conna\u00eet les missions et limites."
+  },
+  {
+    q:"Comment menez-vous une activit\u00e9 \u00e9ducative collective ?",
+    options:[
+      "En proposant une activit\u00e9 occupationnelle pour maintenir le calme du groupe",
+      "En concevant l'activit\u00e9 avec des objectifs \u00e9ducatifs pr\u00e9cis, adapt\u00e9e aux participants",
+      "En laissant le groupe s'auto-organiser pour d\u00e9velopper l'autonomie",
+      "En imposant la participation obligatoire pour favoriser la coh\u00e9sion"
+    ],correct:1,
+    dc:"DC2",dcLabel:"DC2 \u2014 Activit\u00e9 collective",dcClass:"dc2",
+    comp:"Animation du quotidien, intervention collective, cr\u00e9ativit\u00e9",
+    situation:"Amir (FINC) \u2014 activit\u00e9s collectives \u00e0 la maison de quartier",
+    reponse:"Activit\u00e9s con\u00e7ues avec des objectifs pr\u00e9cis : coop\u00e9ration, expression, vivre-ensemble. Adaptation pour qu'Amir trouve sa place sans difficult\u00e9 face au groupe. L'activit\u00e9 collective est un outil \u00e9ducatif pens\u00e9, pas une occupation.",
+    loi:"CIDE art. 31 (droit au jeu et activit\u00e9s r\u00e9cr\u00e9atives)",
+    theorie:"Vygotski (apprentissage par interaction sociale) \u2014 Freinet (p\u00e9dagogie coop\u00e9rative)",
+    analyse:"L'activit\u00e9 collective est un projet \u00e9ducatif : objectifs, m\u00e9thodologie, \u00e9valuation. L'\u00e9ducateur anime avec intention."
+  },
+  {
+    q:"Comment r\u00e9digez-vous un rapport \u00e9ducatif pour un juge ?",
+    options:[
+      "En structurant un rapport factuel, distinguant faits et analyse, avec un vocabulaire adapt\u00e9 au destinataire",
+      "En recopiant les transmissions quotidiennes du cahier de bord",
+      "En donnant mon opinion personnelle sur l'\u00e9volution de l'enfant",
+      "En laissant le chef de service r\u00e9diger car c'est sa responsabilit\u00e9"
+    ],correct:0,
+    dc:"DC3",dcLabel:"DC3 \u2014 \u00c9crits professionnels",dcClass:"dc3",
+    comp:"\u00c9crits professionnels, adaptation au destinataire, cadre \u00e9thique",
+    situation:"R (Vergers) \u2014 r\u00e9daction d'un \u00e9crit professionnel",
+    reponse:"Rapport factuel et structur\u00e9 : situation initiale, objectifs, observations, \u00e9volution. Vocabulaire adapt\u00e9 au magistrat. Distinction faits / analyse professionnelle. Informations strictement n\u00e9cessaires, respect du cadre \u00e9thique.",
+    loi:"Art. 226-13 (secret professionnel) \u2014 Loi 2002-2 (vie priv\u00e9e)",
+    theorie:"\u00c9crit professionnel situ\u00e9 : l'\u00e9crit engage l'institution et a des effets sur la personne",
+    analyse:"L'\u00e9crit influence les d\u00e9cisions. Rigueur dans la distinction faits / observations / interpr\u00e9tations."
+  }
+];
+
+let currentIndex = 0;
+let correct = 0;
+let wrong = 0;
+let answered = false;
+let order = [];
+
+function init(){
+  order = flashcards.map((_,i)=>i);
+}
+
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+  return arr;
+}
+
+function startQuiz(){
+  if(order.length===0) init();
+  currentIndex=0;correct=0;wrong=0;answered=false;
+  document.getElementById('welcomeScreen').classList.add('hidden');
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('quizArea').classList.remove('hidden');
+  renderCard();
+}
+
+function shuffleAndStart(){
+  order = shuffle(flashcards.map((_,i)=>i));
+  currentIndex=0;correct=0;wrong=0;answered=false;
+  document.getElementById('welcomeScreen').classList.add('hidden');
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('quizArea').classList.remove('hidden');
+  renderCard();
+}
+
+function updateStats(){
+  const total = flashcards.length;
+  document.getElementById('statCurrent').textContent = (currentIndex+1)+' / '+total;
+  document.getElementById('statCorrect').innerHTML = '&#10003; '+correct;
+  document.getElementById('statWrong').innerHTML = '&#10007; '+wrong;
+  document.getElementById('progressFill').style.width = ((currentIndex+1)/total*100)+'%';
+}
+
+function renderCard(){
+  answered = false;
+  const fc = flashcards[order[currentIndex]];
+  updateStats();
+  let optsHtml = '';
+  fc.options.forEach((o, i) => {
+    optsHtml += '<div class="opt" id="opt'+i+'" onclick="selectOption('+i+')">'+String.fromCharCode(65+i)+'. '+o+'</div>';
+  });
+  const html = '\
+    <div style="background:linear-gradient(135deg,#0d9488 0%,#0f766e 100%);color:#fff;border-radius:14px;padding:14px 18px;margin-bottom:14px;box-shadow:0 4px 16px rgba(13,148,136,.25)">\
+      <div style="font-size:.75rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;opacity:.85">M&eacute;thode universelle (CPOAPRER)</div>\
+      <div style="display:flex;flex-wrap:wrap;gap:4px 3px;align-items:center;font-size:.82rem;font-weight:700">\
+        <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Contexte</span>\
+        <span style="opacity:.6">&rarr;</span>\
+        <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Probl&eacute;matique</span>\
+        <span style="opacity:.6">&rarr;</span>\
+        <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Objectifs</span>\
+        <span style="opacity:.6">&rarr;</span>\
+        <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Actions</span>\
+        <span style="opacity:.6">&rarr;</span>\
+        <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Posture</span>\
+        <span style="opacity:.6">&rarr;</span>\
+        <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">R&eacute;seau</span>\
+        <span style="opacity:.6">&rarr;</span>\
+        <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">&Eacute;valuation</span>\
+        <span style="opacity:.6">&rarr;</span>\
+        <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">R&eacute;f&eacute;rentiel</span>\
+      </div>\
+    </div>\
+    <div class="card">\
+      <div class="card-header">\
+        <span class="card-num">Carte '+( currentIndex+1)+' / '+flashcards.length+'</span>\
+        <span class="dc-badge" id="dcBadge" style="background:#ccc;color:#fff">? DC</span>\
+      </div>\
+      <div class="question-section">\
+        <h3>\u00ab '+fc.q+' \u00bb</h3>\
+        <p class="qcm-instruction">Choisissez la bonne r\u00e9ponse parmi les propositions :</p>\
+        <div class="options">'+optsHtml+'</div>\
+      </div>\
+      <div class="separator"></div>\
+      <div class="answer-section" id="answerSection">\
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;margin-top:16px;align-items:center">\
+          <span class="dc-badge '+fc.dcClass+'">'+fc.dcLabel+'</span>\
+          <span class="competence-tag">'+fc.comp+'</span>\
+          <span class="situation-tag">'+fc.situation+'</span>\
+        </div>\
+        <div class="answer-block block-reponse">\
+          <h4>R\u00e9ponse synth\u00e9tique orale</h4>\
+          <p>'+fc.reponse+'</p>\
+        </div>\
+        <div class="answer-block block-loi">\
+          <h4>Loi \u00e0 citer</h4>\
+          <p>'+fc.loi+'</p>\
+        </div>\
+        <div class="answer-block block-theorie">\
+          <h4>R\u00e9f\u00e9rence th\u00e9orique</h4>\
+          <p>'+fc.theorie+'</p>\
+        </div>\
+        <div class="answer-block block-analyse">\
+          <h4>Point d\'analyse \u00e0 montrer au jury</h4>\
+          <p>'+fc.analyse+'</p>\
+        </div>\
+        <div class="score-section">\
+          <button class="score-btn" onclick="markResult(true)">&#10003; Je savais</button>\
+          <button class="score-btn fail" onclick="markResult(false)">&#10007; \u00c0 revoir</button>\
+        </div>\
+      </div>\
+    </div>\
+    <div class="nav-buttons">\
+      <button class="nav-btn" onclick="prevCard()">&#8592; Pr\u00e9c\u00e9dente</button>\
+      <button class="nav-btn primary" onclick="nextCard()">Suivante &#8594;</button>\
+    </div>';
+  document.getElementById('quizArea').innerHTML = html;
+  if(window.Mentor) Mentor.onQuestionShown(fc);
+}
+
+function selectOption(i){
+  if(answered) return;
+  answered = true;
+  const fc = flashcards[order[currentIndex]];
+  document.querySelectorAll('.opt').forEach(function(el, j){
+    el.classList.add('disabled');
+    if(j === fc.correct) el.classList.add('correct');
+  });
+  if(i !== fc.correct){
+    document.getElementById('opt'+i).classList.add('wrong');
+  }
+  var badge = document.getElementById('dcBadge');
+  badge.textContent = fc.dcLabel;
+  badge.className = 'dc-badge ' + fc.dcClass;
+  document.getElementById('answerSection').style.display = 'block';
+  setTimeout(function(){
+    document.getElementById('answerSection').scrollIntoView({behavior:'smooth',block:'start'});
+  }, 200);
+  if(window.Mentor){
+    if(i === fc.correct) Mentor.onAnswerCorrect(fc);
+    else Mentor.onAnswerWrong(fc, i);
+  }
+}
+
+function markResult(success){
+  if(success) correct++; else wrong++;
+  updateStats();
+  if(currentIndex < flashcards.length-1){
+    nextCard();
+  } else {
+    showResults();
+  }
+}
+
+function nextCard(){
+  if(currentIndex < flashcards.length-1){currentIndex++;renderCard();window.scrollTo({top:0,behavior:'smooth'});}
+}
+function prevCard(){
+  if(currentIndex > 0){currentIndex--;renderCard();window.scrollTo({top:0,behavior:'smooth'});}
+  else{document.getElementById('quizArea').classList.add('hidden');document.getElementById('welcomeScreen').classList.remove('hidden');}
+}
+
+function showResults(){
+  document.getElementById('quizArea').classList.add('hidden');
+  var rs = document.getElementById('resultsScreen');
+  rs.classList.remove('hidden');
+  var pct = Math.round(correct/(correct+wrong)*100)||0;
+  document.getElementById('finalScore').textContent = pct+'%';
+  var msg = '';
+  if(pct>=80) msg='Excellent ! Vous \u00eates pr\u00eat(e) pour le jury.';
+  else if(pct>=60) msg='Bon niveau. Continuez \u00e0 r\u00e9viser les points faibles.';
+  else msg='\u00c0 retravailler. Concentrez-vous sur les cartes \u00e9chou\u00e9es.';
+  document.getElementById('finalMsg').textContent = correct+' r\u00e9ussies, '+wrong+' \u00e0 revoir \u2014 '+msg;
+  document.getElementById('progressFill').style.width = '100%';
+}
+
+function resetQuiz(){
+  init();
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('welcomeScreen').classList.remove('hidden');
+  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('statCurrent').textContent = '0 / 10';
+  document.getElementById('statCorrect').innerHTML = '&#10003; 0';
+  document.getElementById('statWrong').innerHTML = '&#10007; 0';
+}
+
+init();
+</script>
+<script src="mentor.js"></script>
+</body>
+</html>

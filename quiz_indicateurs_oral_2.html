@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Questionnaire – Indicateurs oral (Partie 2/2) (Jury VAE DEES)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;min-height:100vh}
+.container{max-width:760px;margin:0 auto;padding:24px 16px}
+.back-link{display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;color:#e10600;text-decoration:none;font-size:.9rem}
+.back-link:hover{text-decoration:underline}
+h1{font-size:1.5rem;color:#1a1a2e;margin-bottom:4px;text-align:center}
+.subtitle{font-size:.92rem;color:#666;margin-bottom:10px;text-align:center}
+.desc{font-size:.9rem;color:#444;margin:0 auto 18px;max-width:700px;text-align:center;line-height:1.6}
+.hidden{display:none}
+.welcome-card{background:#fff;border-radius:16px;padding:30px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.06);border-top:4px solid #e10600}
+.welcome-card h2{margin:12px 0 8px;font-size:1.25rem;color:#1a1a2e}
+.welcome-card p{color:#666;font-size:.9rem;margin-bottom:6px;line-height:1.5}
+.badge-red{display:inline-block;padding:5px 16px;border-radius:20px;font-size:.75rem;font-weight:800;color:#fff;background:#e10600}
+.info-row{display:flex;justify-content:center;gap:18px;margin:16px 0;font-size:.85rem;color:#666;flex-wrap:wrap}
+.info-row span{display:flex;align-items:center;gap:4px}
+.btn-start{display:inline-block;margin-top:18px;padding:14px 36px;background:#e10600;color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:800;cursor:pointer;transition:background .2s}
+.btn-start:hover{background:#b30000}
+.progress-bar{height:6px;background:#e5e7eb;border-radius:3px;margin-bottom:8px;overflow:hidden}
+.progress-fill{height:100%;background:#e10600;border-radius:3px;transition:width .3s}
+.progress-text{font-size:.8rem;color:#999;margin-bottom:16px;text-align:right}
+.timer{font-size:.8rem;color:#e10600;text-align:center;margin-bottom:12px;font-weight:800}
+.q-card{background:#fff;border-radius:16px;padding:26px;box-shadow:0 2px 16px rgba(0,0,0,.06)}
+.q-number{font-size:.8rem;color:#e10600;font-weight:900;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.q-label{display:inline-block;padding:3px 10px;border-radius:8px;font-size:.75rem;font-weight:900;color:#fff;background:#e10600;margin-bottom:12px}
+.q-text{font-size:1.02rem;color:#1a1a2e;line-height:1.7;margin-bottom:16px;white-space:pre-line}
+.options{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.opt{padding:14px 18px;border:2px solid #e5e7eb;border-radius:12px;cursor:pointer;font-size:.95rem;color:#333;transition:all .15s;background:#fff}
+.opt:hover:not(.disabled){border-color:#e10600;background:#fff5f5}
+.opt.correct{border-color:#059669;background:#d1fae5;color:#065f46;font-weight:800}
+.opt.wrong{border-color:#dc2626;background:#fef2f2;color:#dc2626}
+.opt.disabled{cursor:default}
+.opt.disabled:not(.correct):not(.wrong){opacity:.6}
+.answer-section{display:none;margin-top:18px;padding:16px 16px;background:#fff7ed;border-radius:12px;border-left:4px solid #ea580c}
+.answer-section h3{font-size:.9rem;color:#ea580c;margin-bottom:8px;font-weight:900}
+.answer-section p{font-size:.9rem;color:#333;line-height:1.7;margin-bottom:6px}
+.answer-section strong{color:#9a3412}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:18px;gap:12px}
+.btn-nav{padding:10px 22px;border:2px solid #e10600;color:#e10600;background:#fff;border-radius:10px;font-size:.9rem;cursor:pointer;transition:all .2s;font-weight:900}
+.btn-nav:hover{background:#fff5f5}
+.btn-nav.primary{background:#e10600;color:#fff;border-color:#e10600}
+.btn-nav.primary:hover{background:#b30000}
+.result-card{background:#fff;border-radius:16px;padding:30px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.06);border-top:4px solid #e10600}
+.score-big{font-size:2.6rem;font-weight:900;color:#e10600;margin:14px 0 6px}
+.score-label{font-size:1rem;color:#666;margin-bottom:16px}
+.checklist{margin-top:18px;text-align:left;padding:18px 18px;background:#f8fafc;border-radius:12px;border-left:4px solid #2563eb}
+.checklist h3{font-size:.9rem;color:#2563eb;margin-bottom:10px;font-weight:900}
+.cl-item{display:flex;gap:10px;align-items:flex-start;margin:10px 0;font-size:.9rem;color:#333;line-height:1.5}
+.cl-item input{margin-top:3px}
+.btn-row{display:flex;gap:12px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" class="back-link">&larr; Retour</a>
+<h1>Indicateurs oral (Partie 2/2)</h1>
+<p class="subtitle">Analyse, evaluation, projet, theorie, secret pro, application.</p>
+<p class="desc">Deuxieme partie : <strong>analyse</strong>, <strong>evaluation</strong>, <strong>projet</strong>, <strong>theorie</strong>, <strong>secret professionnel</strong> et <strong>mises en application</strong> face au jury.</p>
+
+<div id="welcomeScreen">
+  <div class="welcome-card">
+    <span class="badge-red">Quiz Prioritaire</span>
+    <h2>Indicateurs oral — check pro (Partie 2/2)</h2>
+    <p>Format mix : <strong>QCM</strong> (reflexes) + <strong>checklist finale</strong> (demonstration).</p>
+    <div class="info-row">
+      <span>&#128221; 9 QCM</span>
+      <span>&#9201; 3-5 min</span>
+      <span>&#127919; Analyse + evaluation + application</span>
+    </div>
+    <p style="font-size:.85rem;color:#e10600;font-weight:900;margin-top:10px">Reponds a voix haute avant de cliquer.</p>
+    <button class="btn-start" onclick="startQuiz()">Commencer</button>
+  </div>
+</div>
+
+<div id="quizArea" class="hidden">
+  <div class="timer" id="timer">00:00</div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-text" id="progressText">1 / 9</div>
+  <div class="q-card" id="questionCard"></div>
+  <div class="nav-row">
+    <button class="btn-nav" onclick="prevQ()">&larr; Precedente</button>
+    <button class="btn-nav primary" onclick="nextQ()">Suivante &rarr;</button>
+  </div>
+</div>
+
+<div id="resultScreen" class="hidden">
+  <div class="result-card">
+    <span class="badge-red">Termine</span>
+    <div class="score-big" id="scoreDisplay">0 / 0</div>
+    <div class="score-label">reponses QCM correctes</div>
+
+    <div class="checklist">
+      <h3>Checklist "reponse jury" (preuve / demonstration)</h3>
+      <label class="cl-item"><input type="checkbox">Je cite explicitement le <strong>DC</strong> (ou l'enjeu de competence) des le debut.</label>
+      <label class="cl-item"><input type="checkbox">Je <strong>situe</strong> le contexte (lieu, public, dispositif, mon role).</label>
+      <label class="cl-item"><input type="checkbox">Je <strong>decris des faits observables</strong> (pas une opinion).</label>
+      <label class="cl-item"><input type="checkbox">Je formule une <strong>analyse</strong> (hypotheses / besoins / facteurs) avant d'agir.</label>
+      <label class="cl-item"><input type="checkbox">Je pose des <strong>objectifs</strong> (intention + objectifs operationnels).</label>
+      <label class="cl-item"><input type="checkbox">Je decris mes <strong>actions</strong> avec des verbes pro (observer, ajuster, transmettre, evaluer...).</label>
+      <label class="cl-item"><input type="checkbox">Je donne au moins <strong>un effet / resultat</strong> et un <strong>reajustement</strong> (evaluation).</label>
+      <label class="cl-item"><input type="checkbox">Je montre ma <strong>posture</strong> (contenance, ethique, respect du rythme, limites).</label>
+      <label class="cl-item"><input type="checkbox">Je mentionne le <strong>reseau</strong> (equipe, famille, partenaires) quand c'est pertinent.</label>
+      <label class="cl-item"><input type="checkbox">J'ancre dans un <strong>cadre legal / theorique</strong> (au minimum loi 2002-2 / loi 2005) + lien pratique.</label>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-nav" onclick="resetQuiz()">&#128260; Recommencer</button>
+      <a href="index.html" class="btn-nav primary" style="text-decoration:none">Retour</a>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+var questions = [
+  { label: "Analyse", q: "Avant d'agir, l'analyse sert surtout a :", options: ["Trouver un responsable","Comprendre besoins/facteurs et justifier les objectifs","Gagner du temps","Citer une theorie"], correct: 1, explanation: "Analyse = hypotheses + besoins + facteurs, puis objectifs coherents, puis actions justifiees." },
+  { label: "Evaluation", q: "Quel element manque le plus souvent dans une reponse \"trop narrative\" ?", options: ["Le nom de la personne","L'evaluation : effets observes + ajustements","Les details de l'activite","Le lieu exact"], correct: 1, explanation: "Le jury attend : <strong>ce que ca a change</strong> et comment tu <strong>reajustes</strong>." },
+  { label: "Projet", q: "Si une situation parle d'un projet, le jury veut surtout voir que tu maitrises :", options: ["Un titre de projet","Conception, mise en oeuvre, evaluation (technicien du projet)","Une activite sympa","Une intention generale"], correct: 1, explanation: "Projet = methode : analyser/diagnostiquer, objectifs, plan d'actions, evaluation/reajustement." },
+  { label: "Theorie", q: "A quoi sert l'appui theorique a l'oral ?", options: ["Remplacer la situation","Donner du sens et justifier des choix a partir de reperes pro","Faire savant","Allonger la reponse"], correct: 1, explanation: "La theorie sert a <strong>eclairer</strong> la pratique, pas a la remplacer." },
+  { label: "Secret pro", q: "Lors d'une transmission en equipe, l'attendu le plus professionnel est :", options: ["Tout dire pour etre transparent","Transmettre le strict necessaire, factuel, utile, dans le cadre du secret partage","Ne rien dire","Parler uniquement des ressentis"], correct: 1, explanation: "Transmissions : <strong>factuel</strong>, <strong>utile</strong>, <strong>cadre ethique et legal</strong>." },
+  { label: "Referentiel", q: "Quel est le bon critere pour savoir si ta reponse est \"professionnelle\" ?", options: ["Elle est longue","Elle suit une logique (structure), montre des actions, des effets, et un cadre (DC/loi/theorie)","Elle est emotionnelle","Elle evite les details concrets"], correct: 1, explanation: "Pro = structure + concret + effets + cadre (DC/loi/theorie) + posture." },
+  { label: "Application", q: "Situation : le jury te demande \"Comment evalues-tu ton accompagnement ?\". Quel attendu principal ?", options: ["Dire que ca se passe bien","Donner des criteres/indicateurs, des effets observes, et un reajustement","Citer la loi 2002-2 uniquement","Parler du ressenti de l'equipe"], correct: 1, explanation: "Evaluation = <strong>criteres</strong> + <strong>effets</strong> + <strong>ajustements</strong> (pas un ressenti global)." },
+  { label: "Application", q: "Situation : on te dit \"Votre ecrit affirme beaucoup\". Que dois-tu corriger a l'oral ?", options: ["Parler plus vite","Remplacer les affirmations par une demonstration (comment, avec quoi, effets)","Citer plus de lois","Rester general"], correct: 1, explanation: "Passer de l'<strong>affirmation</strong> a la <strong>preuve</strong> : comment tu fais + avec quelles observations + quels effets." },
+  { label: "Application", q: "Situation : tu reponds a une question jury mais tu ne cites aucun acteur (equipe/famille/partenaires). Quel indicateur est fragile ?", options: ["Reseau","Decrire les faits","Objectifs","Posture"], correct: 0, explanation: "Si le travail a mobilise d'autres acteurs, il faut rendre visible le <strong>reseau</strong> (coordination, transmissions, partenaires)." }
+];
+
+var currentIndex = 0;
+var answered = false;
+var score = 0;
+var totalQcm = 0;
+var timerInterval = null;
+var seconds = 0;
+
+function startQuiz() {
+  currentIndex = 0;
+  answered = false;
+  score = 0;
+  totalQcm = questions.length;
+  seconds = 0;
+  document.getElementById('welcomeScreen').classList.add('hidden');
+  document.getElementById('quizArea').classList.remove('hidden');
+  document.getElementById('resultScreen').classList.add('hidden');
+  timerInterval = setInterval(function() {
+    seconds++;
+    var m = Math.floor(seconds / 60);
+    var s = seconds % 60;
+    document.getElementById('timer').textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  }, 1000);
+  renderQuestion();
+}
+
+function renderQuestion() {
+  answered = false;
+  var q = questions[currentIndex];
+  var html = '';
+  html += '<div class="q-number">Question ' + (currentIndex + 1) + ' / ' + questions.length + '</div>';
+  html += '<div class="q-label">' + q.label + '</div>';
+  html += '<div class="q-text">' + q.q + '</div>';
+  html += '<div class="options">';
+  for (var i = 0; i < q.options.length; i++) {
+    html += '<div class="opt" id="opt' + i + '" onclick="selectOption(' + i + ')">' + q.options[i] + '</div>';
+  }
+  html += '</div>';
+  html += '<div class="answer-section" id="answerSection">';
+  html += '<h3>Explication</h3><p>' + q.explanation + '</p>';
+  html += '</div>';
+  document.getElementById('questionCard').innerHTML = html;
+  document.getElementById('progressFill').style.width = ((currentIndex + 1) / questions.length * 100) + '%';
+  document.getElementById('progressText').textContent = (currentIndex + 1) + ' / ' + questions.length;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+  if(window.Mentor) Mentor.onQuestionShown(q);
+}
+
+function selectOption(i) {
+  if (answered) return;
+  answered = true;
+  var q = questions[currentIndex];
+  var opts = document.querySelectorAll('.opt');
+  for (var j = 0; j < opts.length; j++) {
+    opts[j].classList.add('disabled');
+    if (j === q.correct) opts[j].classList.add('correct');
+  }
+  if (i !== q.correct) {
+    document.getElementById('opt' + i).classList.add('wrong');
+  } else {
+    score++;
+  }
+  document.getElementById('answerSection').style.display = 'block';
+  if(window.Mentor){
+    if(i === q.correct) Mentor.onAnswerCorrect(q);
+    else Mentor.onAnswerWrong(q, i);
+  }
+  setTimeout(function() {
+    document.getElementById('answerSection').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+  }, 150);
+}
+
+function prevQ() {
+  if (currentIndex === 0) {
+    clearInterval(timerInterval);
+    document.getElementById('quizArea').classList.add('hidden');
+    document.getElementById('welcomeScreen').classList.remove('hidden');
+    return;
+  }
+  currentIndex--;
+  renderQuestion();
+}
+
+function nextQ() {
+  if (currentIndex >= questions.length - 1) {
+    showResults();
+    return;
+  }
+  currentIndex++;
+  renderQuestion();
+}
+
+function showResults() {
+  clearInterval(timerInterval);
+  document.getElementById('quizArea').classList.add('hidden');
+  document.getElementById('resultScreen').classList.remove('hidden');
+  document.getElementById('scoreDisplay').textContent = score + ' / ' + totalQcm;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function resetQuiz() {
+  document.getElementById('resultScreen').classList.add('hidden');
+  startQuiz();
+}
+</script>
+<script src="mentor.js"></script>
+</body>
+</html>

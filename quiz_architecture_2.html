@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz – Architecture d'une reponse complete (Partie 2/3)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;min-height:100vh}
+.container{max-width:720px;margin:0 auto;padding:24px 16px}
+.back-link{display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;color:#2563eb;text-decoration:none;font-size:.9rem}
+.back-link:hover{text-decoration:underline}
+h1{font-size:1.5rem;color:#1a1a2e;margin-bottom:4px;text-align:center}
+.subtitle{font-size:.92rem;color:#666;margin-bottom:10px;text-align:center}
+.desc{font-size:.9rem;color:#444;margin:0 auto 22px;max-width:680px;text-align:center;line-height:1.6}
+.seq-wrap{text-align:center;margin-bottom:18px}
+.seq{display:inline-block;padding:10px 14px;border-radius:12px;background:#eff6ff;border:1px solid rgba(37,99,235,.18);color:#1e3a8a;font-weight:800;font-size:.85rem;line-height:1.5}
+.hidden{display:none}
+.welcome-card{background:#fff;border-radius:16px;padding:32px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.06);border-top:4px solid #2563eb}
+.welcome-card h2{margin:12px 0 8px;font-size:1.25rem;color:#1a1a2e}
+.welcome-card p{color:#666;font-size:.9rem;margin-bottom:6px;line-height:1.5}
+.badge-blue{display:inline-block;padding:5px 16px;border-radius:20px;font-size:.75rem;font-weight:800;color:#fff;background:#2563eb}
+.info-row{display:flex;justify-content:center;gap:18px;margin:16px 0;font-size:.85rem;color:#666;flex-wrap:wrap}
+.info-row span{display:flex;align-items:center;gap:4px}
+.btn-start{display:inline-block;margin-top:18px;padding:14px 36px;background:#2563eb;color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:800;cursor:pointer;transition:background .2s}
+.btn-start:hover{background:#1d4ed8}
+.progress-bar{height:6px;background:#e5e7eb;border-radius:3px;margin-bottom:8px;overflow:hidden}
+.progress-fill{height:100%;background:#2563eb;border-radius:3px;transition:width .3s}
+.progress-text{font-size:.8rem;color:#999;margin-bottom:16px;text-align:right}
+.timer{font-size:.8rem;color:#2563eb;text-align:center;margin-bottom:12px;font-weight:800}
+.q-card{background:#fff;border-radius:16px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,.06)}
+.q-number{font-size:.8rem;color:#2563eb;font-weight:900;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.q-label{display:inline-block;padding:3px 10px;border-radius:8px;font-size:.75rem;font-weight:900;color:#fff;background:#2563eb;margin-bottom:12px}
+.q-text{font-size:1.03rem;color:#1a1a2e;line-height:1.7;margin-bottom:16px;white-space:pre-line}
+.options{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.opt{padding:14px 18px;border:2px solid #e5e7eb;border-radius:12px;cursor:pointer;font-size:.95rem;color:#333;transition:all .15s;background:#fff}
+.opt:hover:not(.disabled){border-color:#2563eb;background:#eff6ff}
+.opt.correct{border-color:#059669;background:#d1fae5;color:#065f46;font-weight:800}
+.opt.wrong{border-color:#dc2626;background:#fef2f2;color:#dc2626}
+.opt.disabled{cursor:default}
+.opt.disabled:not(.correct):not(.wrong){opacity:.6}
+.answer-section{display:none;margin-top:18px;padding:18px 18px;background:#fff7ed;border-radius:12px;border-left:4px solid #ea580c}
+.answer-section h3{font-size:.9rem;color:#ea580c;margin-bottom:10px;font-weight:900}
+.answer-section p{font-size:.9rem;color:#333;line-height:1.7;margin-bottom:6px}
+.answer-section strong{color:#9a3412}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:12px}
+.btn-nav{padding:10px 22px;border:2px solid #2563eb;color:#2563eb;background:#fff;border-radius:10px;font-size:.9rem;cursor:pointer;transition:all .2s;font-weight:900}
+.btn-nav:hover{background:#eff6ff}
+.btn-nav.primary{background:#2563eb;color:#fff;border-color:#2563eb}
+.btn-nav.primary:hover{background:#1d4ed8}
+.result-card{background:#fff;border-radius:16px;padding:36px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.06);border-top:4px solid #2563eb}
+.score-big{font-size:2.8rem;font-weight:900;color:#2563eb;margin:16px 0 8px}
+.score-label{font-size:1rem;color:#666;margin-bottom:20px}
+.autocheck{margin-top:20px;padding:16px 20px;background:#f0fdf4;border-radius:12px;border-left:4px solid #059669;text-align:left}
+.autocheck h3{font-size:.85rem;color:#059669;margin-bottom:8px}
+.autocheck p{font-size:.85rem;color:#555;line-height:1.6}
+.btn-row{display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" class="back-link">&larr; Retour</a>
+<h1>Quiz – Architecture d'une reponse complete (Partie 2/3)</h1>
+<p class="subtitle">Ordre des etapes + premieres applications.</p>
+<p class="desc">Ce quiz entraine a structurer une reponse orale devant le jury VAE DEES en suivant l'architecture professionnelle suivante : <strong>1. Situer / contextualiser</strong>, <strong>2. Decrire les faits</strong>, <strong>3. Analyser</strong>, <strong>4. Poser des objectifs</strong>, <strong>5. Mettre en oeuvre / agir</strong>, <strong>6. Evaluer</strong>, <strong>7. Posture professionnelle (reflexivite)</strong>.</p>
+<div class="seq-wrap"><span class="seq">Situer &rarr; Decrire &rarr; Analyser &rarr; Objectifs &rarr; Agir &rarr; Evaluer &rarr; Posture</span></div>
+
+<div id="welcomeScreen">
+<div class="welcome-card">
+  <span class="badge-blue">Partie 2/3</span>
+  <h2>Architecture — Ordre + Application</h2>
+  <p>Exercices : <strong>ordre des etapes</strong> + debut <strong>application a une situation</strong>.</p>
+  <div class="info-row">
+    <span>&#128221; 7 questions</span>
+    <span>&#9201; 3-4 min</span>
+    <span>&#127919; Reponse complete</span>
+  </div>
+  <p style="font-size:.85rem;color:#2563eb;font-weight:900;margin-top:10px">Reponds a voix haute avant de cliquer. Objectif : automatisme.</p>
+  <button class="btn-start" onclick="startQuiz()">Commencer le quiz</button>
+</div>
+</div>
+
+<div id="quizArea" class="hidden">
+  <div class="timer" id="timer">00:00</div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-text" id="progressText">1 / 7</div>
+  <div class="q-card" id="questionCard"></div>
+  <div class="nav-row">
+    <button class="btn-nav" onclick="prevQ()">&larr; Precedente</button>
+    <button class="btn-nav primary" onclick="nextQ()">Suivante &rarr;</button>
+  </div>
+</div>
+
+<div id="resultScreen" class="hidden">
+<div class="result-card">
+  <span class="badge-blue">Termine !</span>
+  <div class="score-big" id="scoreDisplay">0 / 0</div>
+  <div class="score-label">questions QCM correctes</div>
+  <div class="autocheck">
+    <h3>&#9989; Auto-check (oral)</h3>
+    <p>Si tu peux derouler la sequence <strong>Situer &rarr; Decrire &rarr; Analyser &rarr; Objectifs &rarr; Agir &rarr; Evaluer &rarr; Posture</strong> sans hesiter, tu as l'architecture en tete.</p>
+    <p style="margin-top:8px">En simulation : si tu bloques, repars de <strong>Decrire les faits</strong> (concret) puis remonte vers l'<strong>analyse</strong> et les <strong>objectifs</strong>.</p>
+  </div>
+  <div class="btn-row">
+    <button class="btn-nav" onclick="resetQuiz()">&#128260; Recommencer</button>
+    <a href="index.html" class="btn-nav primary" style="text-decoration:none">Retour</a>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+var questions = [
+  { label: "Ordre", q: "Quelle est la bonne sequence (4 premieres etapes) ?", type: "qcm", options: ["Situer \u2192 Decrire \u2192 Analyser \u2192 Objectifs","Decrire \u2192 Situer \u2192 Objectifs \u2192 Analyser","Analyser \u2192 Situer \u2192 Agir \u2192 Evaluer","Situer \u2192 Analyser \u2192 Decrire \u2192 Objectifs"], correct: 0, explanation: "Le coeur : <strong>Situer \u2192 Decrire \u2192 Analyser \u2192 Objectifs</strong>." },
+  { label: "Ordre", q: "Qu'est-ce qui vient juste apres Analyser ?", type: "qcm", options: ["Poser des objectifs","Mettre en oeuvre / agir","Evaluer","Posture"], correct: 0, explanation: "Apres <strong>Analyser</strong>, tu poses des <strong>objectifs</strong> (coherence)." },
+  { label: "Ordre", q: "Qu'est-ce qui vient juste apres Poser des objectifs ?", type: "qcm", options: ["Mettre en oeuvre / agir","Evaluer","Posture","Decrire"], correct: 0, explanation: "Apres les <strong>objectifs</strong>, tu passes a l'<strong>agir</strong> (mise en oeuvre)." },
+  { label: "Ordre", q: "Qu'est-ce qui vient juste apres Mettre en oeuvre / agir ?", type: "qcm", options: ["Evaluer","Analyser","Situer","Objectifs"], correct: 0, explanation: "Apres l'<strong>agir</strong>, tu fais l'<strong>evaluation</strong> (effets + ajustements)." },
+  { label: "Ordre", q: "Quelle est la bonne sequence complete ?", type: "qcm", options: ["Situer \u2192 Decrire \u2192 Analyser \u2192 Objectifs \u2192 Agir \u2192 Evaluer \u2192 Posture","Situer \u2192 Analyser \u2192 Decrire \u2192 Objectifs \u2192 Agir \u2192 Evaluer \u2192 Posture","Decrire \u2192 Situer \u2192 Analyser \u2192 Objectifs \u2192 Agir \u2192 Posture \u2192 Evaluer","Situer \u2192 Decrire \u2192 Objectifs \u2192 Analyser \u2192 Agir \u2192 Evaluer \u2192 Posture"], correct: 0, explanation: "La sequence complete : <strong>Situer \u2192 Decrire \u2192 Analyser \u2192 Objectifs \u2192 Agir \u2192 Evaluer \u2192 Posture</strong>." },
+  { label: "Application", q: "Situation : Un adolescent se met regulierement en retrait du groupe.\nQuelle etape consiste a comprendre les causes possibles de ce comportement ?", type: "qcm", options: ["Decrire les faits","Analyser","Poser des objectifs","Evaluer"], correct: 1, explanation: "Comprendre les causes/facteurs = <strong>Analyser</strong>." },
+  { label: "Application", q: "Situation : Tu observes que le retrait est surtout present lors des activites sportives, et tu notes les moments precis.\nQuelle etape travailles-tu ?", type: "qcm", options: ["Decrire les faits","Evaluer","Posture","Objectifs"], correct: 0, explanation: "Observer/consigner des elements concrets = <strong>Decrire les faits</strong>." }
+];
+
+var currentIndex = 0;
+var answered = false;
+var score = 0;
+var totalQcm = 0;
+var timerInterval = null;
+var seconds = 0;
+
+function startQuiz() {
+  currentIndex = 0;
+  answered = false;
+  score = 0;
+  totalQcm = questions.length;
+  seconds = 0;
+  document.getElementById('welcomeScreen').classList.add('hidden');
+  document.getElementById('quizArea').classList.remove('hidden');
+  document.getElementById('resultScreen').classList.add('hidden');
+  timerInterval = setInterval(function() {
+    seconds++;
+    var m = Math.floor(seconds / 60);
+    var s = seconds % 60;
+    document.getElementById('timer').textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  }, 1000);
+  renderQuestion();
+}
+
+function renderQuestion() {
+  answered = false;
+  var q = questions[currentIndex];
+  var html = '';
+  html += '<div class="q-number">Question ' + (currentIndex + 1) + ' / ' + questions.length + '</div>';
+  html += '<div class="q-label">' + q.label + '</div>';
+  html += '<div class="q-text">' + q.q + '</div>';
+  html += '<div class="options">';
+  for (var i = 0; i < q.options.length; i++) {
+    html += '<div class="opt" id="opt' + i + '" onclick="selectOption(' + i + ')">' + q.options[i] + '</div>';
+  }
+  html += '</div>';
+  html += '<div class="answer-section" id="answerSection">';
+  html += '<h3>Explication</h3><p>' + q.explanation + '</p>';
+  html += '</div>';
+
+  document.getElementById('questionCard').innerHTML = html;
+  document.getElementById('progressFill').style.width = ((currentIndex + 1) / questions.length * 100) + '%';
+  document.getElementById('progressText').textContent = (currentIndex + 1) + ' / ' + questions.length;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+  if(window.Mentor) Mentor.onQuestionShown(q);
+}
+
+function selectOption(i) {
+  if (answered) return;
+  answered = true;
+  var q = questions[currentIndex];
+  var opts = document.querySelectorAll('.opt');
+  for (var j = 0; j < opts.length; j++) {
+    opts[j].classList.add('disabled');
+    if (j === q.correct) opts[j].classList.add('correct');
+  }
+  if (i !== q.correct) {
+    document.getElementById('opt' + i).classList.add('wrong');
+  } else {
+    score++;
+  }
+  document.getElementById('answerSection').style.display = 'block';
+  if(window.Mentor){
+    if(i === q.correct) Mentor.onAnswerCorrect(q);
+    else Mentor.onAnswerWrong(q, i);
+  }
+  setTimeout(function() {
+    document.getElementById('answerSection').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+  }, 150);
+}
+
+function prevQ() {
+  if (currentIndex === 0) {
+    clearInterval(timerInterval);
+    document.getElementById('quizArea').classList.add('hidden');
+    document.getElementById('welcomeScreen').classList.remove('hidden');
+    return;
+  }
+  currentIndex--;
+  renderQuestion();
+}
+
+function nextQ() {
+  if (currentIndex >= questions.length - 1) {
+    showResults();
+    return;
+  }
+  currentIndex++;
+  renderQuestion();
+}
+
+function showResults() {
+  clearInterval(timerInterval);
+  document.getElementById('quizArea').classList.add('hidden');
+  document.getElementById('resultScreen').classList.remove('hidden');
+  document.getElementById('scoreDisplay').textContent = score + ' / ' + totalQcm;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function resetQuiz() {
+  document.getElementById('resultScreen').classList.add('hidden');
+  startQuiz();
+}
+</script>
+<script src="mentor.js"></script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz – Methode universelle (Partie 1/3)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;min-height:100vh}
+.container{max-width:720px;margin:0 auto;padding:24px 16px}
+.back-link{display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;color:#e10600;text-decoration:none;font-size:.9rem}
+.back-link:hover{text-decoration:underline}
+h1{font-size:1.5rem;color:#1a1a2e;margin-bottom:4px;text-align:center}
+.subtitle{font-size:.92rem;color:#666;margin-bottom:10px;text-align:center}
+.desc{font-size:.9rem;color:#444;margin:0 auto 22px;max-width:680px;text-align:center;line-height:1.6}
+.seq-wrap{text-align:center;margin-bottom:18px}
+.seq{display:inline-block;padding:10px 14px;border-radius:12px;background:#fff5f5;border:1px solid rgba(225,6,0,.18);color:#7f1d1d;font-weight:800;font-size:.85rem;line-height:1.5}
+.hidden{display:none}
+.welcome-card{background:#fff;border-radius:16px;padding:32px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.06);border-top:4px solid #e10600}
+.welcome-card h2{margin:12px 0 8px;font-size:1.25rem;color:#1a1a2e}
+.welcome-card p{color:#666;font-size:.9rem;margin-bottom:6px;line-height:1.5}
+.badge-red{display:inline-block;padding:5px 16px;border-radius:20px;font-size:.75rem;font-weight:800;color:#fff;background:#e10600}
+.info-row{display:flex;justify-content:center;gap:18px;margin:16px 0;font-size:.85rem;color:#666;flex-wrap:wrap}
+.info-row span{display:flex;align-items:center;gap:4px}
+.btn-start{display:inline-block;margin-top:18px;padding:14px 36px;background:#e10600;color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:800;cursor:pointer;transition:background .2s}
+.btn-start:hover{background:#b30000}
+.progress-bar{height:6px;background:#e5e7eb;border-radius:3px;margin-bottom:8px;overflow:hidden}
+.progress-fill{height:100%;background:#e10600;border-radius:3px;transition:width .3s}
+.progress-text{font-size:.8rem;color:#999;margin-bottom:16px;text-align:right}
+.timer{font-size:.8rem;color:#e10600;text-align:center;margin-bottom:12px;font-weight:800}
+.q-card{background:#fff;border-radius:16px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,.06)}
+.q-number{font-size:.8rem;color:#e10600;font-weight:900;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.q-label{display:inline-block;padding:3px 10px;border-radius:8px;font-size:.75rem;font-weight:900;color:#fff;background:#e10600;margin-bottom:12px}
+.q-text{font-size:1.03rem;color:#1a1a2e;line-height:1.7;margin-bottom:16px;white-space:pre-line}
+.options{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.opt{padding:14px 18px;border:2px solid #e5e7eb;border-radius:12px;cursor:pointer;font-size:.95rem;color:#333;transition:all .15s;background:#fff}
+.opt:hover:not(.disabled){border-color:#e10600;background:#fff5f5}
+.opt.correct{border-color:#059669;background:#d1fae5;color:#065f46;font-weight:800}
+.opt.wrong{border-color:#dc2626;background:#fef2f2;color:#dc2626}
+.opt.disabled{cursor:default}
+.opt.disabled:not(.correct):not(.wrong){opacity:.6}
+.answer-section{display:none;margin-top:18px;padding:18px 18px;background:#fff7ed;border-radius:12px;border-left:4px solid #ea580c}
+.answer-section h3{font-size:.9rem;color:#ea580c;margin-bottom:10px;font-weight:900}
+.answer-section p{font-size:.9rem;color:#333;line-height:1.7;margin-bottom:6px}
+.answer-section strong{color:#9a3412}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:12px}
+.btn-nav{padding:10px 22px;border:2px solid #e10600;color:#e10600;background:#fff;border-radius:10px;font-size:.9rem;cursor:pointer;transition:all .2s;font-weight:900}
+.btn-nav:hover{background:#fff5f5}
+.btn-nav.primary{background:#e10600;color:#fff;border-color:#e10600}
+.btn-nav.primary:hover{background:#b30000}
+.result-card{background:#fff;border-radius:16px;padding:36px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.06);border-top:4px solid #e10600}
+.score-big{font-size:2.8rem;font-weight:900;color:#e10600;margin:16px 0 8px}
+.score-label{font-size:1rem;color:#666;margin-bottom:20px}
+.autocheck{margin-top:20px;padding:16px 20px;background:#f0fdf4;border-radius:12px;border-left:4px solid #059669;text-align:left}
+.autocheck h3{font-size:.85rem;color:#059669;margin-bottom:8px}
+.autocheck p{font-size:.85rem;color:#555;line-height:1.6}
+.btn-row{display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" class="back-link">&larr; Retour</a>
+<h1>Quiz – Methode universelle (Partie 1/3)</h1>
+<p class="subtitle">Automatiser la structure professionnelle de reponse au jury VAE DEES.</p>
+<p class="desc">Ce quiz entraine a reconnaitre et utiliser la structure universelle de reponse orale utilisee devant le jury : <strong>Contexte &rarr; Problematique &rarr; Objectifs &rarr; Actions &rarr; Posture &rarr; Reseau &rarr; Evaluation &rarr; Referentiel</strong>. L'objectif est d'automatiser cette structure mentale pour repondre clairement aux questions du jury.</p>
+<div class="seq-wrap"><span class="seq">Contexte &rarr; Problematique &rarr; Objectifs &rarr; Actions &rarr; Posture &rarr; Reseau &rarr; Evaluation &rarr; Referentiel</span></div>
+
+<div id="welcomeScreen">
+<div class="welcome-card">
+  <span class="badge-red">Quiz Prioritaire</span>
+  <h2>Methode universelle — Partie 1/3</h2>
+  <p>Exercices : <strong>reconnaissance</strong> et <strong>ordre</strong>.</p>
+  <div class="info-row">
+    <span>&#128221; 10 cartes</span>
+    <span>&#9201; 3-4 min</span>
+    <span>&#127919; Structure 8/8</span>
+  </div>
+  <p style="font-size:.85rem;color:#e10600;font-weight:900;margin-top:10px">Reponds a voix haute avant de cliquer. Objectif : automatisme.</p>
+  <button class="btn-start" onclick="startQuiz()">Commencer le quiz</button>
+</div>
+</div>
+
+<div id="quizArea" class="hidden">
+  <div class="timer" id="timer">00:00</div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-text" id="progressText">1 / 10</div>
+  <div class="q-card" id="questionCard"></div>
+  <div class="nav-row">
+    <button class="btn-nav" onclick="prevQ()">&larr; Precedente</button>
+    <button class="btn-nav primary" onclick="nextQ()">Suivante &rarr;</button>
+  </div>
+</div>
+
+<div id="resultScreen" class="hidden">
+<div class="result-card">
+  <span class="badge-red">Termine !</span>
+  <div class="score-big" id="scoreDisplay">0 / 0</div>
+  <div class="score-label">questions QCM correctes</div>
+  <div class="autocheck">
+    <h3>&#9989; Auto-check (oral)</h3>
+    <p>Si tu peux nommer <strong>le bon bloc</strong> et <strong>la bonne sequence</strong> sans hesiter, tu as automatise la structure.</p>
+    <p style="margin-top:8px">Ensuite, en simulation : deroule systematiquement jusqu'au <strong>Referentiel</strong> (DC + repere legal/theorique si pertinent).</p>
+  </div>
+  <div class="btn-row">
+    <button class="btn-nav" onclick="resetQuiz()">&#128260; Recommencer</button>
+    <a href="index.html" class="btn-nav primary" style="text-decoration:none">Retour</a>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+var questions = [
+  { label: "Reconnaissance", q: "Quelle etape de la methode universelle consiste a situer le cadre (lieu, dispositif, public, moment) ?", type: "qcm", options: ["Contexte","Problematique","Actions","Evaluation"], correct: 0, explanation: "<strong>Contexte</strong> : tu poses le cadre, le lieu, le dispositif, le public, le moment." },
+  { label: "Reconnaissance", q: "Quelle etape consiste a identifier la difficulte educative / l'enjeu rencontre ?", type: "qcm", options: ["Contexte","Problematique","Reseau","Referentiel"], correct: 1, explanation: "<strong>Problematique</strong> : tu nommes l'enjeu educatif, la tension, la difficulte a traiter." },
+  { label: "Reconnaissance", q: "Quelle etape consiste a formuler ce que tu veux favoriser / soutenir (intention educative) ?", type: "qcm", options: ["Objectifs","Actions","Evaluation","Posture"], correct: 0, explanation: "<strong>Objectifs</strong> : intention + objectifs operationnels (priorites)." },
+  { label: "Reconnaissance", q: "Quelle etape consiste a decrire concretement ce que tu as fait (verbes d'action pro) ?", type: "qcm", options: ["Actions","Reseau","Contexte","Referentiel"], correct: 0, explanation: "<strong>Actions</strong> : tu decris l'intervention concrete (individuel/collectif, cadre, mediation, etc.)." },
+  { label: "Reconnaissance", q: "Quelle etape correspond a ton positionnement (ecoute, contenance, ethique, respect du rythme) ?", type: "qcm", options: ["Posture","Objectifs","Evaluation","Actions"], correct: 0, explanation: "<strong>Posture</strong> : comment tu t'es positionne et pourquoi (ethique, relation, limites)." },
+  { label: "Reconnaissance", q: "Quelle etape consiste a nommer les acteurs impliques (equipe, famille, partenaires) ?", type: "qcm", options: ["Reseau","Contexte","Referentiel","Problematique"], correct: 0, explanation: "<strong>Reseau</strong> : acteurs, transmissions, coordination, partenariats (meme minimal)." },
+  { label: "Reconnaissance", q: "Quelle etape consiste a dire les effets observes et les ajustements ?", type: "qcm", options: ["Evaluation","Referentiel","Actions","Objectifs"], correct: 0, explanation: "<strong>Evaluation</strong> : effets observes + ajustements, limites, points de vigilance." },
+  { label: "Reconnaissance", q: "Quelle etape consiste a faire le lien avec le DC (et une loi/theorie si pertinent) ?", type: "qcm", options: ["Referentiel","Reseau","Contexte","Posture"], correct: 0, explanation: "<strong>Referentiel</strong> : DC principal (DC1/DC2/DC3/DC4) + repere legal/theorique si utile." },
+  { label: "Ordre", q: "Quelle est la bonne sequence de debut (2 premiers blocs) ?", type: "qcm", options: ["Problematique \u2192 Contexte","Contexte \u2192 Problematique","Actions \u2192 Objectifs","Contexte \u2192 Actions"], correct: 1, explanation: "On commence par <strong>Contexte</strong>, puis <strong>Problematique</strong>." },
+  { label: "Ordre", q: "Quelle est la bonne sequence (4 premiers blocs) ?", type: "qcm", options: ["Contexte \u2192 Objectifs \u2192 Problematique \u2192 Actions","Contexte \u2192 Problematique \u2192 Objectifs \u2192 Actions","Problematique \u2192 Contexte \u2192 Actions \u2192 Objectifs","Contexte \u2192 Problematique \u2192 Actions \u2192 Objectifs"], correct: 1, explanation: "La base : <strong>Contexte \u2192 Problematique \u2192 Objectifs \u2192 Actions</strong>." }
+];
+
+var currentIndex = 0;
+var answered = false;
+var score = 0;
+var totalQcm = 0;
+var timerInterval = null;
+var seconds = 0;
+
+function startQuiz() {
+  currentIndex = 0;
+  answered = false;
+  score = 0;
+  totalQcm = questions.length;
+  seconds = 0;
+  document.getElementById('welcomeScreen').classList.add('hidden');
+  document.getElementById('quizArea').classList.remove('hidden');
+  document.getElementById('resultScreen').classList.add('hidden');
+  timerInterval = setInterval(function() {
+    seconds++;
+    var m = Math.floor(seconds / 60);
+    var s = seconds % 60;
+    document.getElementById('timer').textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  }, 1000);
+  renderQuestion();
+}
+
+function renderQuestion() {
+  answered = false;
+  var q = questions[currentIndex];
+  var html = '';
+  html += '<div class="q-number">Question ' + (currentIndex + 1) + ' / ' + questions.length + '</div>';
+  html += '<div class="q-label">' + q.label + '</div>';
+  html += '<div class="q-text">' + q.q + '</div>';
+  html += '<div class="options">';
+  for (var i = 0; i < q.options.length; i++) {
+    html += '<div class="opt" id="opt' + i + '" onclick="selectOption(' + i + ')">' + q.options[i] + '</div>';
+  }
+  html += '</div>';
+  html += '<div class="answer-section" id="answerSection">';
+  html += '<h3>Explication</h3><p>' + q.explanation + '</p>';
+  html += '</div>';
+
+  document.getElementById('questionCard').innerHTML = html;
+  document.getElementById('progressFill').style.width = ((currentIndex + 1) / questions.length * 100) + '%';
+  document.getElementById('progressText').textContent = (currentIndex + 1) + ' / ' + questions.length;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+  if(window.Mentor) Mentor.onQuestionShown(q);
+}
+
+function selectOption(i) {
+  if (answered) return;
+  answered = true;
+  var q = questions[currentIndex];
+  var opts = document.querySelectorAll('.opt');
+  for (var j = 0; j < opts.length; j++) {
+    opts[j].classList.add('disabled');
+    if (j === q.correct) opts[j].classList.add('correct');
+  }
+  if (i !== q.correct) {
+    document.getElementById('opt' + i).classList.add('wrong');
+  } else {
+    score++;
+  }
+  document.getElementById('answerSection').style.display = 'block';
+  if(window.Mentor){
+    if(i === q.correct) Mentor.onAnswerCorrect(q);
+    else Mentor.onAnswerWrong(q, i);
+  }
+  setTimeout(function() {
+    document.getElementById('answerSection').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+  }, 150);
+}
+
+function prevQ() {
+  if (currentIndex === 0) {
+    clearInterval(timerInterval);
+    document.getElementById('quizArea').classList.add('hidden');
+    document.getElementById('welcomeScreen').classList.remove('hidden');
+    return;
+  }
+  currentIndex--;
+  renderQuestion();
+}
+
+function nextQ() {
+  if (currentIndex >= questions.length - 1) {
+    showResults();
+    return;
+  }
+  currentIndex++;
+  renderQuestion();
+}
+
+function showResults() {
+  clearInterval(timerInterval);
+  document.getElementById('quizArea').classList.add('hidden');
+  document.getElementById('resultScreen').classList.remove('hidden');
+  document.getElementById('scoreDisplay').textContent = score + ' / ' + totalQcm;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function resetQuiz() {
+  document.getElementById('resultScreen').classList.add('hidden');
+  startQuiz();
+}
+</script>
+<script src="mentor.js"></script>
+</body>
+</html>

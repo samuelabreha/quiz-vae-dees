@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 1c — Automatismes Situation / Analyse (3/3) (VAE DEES)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;color:#1a1a2e;min-height:100vh}
+.header{background:linear-gradient(135deg,#e10600 0%,#b30000 100%);color:#fff;padding:24px 20px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.header h1{font-size:1.3rem;font-weight:700;margin-bottom:4px}
+.header p{font-size:.85rem;opacity:.9}
+.progress-bar{background:rgba(255,255,255,.2);height:6px;border-radius:3px;margin-top:12px;overflow:hidden}
+.progress-fill{height:100%;background:#fff;border-radius:3px;transition:width .4s ease}
+.stats{display:flex;justify-content:center;gap:20px;margin-top:10px;font-size:.8rem}
+.stats span{background:rgba(255,255,255,.15);padding:4px 12px;border-radius:20px}
+.container{max-width:700px;margin:0 auto;padding:20px}
+.card{background:#fff;border-radius:16px;box-shadow:0 2px 16px rgba(0,0,0,.08);overflow:hidden;margin-bottom:20px;transition:transform .2s}
+.card-header{padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center}
+.card-num{font-size:.75rem;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.dc-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700;color:#fff}
+.dc1{background:#e10600}
+.dc2{background:#2563eb}
+.dc3{background:#059669}
+.dc4{background:#7c3aed}
+.dc-multi{background:linear-gradient(135deg,#e10600,#2563eb)}
+.question-section{padding:20px}
+.question-section h3{font-size:1.05rem;line-height:1.5;color:#1a1a2e;margin-bottom:12px}
+.competence-tag{display:inline-block;background:#f8f9fa;border:1px solid #e0e0e0;padding:4px 10px;border-radius:8px;font-size:.78rem;color:#555;margin-bottom:10px}
+.situation-tag{display:inline-block;background:#fff3cd;border:1px solid #ffc107;padding:4px 10px;border-radius:8px;font-size:.78rem;color:#856404;margin-top:4px}
+.options{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.opt{padding:12px 16px;border:2px solid #e5e7eb;border-radius:10px;cursor:pointer;font-size:.9rem;line-height:1.4;transition:all .2s;background:#fafafa}
+.opt:hover{border-color:#e10600;background:#fff5f5}
+.opt.correct{border-color:#059669;background:#d1fae5;font-weight:600}
+.opt.wrong{border-color:#dc2626;background:#fee2e2}
+.opt.disabled{pointer-events:none;opacity:.7}
+.opt.disabled:hover{background:inherit;border-color:#e5e7eb}
+.opt.disabled.correct{opacity:1}
+.answer-section{display:none;padding:0 20px 20px;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.answer-block{margin-bottom:14px;padding:12px 14px;border-radius:10px;border-left:4px solid}
+.answer-block h4{font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.answer-block p,.answer-block li{font-size:.88rem;line-height:1.6;color:#333}
+.answer-block ul{padding-left:18px}
+.answer-block li{margin-bottom:2px}
+.block-reponse{background:#f0fdf4;border-color:#059669}
+.block-reponse h4{color:#059669}
+.block-loi{background:#eff6ff;border-color:#2563eb}
+.block-loi h4{color:#2563eb}
+.block-theorie{background:#faf5ff;border-color:#7c3aed}
+.block-theorie h4{color:#7c3aed}
+.block-analyse{background:#fff7ed;border-color:#ea580c}
+.block-analyse h4{color:#ea580c}
+.nav-buttons{display:flex;gap:10px;margin-top:10px}
+.nav-btn{flex:1;padding:12px;border:2px solid #e10600;background:#fff;color:#e10600;font-size:.9rem;font-weight:600;border-radius:10px;cursor:pointer;transition:all .2s}
+.nav-btn:hover{background:#e10600;color:#fff}
+.nav-btn:disabled{border-color:#ccc;color:#ccc;cursor:default;background:#fff}
+.nav-btn.primary{background:#fff;color:#e10600}
+.nav-btn.primary:hover{background:#e10600;color:#fff}
+.score-btn{padding:8px 16px;background:#059669;color:#fff;border:none;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .15s}
+.score-btn:hover{opacity:.9;transform:scale(1.02)}
+.score-btn.fail{background:#e10600}
+.score-section{display:flex;gap:10px;margin-top:14px;justify-content:center}
+.welcome{text-align:center;padding:60px 20px}
+.welcome h2{font-size:1.5rem;margin-bottom:12px;color:#e10600}
+.welcome p{font-size:.95rem;color:#555;line-height:1.6;margin-bottom:8px}
+.start-btn{margin-top:24px;padding:16px 40px;background:linear-gradient(135deg,#e10600,#b30000);color:#fff;border:none;font-size:1.1rem;font-weight:700;border-radius:12px;cursor:pointer;transition:transform .2s}
+.start-btn:hover{transform:scale(1.05)}
+.results{text-align:center;padding:40px 20px}
+.results h2{font-size:1.6rem;color:#e10600;margin-bottom:16px}
+.results .score-big{font-size:3rem;font-weight:800;color:#059669;margin:20px 0}
+.results p{font-size:1rem;color:#555;margin-bottom:8px}
+.hidden{display:none}
+.shuffle-btn{padding:8px 16px;background:#fff;border:2px solid #e10600;color:#e10600;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;margin-top:12px}
+.shuffle-btn:hover{background:#e10600;color:#fff}
+.back-link{display:inline-block;margin-top:20px;padding:8px 16px;font-size:.82rem;color:#999;text-decoration:none;border:1px solid #ddd;border-radius:8px;transition:all .2s}
+.back-link:hover{color:#e10600;border-color:#e10600}
+.qcm-instruction{margin-top:8px;font-size:.85rem;color:#999;font-style:italic}
+.separator{height:1px;background:#f0f0f0;margin:16px 0 0}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Quiz 1c &mdash; Automatismes Situation / Analyse (3/3)</h1>
+  <p>10 questions QCM + flashcards &bull; Entra&icirc;nement oral VAE DEES</p>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="stats">
+    <span id="statCurrent">0 / 10</span>
+    <span id="statCorrect" style="color:#a7f3d0">&#10003; 0</span>
+    <span id="statWrong" style="color:#fca5a5">&#10007; 0</span>
+  </div>
+</div>
+
+<div class="container">
+  <div id="welcomeScreen" class="welcome">
+    <h2>Pr&eacute;paration Oral VAE DEES</h2>
+    <p><strong>Mode hybride :</strong> QCM interactif + fiche de r&eacute;vision compl&egrave;te</p>
+    <p>1. Lisez la question &rarr; 2. R&eacute;pondez au QCM &rarr; 3. D&eacute;couvrez la fiche d&eacute;taill&eacute;e</p>
+    <p style="margin-top:16px;font-size:.85rem;color:#888">10 questions &bull; Partie 3/3 &bull; Situations : N (Perthes), R (Vergers), Amir (FINC)</p>
+    <button class="start-btn" onclick="startQuiz()">Commencer le quiz</button>
+    <br>
+    <button class="shuffle-btn" onclick="shuffleAndStart()">M&eacute;langer et commencer</button>
+    <br><a href="index.html" class="back-link">&larr; Retour &agrave; l'accueil</a>
+  </div>
+
+  <div id="quizArea" class="hidden"></div>
+
+  <div id="resultsScreen" class="hidden results">
+    <h2>R&eacute;sultats</h2>
+    <div class="score-big" id="finalScore"></div>
+    <p id="finalMsg"></p>
+    <div style="margin:20px auto 0;max-width:420px;padding:14px 18px;background:#f0fdfa;border-radius:12px;border-left:4px solid #0d9488;text-align:left">
+      <p style="font-size:.85rem;color:#333;line-height:1.6"><strong style="color:#0d9488">&#128172; Besoin d'aide pour structurer vos r&eacute;ponses ?</strong><br>Le <strong>Coach Interactif</strong> vous guide question par question avec des indices progressifs si vous bloquez.</p>
+      <a href="agent_pedagogique.html" style="display:inline-block;margin-top:8px;padding:8px 20px;background:#0d9488;color:#fff;border-radius:10px;font-size:.85rem;font-weight:600;text-decoration:none;transition:background .2s">Lancer le Coach Interactif &rarr;</a>
+    </div>
+    <button class="start-btn" onclick="resetQuiz()" style="margin-top:20px;font-size:.95rem;padding:12px 30px">Recommencer</button>
+    <button class="shuffle-btn" onclick="shuffleAndStart()">M&eacute;langer et recommencer</button>
+  </div>
+</div>
+
+<script>
+const flashcards = [
+  {
+    q:"Comment analysez-vous une situation \u00e9ducative complexe ?",
+    options:[
+      "En identifiant la cause principale du probl\u00e8me pour agir directement dessus",
+      "En me r\u00e9f\u00e9rant uniquement au dossier administratif de la personne",
+      "En appliquant une grille d'analyse standardis\u00e9e pr\u00e9d\u00e9finie",
+      "En croisant les informations et en partageant l'analyse en \u00e9quipe pour un diagnostic syst\u00e9mique"
+    ],correct:3,
+    dc:"DC2",dcLabel:"DC2 \u2014 Analyse",dcClass:"dc2",
+    comp:"Observation et analyse des situations, diagnostic partag\u00e9",
+    situation:"R (Vergers) \u2014 analyse plurifactorielle (familiale, scolaire, comportementale)",
+    reponse:"Croisement des informations familiales, scolaires, comportementales. Analyse partag\u00e9e en \u00e9quipe pour un diagnostic socio-\u00e9ducatif commun. Ce diagnostic a fond\u00e9 les objectifs du projet. L'analyse est collective, pas individuelle.",
+    loi:"Loi 2007 (\u00e9valuation des situations de danger) \u2014 Loi 2002-2 (projet personnalis\u00e9)",
+    theorie:"Approche syst\u00e9mique : comprendre dans le contexte global, pas par un sympt\u00f4me isol\u00e9",
+    analyse:"L'analyse est syst\u00e9mique (pas mono-causale), partag\u00e9e (pas individuelle), \u00e9volutive (pas fig\u00e9e)."
+  },
+  {
+    q:"Comment accompagnez-vous un enfant dans le d\u00e9veloppement de ses capacit\u00e9s ?",
+    options:[
+      "En faisant les choses \u00e0 sa place pour lui \u00e9viter l'\u00e9chec",
+      "En l'\u00e9tayant progressivement puis en r\u00e9duisant le soutien \u00e0 mesure qu'il gagne en autonomie",
+      "En le mettant face \u00e0 des d\u00e9fis difficiles pour stimuler sa progression",
+      "En comparant ses progr\u00e8s avec ceux des autres enfants du groupe"
+    ],correct:1,
+    dc:"DC1",dcLabel:"DC1 \u2014 \u00c9tayage",dcClass:"dc1",
+    comp:"D\u00e9veloppement des capacit\u00e9s, fonction d'\u00e9tayage",
+    situation:"Amir (FINC) \u2014 d\u00e9veloppement des comp\u00e9tences sociales",
+    reponse:"Amir avait des comp\u00e9tences qu'il ne mobilisait pas encore en groupe. \u00c9tayage : accompagnement individuel dans les activit\u00e9s, puis r\u00e9duction progressive du soutien. La comp\u00e9tence se d\u00e9veloppe quand on cr\u00e9e les conditions pour exp\u00e9rimenter dans un cadre s\u00e9curisant.",
+    loi:"Loi 2005 (compensation, d\u00e9veloppement des potentialit\u00e9s)",
+    theorie:"Vygotski (ZPD) \u2014 Bruner (\u00e9tayage / scaffolding)",
+    analyse:"L'\u00e9tayage consiste \u00e0 faire AVEC avant de laisser faire SEUL. Se retirer progressivement quand le soutien n'est plus n\u00e9cessaire."
+  },
+  {
+    q:"Comment vous positionnez-vous face au secret professionnel ?",
+    options:[
+      "En partageant toutes les informations avec l'\u00e9quipe pour assurer la transparence",
+      "En ne communiquant rien pour prot\u00e9ger totalement la vie priv\u00e9e",
+      "En partageant uniquement le n\u00e9cessaire dans l'int\u00e9r\u00eat de la personne, dans un cadre l\u00e9gal strict",
+      "En laissant le responsable hi\u00e9rarchique d\u00e9cider de ce qui peut \u00eatre partag\u00e9"
+    ],correct:2,
+    dc:"DC3",dcLabel:"DC3 \u2014 Secret professionnel",dcClass:"dc3",
+    comp:"Cadre \u00e9thique, respect des droits",
+    situation:"N (Perthes) \u2014 informations m\u00e9dicales sensibles en contexte pluridisciplinaire",
+    reponse:"Partage uniquement des \u00e9l\u00e9ments n\u00e9cessaires \u00e0 la coh\u00e9rence de l'accompagnement \u00e9ducatif. Pas de d\u00e9tails m\u00e9dicaux hors comp\u00e9tence. Le secret n'est pas le silence \u2014 c'est le partage raisonn\u00e9 de l'information dans l'int\u00e9r\u00eat de la personne.",
+    loi:"Art. 226-13 et 226-14 Code p\u00e9nal \u2014 Art. L.226-2-2 CASF (secret partag\u00e9)",
+    theorie:"Tension entre devoir de partage (coh\u00e9rence) et devoir de discr\u00e9tion (respect)",
+    analyse:"Le secret professionnel est une comp\u00e9tence \u00e9thique : discernement permanent sur ce qu'il est utile et l\u00e9gitime de partager."
+  },
+  {
+    q:"Comment inscrivez-vous votre pratique dans les politiques publiques actuelles ?",
+    options:[
+      "En articulant mon action avec les orientations l\u00e9gislatives et en actualisant mes connaissances",
+      "En me concentrant uniquement sur la relation individuelle sans consid\u00e9rer le cadre politique",
+      "En appliquant uniquement les directives internes de l'\u00e9tablissement",
+      "En attendant que mon employeur m'informe des \u00e9volutions l\u00e9gislatives"
+    ],correct:0,
+    dc:"DC4",dcLabel:"DC4 \u2014 Politiques publiques",dcClass:"dc4",
+    comp:"Politiques publiques, l\u00e9gislation, actualisation des connaissances",
+    situation:"Amir (FINC) \u2014 politique de la ville, coh\u00e9sion sociale",
+    reponse:"La maison de quartier s'inscrit dans la politique de la ville et de coh\u00e9sion sociale. L'accompagnement d'Amir r\u00e9pondait \u00e0 des objectifs de pr\u00e9vention, inclusion et lien social. Veille sur les \u00e9volutions l\u00e9gislatives et orientations des sch\u00e9mas d\u00e9partementaux.",
+    loi:"Loi 2002-2 (r\u00e9novation de l'action sociale) \u2014 Politiques de la ville",
+    theorie:"L'\u00e9ducateur est un acteur d'une politique sociale qui d\u00e9passe son institution",
+    analyse:"L'\u00e9ducateur ne travaille pas hors du monde. L'actualisation des connaissances est un devoir professionnel."
+  },
+  {
+    q:"Qu'est-ce que la posture r\u00e9flexive pour vous ?",
+    options:[
+      "Une remise en question ponctuelle apr\u00e8s un incident grave",
+      "Une obligation administrative impos\u00e9e par l'institution",
+      "Un signe de doute qui affaiblit la posture professionnelle",
+      "La capacit\u00e9 \u00e0 questionner sa pratique en continu en s'appuyant sur l'analyse et la th\u00e9orie"
+    ],correct:3,
+    dc:"DC4",dcLabel:"DC4 \u2014 R\u00e9flexivit\u00e9",dcClass:"dc4",
+    comp:"Analyse critique de la pratique, conceptualisation",
+    situation:"Transversale \u2014 prise de recul sur l'exp\u00e9rience",
+    reponse:"Capacit\u00e9 \u00e0 questionner sa propre pratique. Avec R, j'ai d'abord r\u00e9agi de mani\u00e8re trop r\u00e9active. L'analyse de pratique m'a fait comprendre que je reproduisais un rapport de force au lieu d'un sch\u00e9ma \u00e9ducatif. Cette prise de conscience a transform\u00e9 mon intervention.",
+    loi:"Loi 2002-2 (\u00e9valuation comme obligation institutionnelle)",
+    theorie:"Sch\u00f6n (praticien r\u00e9flexif) \u2014 Perrenoud (pratique r\u00e9flexive dans le m\u00e9tier)",
+    analyse:"La r\u00e9flexivit\u00e9 est un processus. Le jury veut voir ce qu'on a compris, chang\u00e9, et pourquoi. La VAE est elle-m\u00eame un acte de r\u00e9flexivit\u00e9."
+  },
+  {
+    q:"Comment pr\u00e9venez-vous l'usure professionnelle ?",
+    options:[
+      "En gardant ses difficult\u00e9s pour soi pour ne pas inqui\u00e9ter l'\u00e9quipe",
+      "En changeant r\u00e9guli\u00e8rement de poste pour \u00e9viter la routine",
+      "En utilisant les espaces institutionnels de r\u00e9gulation et en reconnaissant ses limites",
+      "En \u00e9vitant les situations trop charg\u00e9es \u00e9motionnellement"
+    ],correct:2,
+    dc:"DC4+DC3",dcLabel:"DC4 + DC3",dcClass:"dc-multi",
+    comp:"Analyse critique + Dynamique institutionnelle",
+    situation:"Transversale \u2014 les deux exp\u00e9riences (AIS et FINC)",
+    reponse:"Espaces institutionnels de r\u00e9gulation : analyse de pratique, supervision, \u00e9changes en \u00e9quipe. Apprendre \u00e0 ne pas porter seul les situations difficiles. Quand en difficult\u00e9, utiliser les espaces pr\u00e9vus pour en parler.",
+    loi:"Code du travail (pr\u00e9vention des risques psychosociaux) \u2014 Loi 2002-2 (\u00e9valuation interne)",
+    theorie:"Burnout : risque professionnel \u00e0 pr\u00e9venir institutionnellement, pas une faiblesse individuelle",
+    analyse:"Reconna\u00eetre ses limites et utiliser les ressources institutionnelles est un indicateur de maturit\u00e9 professionnelle."
+  },
+  {
+    q:"Comment repr\u00e9sentez-vous votre service ou institution \u00e0 l'ext\u00e9rieur ?",
+    options:[
+      "En donnant mon avis personnel sur le fonctionnement de l'institution",
+      "En portant les valeurs et missions de l'institution avec un discours adapt\u00e9 aux interlocuteurs",
+      "En critiquant les dysfonctionnements pour montrer ma lucidit\u00e9 professionnelle",
+      "En laissant le directeur g\u00e9rer les relations ext\u00e9rieures"
+    ],correct:1,
+    dc:"DC3",dcLabel:"DC3 \u2014 Repr\u00e9sentation",dcClass:"dc3",
+    comp:"Repr\u00e9sentation du service ou de l'institution",
+    situation:"Amir (FINC) \u2014 repr\u00e9sentation aupr\u00e8s des partenaires locaux",
+    reponse:"Rencontres avec \u00e9coles, associations, services sociaux. Pr\u00e9sentation des missions et actions, discours adapt\u00e9 aux interlocuteurs. Repr\u00e9senter, c'est porter les valeurs et objectifs de mani\u00e8re claire et professionnelle.",
+    loi:"Loi 2002-2 (projet d'\u00e9tablissement, tissu local)",
+    theorie:"Communication institutionnelle : l'\u00e9ducateur est ambassadeur de son institution",
+    analyse:"Repr\u00e9senter est une comp\u00e9tence de communication. L'\u00e9ducateur adapte, porte les valeurs et rend compte de son action."
+  },
+  {
+    q:"Comment accompagnez-vous la scolarit\u00e9 d'un enfant en difficult\u00e9 ?",
+    options:[
+      "En coordonnant avec l'enseignant et en cr\u00e9ant les conditions pour que le droit \u00e0 l'\u00e9ducation soit effectif",
+      "En rempla\u00e7ant l'enseignant pour assurer le soutien scolaire directement",
+      "En s\u00e9parant le suivi \u00e9ducatif du suivi scolaire pour ne pas interf\u00e9rer",
+      "En d\u00e9cidant seul des am\u00e9nagements n\u00e9cessaires pour l'enfant"
+    ],correct:0,
+    dc:"DC1+DC4",dcLabel:"DC1 + DC4",dcClass:"dc-multi",
+    comp:"Acc\u00e8s aux droits, d\u00e9veloppement des capacit\u00e9s + Partenariat",
+    situation:"N (Perthes) \u2014 maintien de la scolarit\u00e9 pendant l'hospitalisation",
+    reponse:"Lien avec l'enseignant sp\u00e9cialis\u00e9 pour la continuit\u00e9 scolaire. Adaptation des temps \u00e9ducatifs selon l'\u00e9nergie de N. Mon r\u00f4le n'\u00e9tait pas d'enseigner mais de cr\u00e9er les conditions pour que le droit \u00e0 l'\u00e9ducation soit effectif.",
+    loi:"Loi 2005 (scolarisation) \u2014 CIDE art. 28 (\u00e9ducation)",
+    theorie:"Vygotski (l'apprentissage pr\u00e9c\u00e8de le d\u00e9veloppement)",
+    analyse:"L'\u00e9ducateur est garant du droit \u00e0 l'\u00e9ducation. Il coordonne les acteurs et cr\u00e9e les conditions favorables."
+  },
+  {
+    q:"Comment vous assurez-vous que votre accompagnement respecte les droits fondamentaux ?",
+    options:[
+      "En appliquant un protocole standardis\u00e9 identique pour tous",
+      "En int\u00e9grant l'information sur les droits, la participation et le respect de la vie priv\u00e9e dans chaque accompagnement",
+      "En d\u00e9l\u00e9guant la question des droits au r\u00e9f\u00e9rent juridique de l'\u00e9tablissement",
+      "En ne m'en pr\u00e9occupant qu'en cas de signalement ou de plainte"
+    ],correct:1,
+    dc:"DC4+DC1",dcLabel:"DC4 + DC1",dcClass:"dc-multi",
+    comp:"Respect des droits fondamentaux + Participation",
+    situation:"Transversale \u2014 N et Amir",
+    reponse:"Information sur les droits, participation aux d\u00e9cisions, respect de la vie priv\u00e9e. Pour N : information adapt\u00e9e. Pour Amir : respect du rythme d'inclusion. Les droits sont le socle de l'action \u00e9ducative, pas un suppl\u00e9ment.",
+    loi:"Loi 2002-2 (7 droits fondamentaux) \u2014 CIDE \u2014 DUDH",
+    theorie:"Approche par les droits : l'intervention sociale se fonde sur les droits, pas sur la charit\u00e9",
+    analyse:"Le respect des droits est le fondement \u00e9thique. L'\u00e9ducateur est un professionnel des droits de la personne vuln\u00e9rable."
+  },
+  {
+    q:"Qu'est-ce que cette exp\u00e9rience vous a appris sur le m\u00e9tier d'\u00e9ducateur sp\u00e9cialis\u00e9 ?",
+    options:[
+      "Que c'est un m\u00e9tier avant tout intuitif fond\u00e9 sur la bienveillance naturelle",
+      "Que le dipl\u00f4me et l'anciennet\u00e9 suffisent pour \u00eatre comp\u00e9tent",
+      "Que l'\u00e9ducateur est un professionnel de la relation, du projet et du cadre, alliant observation, analyse et r\u00e9flexivit\u00e9",
+      "Que l'exp\u00e9rience personnelle de vie est le meilleur guide professionnel"
+    ],correct:2,
+    dc:"DC4",dcLabel:"DC4 \u2014 Synth\u00e8se",dcClass:"dc4",
+    comp:"Conceptualisation, analyse critique + Transversal",
+    situation:"Transversale \u2014 bilan des deux exp\u00e9riences (AIS et FINC)",
+    reponse:"L'\u00e9ducateur sp\u00e9cialis\u00e9 est un professionnel de la relation, du projet et du cadre. La relation \u00e9ducative est son outil principal. Le projet est sa m\u00e9thodologie. Le cadre l\u00e9gal est son rep\u00e8re. La comp\u00e9tence est dans la capacit\u00e9 \u00e0 observer, analyser, agir et \u00e9valuer de mani\u00e8re rigoureuse et r\u00e9flexive.",
+    loi:"Loi 2002-2 et Loi 2005 comme cadres structurants",
+    theorie:"Sch\u00f6n (praticien r\u00e9flexif) \u2014 Boutinet (projet comme professionnalisation)",
+    analyse:"Synth\u00e8se r\u00e9flexive : montrer le passage de l'exp\u00e9rience v\u00e9cue \u00e0 la comp\u00e9tence professionnelle consciente et transf\u00e9rable."
+  }
+];
+
+let currentIndex = 0;
+let correct = 0;
+let wrong = 0;
+let answered = false;
+let order = [];
+
+function init(){
+  order = flashcards.map((_,i)=>i);
+}
+
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+  return arr;
+}
+
+function startQuiz(){
+  if(order.length===0) init();
+  currentIndex=0;correct=0;wrong=0;answered=false;
+  document.getElementById('welcomeScreen').classList.add('hidden');
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('quizArea').classList.remove('hidden');
+  renderCard();
+}
+
+function shuffleAndStart(){
+  order = shuffle(flashcards.map((_,i)=>i));
+  currentIndex=0;correct=0;wrong=0;answered=false;
+  document.getElementById('welcomeScreen').classList.add('hidden');
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('quizArea').classList.remove('hidden');
+  renderCard();
+}
+
+function updateStats(){
+  const total = flashcards.length;
+  document.getElementById('statCurrent').textContent = (currentIndex+1)+' / '+total;
+  document.getElementById('statCorrect').innerHTML = '&#10003; '+correct;
+  document.getElementById('statWrong').innerHTML = '&#10007; '+wrong;
+  document.getElementById('progressFill').style.width = ((currentIndex+1)/total*100)+'%';
+}
+
+function renderCard(){
+  answered = false;
+  const fc = flashcards[order[currentIndex]];
+  updateStats();
+  let optsHtml = '';
+  fc.options.forEach((o, i) => {
+    optsHtml += '<div class="opt" id="opt'+i+'" onclick="selectOption('+i+')">'+String.fromCharCode(65+i)+'. '+o+'</div>';
+  });
+  const html = '\
+    <div style="background:linear-gradient(135deg,#0d9488 0%,#0f766e 100%);color:#fff;border-radius:14px;padding:14px 18px;margin-bottom:14px;box-shadow:0 4px 16px rgba(13,148,136,.25)">\
+      <div style="font-size:.75rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;opacity:.85">M&eacute;thode universelle (CPOAPRER)</div>\
+      <div style="display:flex;flex-wrap:wrap;gap:4px 3px;align-items:center;font-size:.82rem;font-weight:700">\
+        <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Contexte</span>\
+        <span style="opacity:.6">&rarr;</span>\
+        <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Probl&eacute;matique</span>\
+        <span style="opacity:.6">&rarr;</span>\
+        <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Objectifs</span>\
+        <span style="opacity:.6">&rarr;</span>\
+        <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Actions</span>\
+        <span style="opacity:.6">&rarr;</span>\
+        <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Posture</span>\
+        <span style="opacity:.6">&rarr;</span>\
+        <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">R&eacute;seau</span>\
+        <span style="opacity:.6">&rarr;</span>\
+        <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">&Eacute;valuation</span>\
+        <span style="opacity:.6">&rarr;</span>\
+        <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">R&eacute;f&eacute;rentiel</span>\
+      </div>\
+    </div>\
+    <div class="card">\
+      <div class="card-header">\
+        <span class="card-num">Carte '+( currentIndex+1)+' / '+flashcards.length+'</span>\
+        <span class="dc-badge" id="dcBadge" style="background:#ccc;color:#fff">? DC</span>\
+      </div>\
+      <div class="question-section">\
+        <h3>\u00ab '+fc.q+' \u00bb</h3>\
+        <p class="qcm-instruction">Choisissez la bonne r\u00e9ponse parmi les propositions :</p>\
+        <div class="options">'+optsHtml+'</div>\
+      </div>\
+      <div class="separator"></div>\
+      <div class="answer-section" id="answerSection">\
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;margin-top:16px;align-items:center">\
+          <span class="dc-badge '+fc.dcClass+'">'+fc.dcLabel+'</span>\
+          <span class="competence-tag">'+fc.comp+'</span>\
+          <span class="situation-tag">'+fc.situation+'</span>\
+        </div>\
+        <div class="answer-block block-reponse">\
+          <h4>R\u00e9ponse synth\u00e9tique orale</h4>\
+          <p>'+fc.reponse+'</p>\
+        </div>\
+        <div class="answer-block block-loi">\
+          <h4>Loi \u00e0 citer</h4>\
+          <p>'+fc.loi+'</p>\
+        </div>\
+        <div class="answer-block block-theorie">\
+          <h4>R\u00e9f\u00e9rence th\u00e9orique</h4>\
+          <p>'+fc.theorie+'</p>\
+        </div>\
+        <div class="answer-block block-analyse">\
+          <h4>Point d\'analyse \u00e0 montrer au jury</h4>\
+          <p>'+fc.analyse+'</p>\
+        </div>\
+        <div class="score-section">\
+          <button class="score-btn" onclick="markResult(true)">&#10003; Je savais</button>\
+          <button class="score-btn fail" onclick="markResult(false)">&#10007; \u00c0 revoir</button>\
+        </div>\
+      </div>\
+    </div>\
+    <div class="nav-buttons">\
+      <button class="nav-btn" onclick="prevCard()">&#8592; Pr\u00e9c\u00e9dente</button>\
+      <button class="nav-btn primary" onclick="nextCard()">Suivante &#8594;</button>\
+    </div>';
+  document.getElementById('quizArea').innerHTML = html;
+  if(window.Mentor) Mentor.onQuestionShown(fc);
+}
+
+function selectOption(i){
+  if(answered) return;
+  answered = true;
+  const fc = flashcards[order[currentIndex]];
+  document.querySelectorAll('.opt').forEach(function(el, j){
+    el.classList.add('disabled');
+    if(j === fc.correct) el.classList.add('correct');
+  });
+  if(i !== fc.correct){
+    document.getElementById('opt'+i).classList.add('wrong');
+  }
+  var badge = document.getElementById('dcBadge');
+  badge.textContent = fc.dcLabel;
+  badge.className = 'dc-badge ' + fc.dcClass;
+  document.getElementById('answerSection').style.display = 'block';
+  setTimeout(function(){
+    document.getElementById('answerSection').scrollIntoView({behavior:'smooth',block:'start'});
+  }, 200);
+  if(window.Mentor){
+    if(i === fc.correct) Mentor.onAnswerCorrect(fc);
+    else Mentor.onAnswerWrong(fc, i);
+  }
+}
+
+function markResult(success){
+  if(success) correct++; else wrong++;
+  updateStats();
+  if(currentIndex < flashcards.length-1){
+    nextCard();
+  } else {
+    showResults();
+  }
+}
+
+function nextCard(){
+  if(currentIndex < flashcards.length-1){currentIndex++;renderCard();window.scrollTo({top:0,behavior:'smooth'});}
+}
+function prevCard(){
+  if(currentIndex > 0){currentIndex--;renderCard();window.scrollTo({top:0,behavior:'smooth'});}
+  else{document.getElementById('quizArea').classList.add('hidden');document.getElementById('welcomeScreen').classList.remove('hidden');}
+}
+
+function showResults(){
+  document.getElementById('quizArea').classList.add('hidden');
+  var rs = document.getElementById('resultsScreen');
+  rs.classList.remove('hidden');
+  var pct = Math.round(correct/(correct+wrong)*100)||0;
+  document.getElementById('finalScore').textContent = pct+'%';
+  var msg = '';
+  if(pct>=80) msg='Excellent ! Vous \u00eates pr\u00eat(e) pour le jury.';
+  else if(pct>=60) msg='Bon niveau. Continuez \u00e0 r\u00e9viser les points faibles.';
+  else msg='\u00c0 retravailler. Concentrez-vous sur les cartes \u00e9chou\u00e9es.';
+  document.getElementById('finalMsg').textContent = correct+' r\u00e9ussies, '+wrong+' \u00e0 revoir \u2014 '+msg;
+  document.getElementById('progressFill').style.width = '100%';
+}
+
+function resetQuiz(){
+  init();
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('welcomeScreen').classList.remove('hidden');
+  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('statCurrent').textContent = '0 / 10';
+  document.getElementById('statCorrect').innerHTML = '&#10003; 0';
+  document.getElementById('statWrong').innerHTML = '&#10007; 0';
+}
+
+init();
+</script>
+<script src="mentor.js"></script>
+</body>
+</html>
