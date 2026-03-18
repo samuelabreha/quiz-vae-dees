@@ -3,81 +3,79 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiz Situations — Journ&eacute;e &amp; Projet collectif</title>
+<title>Quiz Situations &mdash; Journ&eacute;e &amp; Projet collectif</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;min-height:100vh}
-.container{max-width:700px;margin:0 auto;padding:24px 16px}
-.back-link{display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;color:#1e3a5f;text-decoration:none;font-size:.9rem}
-.back-link:hover{text-decoration:underline}
-h1{font-size:1.5rem;color:#1e3a5f;margin-bottom:4px;text-align:center}
-.subtitle{font-size:.9rem;color:#666;margin-bottom:24px;text-align:center}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;color:#1a1a2e;min-height:100vh}
+.header{background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);color:#fff;padding:24px 20px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.header h1{font-size:1.3rem;font-weight:700;margin-bottom:4px}
+.header p{font-size:.85rem;opacity:.9}
+.progress-bar{background:rgba(255,255,255,.2);height:6px;border-radius:3px;margin-top:12px;overflow:hidden}
+.progress-fill{height:100%;background:#fff;border-radius:3px;transition:width .4s ease}
+.stats{display:flex;justify-content:center;gap:20px;margin-top:10px;font-size:.8rem}
+.stats span{background:rgba(255,255,255,.15);padding:4px 12px;border-radius:20px}
+.container{max-width:720px;margin:0 auto;padding:20px}
+.card{background:#fff;border-radius:16px;box-shadow:0 2px 16px rgba(0,0,0,.08);overflow:hidden;margin-bottom:20px}
+.card-header{padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.card-num{font-size:.75rem;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.dc-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.72rem;font-weight:700;color:#fff}
+.sit-label{display:inline-block;padding:4px 10px;border-radius:20px;font-size:.7rem;font-weight:700;color:#fff;background:#64748b}
+.question-section{padding:20px}
+.question-section h3{font-size:1.02rem;line-height:1.5;margin-bottom:16px}
+.options{display:flex;flex-direction:column;gap:8px}
+.opt{padding:12px 16px;border:2px solid #e5e7eb;border-radius:10px;cursor:pointer;font-size:.9rem;line-height:1.4;transition:all .2s;background:#fafafa}
+.opt:hover{border-color:#2563eb;background:#eff6ff}
+.opt.selected{border-color:#2563eb;background:#dbeafe;font-weight:600}
+.opt.correct{border-color:#059669;background:#d1fae5;font-weight:600}
+.opt.wrong{border-color:#dc2626;background:#fee2e2}
+.opt.disabled{pointer-events:none;opacity:.7}
+.opt.disabled.correct{opacity:1}
+.explanation{display:none;margin-top:14px;padding:14px 16px;border-radius:10px;background:#f8fafc;border-left:4px solid #2563eb;font-size:.88rem;line-height:1.7;color:#333}
+.explanation.show{display:block;animation:fadeIn .3s ease}
+.explanation strong{color:#2563eb}
+.explanation p{margin-bottom:4px}
+.nav-buttons{display:flex;gap:10px;margin-top:10px}
+.nav-btn{flex:1;padding:12px;border:2px solid #2563eb;background:#fff;color:#2563eb;font-size:.9rem;font-weight:600;border-radius:10px;cursor:pointer;transition:all .2s}
+.nav-btn:hover{background:#2563eb;color:#fff}
+.nav-btn:disabled{border-color:#ccc;color:#ccc;cursor:default;background:#fff}
+.nav-btn.primary{background:#fff;color:#2563eb}
+.nav-btn.primary:hover{background:#2563eb;color:#fff}
+.welcome{text-align:center;padding:60px 20px}
+.welcome h2{font-size:1.5rem;margin-bottom:12px;color:#2563eb}
+.welcome p{font-size:.95rem;color:#555;line-height:1.6;margin-bottom:8px}
+.start-btn{margin-top:24px;padding:16px 40px;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border:none;font-size:1.1rem;font-weight:700;border-radius:12px;cursor:pointer;transition:transform .2s}
+.start-btn:hover{transform:scale(1.05)}
+.results{text-align:center;padding:40px 20px}
+.results h2{font-size:1.6rem;color:#2563eb;margin-bottom:16px}
+.results .score-big{font-size:3rem;font-weight:800;color:#059669;margin:20px 0}
 .hidden{display:none}
-.welcome-card{background:#fff;border-radius:16px;padding:32px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.06);border-top:4px solid #1e3a5f}
-.welcome-card h2{margin:12px 0 8px;font-size:1.3rem;color:#1e3a5f}
-.welcome-card p{color:#666;font-size:.9rem;margin-bottom:6px;line-height:1.5}
-.badge-blue{display:inline-block;padding:5px 16px;border-radius:20px;font-size:.75rem;font-weight:700;color:#fff;background:#1e3a5f}
-.info-row{display:flex;justify-content:center;gap:20px;margin:16px 0;font-size:.85rem;color:#666}
-.info-row span{display:flex;align-items:center;gap:4px}
-.btn-start{display:inline-block;margin-top:20px;padding:14px 36px;background:#1e3a5f;color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;transition:background .2s}
-.btn-start:hover{background:#152d4a}
-.progress-bar{height:6px;background:#e5e7eb;border-radius:3px;margin-bottom:8px;overflow:hidden}
-.progress-fill{height:100%;background:#1e3a5f;border-radius:3px;transition:width .3s}
-.progress-text{font-size:.8rem;color:#999;margin-bottom:16px;text-align:right}
-.timer{font-size:.8rem;color:#1e3a5f;text-align:center;margin-bottom:12px;font-weight:600}
-.q-card{background:#fff;border-radius:16px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,.06)}
-.q-number{font-size:.8rem;color:#1e3a5f;font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
-.dc-badge{display:inline-block;padding:3px 10px;border-radius:8px;font-size:.75rem;font-weight:700;color:#fff;margin-bottom:6px;margin-right:6px}
-.sit-label{display:inline-block;padding:3px 10px;border-radius:8px;font-size:.75rem;font-weight:700;color:#fff;background:#64748b;margin-bottom:12px}
-.q-text{font-size:1.05rem;color:#1a1a2e;line-height:1.7;margin-bottom:20px;white-space:pre-line}
-.btn-reveal{display:inline-block;padding:12px 28px;background:#1e3a5f;color:#fff;border:none;border-radius:12px;font-size:.95rem;cursor:pointer;transition:background .2s;font-weight:600}
-.btn-reveal:hover{background:#152d4a}
-.answer-section{display:none;margin-top:20px;padding:20px;background:#eff6ff;border-radius:12px;border-left:4px solid #1e3a5f}
-.answer-section h3{font-size:.9rem;color:#1e3a5f;margin-bottom:10px;font-weight:700}
-.answer-section p{font-size:.9rem;color:#333;line-height:1.7;margin-bottom:6px}
-.answer-section strong{color:#1e3a5f}
-.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:12px}
-.btn-nav{padding:10px 22px;border:2px solid #1e3a5f;color:#1e3a5f;background:#fff;border-radius:10px;font-size:.9rem;cursor:pointer;transition:all .2s;font-weight:600}
-.btn-nav:hover{background:#eff6ff}
-.btn-nav.primary{background:#1e3a5f;color:#fff;border-color:#1e3a5f}
-.btn-nav.primary:hover{background:#152d4a}
-.result-card{background:#fff;border-radius:16px;padding:36px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.06);border-top:4px solid #1e3a5f}
-.result-emoji{font-size:3rem;margin:12px 0}
-.score-label{font-size:1rem;color:#666;margin-bottom:20px}
-.autocheck{margin-top:24px;padding:16px 20px;background:#fffbeb;border-radius:12px;border-left:4px solid #d97706;text-align:left}
-.autocheck h3{font-size:.85rem;color:#d97706;margin-bottom:8px}
-.autocheck p{font-size:.85rem;color:#555;line-height:1.6}
-.btn-row{display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.shuffle-btn{padding:8px 16px;background:#fff;border:2px solid #2563eb;color:#2563eb;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;margin-top:12px}
+.shuffle-btn:hover{background:#2563eb;color:#fff}
+.back-link{display:inline-block;margin-top:20px;padding:8px 16px;font-size:.82rem;color:#999;text-decoration:none;border:1px solid #ddd;border-radius:8px;transition:all .2s}
+.back-link:hover{color:#2563eb;border-color:#2563eb}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
-<div class="container">
-<a href="situations_referentiel_jury.html" class="back-link">&larr; Retour aux situations</a>
-<h1>Quiz Situations &mdash; Journ&eacute;e &amp; Projet collectif</h1>
-<p class="subtitle">FINC &mdash; R&eacute;pondez &agrave; voix haute, puis r&eacute;v&eacute;lez la r&eacute;ponse</p>
 
-<div id="welcomeScreen">
-<div class="welcome-card">
-  <span class="badge-blue">Quiz Situations</span>
-  <h2>Journ&eacute;e compl&egrave;te &amp; Projet collectif &mdash; 4 DC</h2>
-  <p>2 situations &times; 4 DC = 8 questions. R&eacute;pondez &agrave; voix haute en suivant la m&eacute;thode CPOAPRER, puis v&eacute;rifiez.</p>
-  <div class="info-row">
-    <span>&#128221; 8 questions</span>
-    <span>&#9201; 5-8 min</span>
-    <span>&#127919; FINC</span>
+<div class="header">
+  <h1>Quiz Situations &mdash; Journ&eacute;e &amp; Projet collectif</h1>
+  <p>FINC &bull; 8 questions QCM &bull; Pr&eacute;paration VAE DEES</p>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="stats">
+    <span id="statCurrent">0 / 8</span>
+    <span id="statCorrect" style="color:#a7f3d0">&#10003; 0</span>
+    <span id="statWrong" style="color:#fca5a5">&#10007; 0</span>
   </div>
-  <p style="font-size:.85rem;color:#1e3a5f;font-weight:600;margin-top:12px">R&eacute;pondez en &laquo; je &raquo;, 4 phrases max par question.</p>
-  <button class="btn-start" onclick="startQuiz()">Commencer le quiz</button>
-</div>
 </div>
 
-<div id="quizArea" class="hidden">
-  <div id="cpoaprerBanner" style="background:linear-gradient(135deg,#0d9488 0%,#0f766e 100%);color:#fff;border-radius:14px;padding:14px 18px;margin-bottom:14px;box-shadow:0 4px 16px rgba(13,148,136,.25)">
-    <div style="font-size:.75rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;opacity:.85">Methode universelle (CPOAPRER)</div>
+<div class="container">
+  <div style="background:linear-gradient(135deg,#0d9488 0%,#0f766e 100%);color:#fff;border-radius:14px;padding:14px 18px;margin-bottom:14px;box-shadow:0 4px 16px rgba(13,148,136,.25)">
+    <div style="font-size:.75rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;opacity:.85">M&eacute;thode universelle (CPOAPRER)</div>
     <div style="display:flex;flex-wrap:wrap;gap:4px 3px;align-items:center;font-size:.82rem;font-weight:700">
       <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Contexte</span>
       <span style="opacity:.6">&rarr;</span>
-      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Problematique</span>
+      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Probl&eacute;matique</span>
       <span style="opacity:.6">&rarr;</span>
       <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Objectifs</span>
       <span style="opacity:.6">&rarr;</span>
@@ -85,179 +83,280 @@ h1{font-size:1.5rem;color:#1e3a5f;margin-bottom:4px;text-align:center}
       <span style="opacity:.6">&rarr;</span>
       <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Posture</span>
       <span style="opacity:.6">&rarr;</span>
-      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Reseau</span>
+      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">R&eacute;seau</span>
       <span style="opacity:.6">&rarr;</span>
-      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Evaluation</span>
+      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">&Eacute;valuation</span>
       <span style="opacity:.6">&rarr;</span>
-      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Referentiel</span>
+      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">R&eacute;f&eacute;rentiel</span>
     </div>
   </div>
-  <div class="timer" id="timer">00:00</div>
-  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-  <div class="progress-text" id="progressText">1 / 8</div>
-  <div class="q-card" id="questionCard"></div>
-  <div class="nav-row">
-    <button class="btn-nav" onclick="prevQ()">&larr; Pr&eacute;c&eacute;dente</button>
-    <button class="btn-nav primary" onclick="nextQ()">Suivante &rarr;</button>
-  </div>
-</div>
 
-<div id="resultScreen" class="hidden">
-<div class="result-card">
-  <span class="badge-blue">Termin&eacute; !</span>
-  <div class="result-emoji">&#127919;</div>
-  <div class="score-label">8 questions r&eacute;vis&eacute;es &mdash; Journ&eacute;e &amp; Projet collectif</div>
-  <div class="autocheck">
-    <h3>&#9989; Auto-check</h3>
-    <p>Si vous pouvez r&eacute;pondre &agrave; chaque question en moins de 45 secondes avec la structure CPOAPRER, la m&eacute;morisation active progresse bien.</p>
-    <p style="margin-top:8px">Si vous bloquez, reprenez le fil : <strong>DC &rarr; situation &rarr; action &rarr; r&eacute;sultat</strong>.</p>
+  <div id="welcomeScreen" class="welcome">
+    <h2>Quiz Situations &mdash; Journ&eacute;e &amp; Projet collectif</h2>
+    <p><strong>8 QCM</strong> &mdash; 2 situations &times; 4 DC = 8 questions</p>
+    <p style="margin-top:8px;font-size:.85rem;color:#888">FINC &bull; R&eacute;pondez en &laquo; je &raquo;, 4 phrases max</p>
+    <button class="start-btn" onclick="startQuiz()">Commencer</button>
+    <br>
+    <button class="shuffle-btn" onclick="shuffleAndStart()">M&eacute;langer et commencer</button>
+    <br><a href="index.html" class="back-link">&larr; Retour &agrave; l'accueil</a>
   </div>
-  <div style="margin-top:16px;padding:14px 18px;background:#f0fdfa;border-radius:12px;border-left:4px solid #0d9488;text-align:left">
-    <p style="font-size:.85rem;color:#333;line-height:1.6"><strong style="color:#0d9488">&#128172; Besoin d'aide pour structurer vos r&eacute;ponses ?</strong><br>Le <strong>Coach Interactif</strong> vous guide question par question avec des indices progressifs si vous bloquez.</p>
-    <a href="agent_pedagogique.html" style="display:inline-block;margin-top:8px;padding:8px 20px;background:#0d9488;color:#fff;border-radius:10px;font-size:.85rem;font-weight:600;text-decoration:none;transition:background .2s">Lancer le Coach Interactif &rarr;</a>
+
+  <div id="quizArea" class="hidden"></div>
+
+  <div id="resultsScreen" class="hidden results">
+    <h2>R&eacute;sultats</h2>
+    <div class="score-big" id="finalScore"></div>
+    <p id="finalMsg"></p>
+    <div style="margin:20px auto 0;max-width:420px;padding:14px 18px;background:#f0fdfa;border-radius:12px;border-left:4px solid #0d9488;text-align:left">
+      <p style="font-size:.85rem;color:#333;line-height:1.6"><strong style="color:#0d9488">&#128172; Besoin d'aide pour structurer vos r&eacute;ponses ?</strong><br>Le <strong>Coach Interactif</strong> vous guide question par question avec des indices progressifs si vous bloquez.</p>
+      <a href="agent_pedagogique.html" style="display:inline-block;margin-top:8px;padding:8px 20px;background:#0d9488;color:#fff;border-radius:10px;font-size:.85rem;font-weight:600;text-decoration:none;transition:background .2s">Lancer le Coach Interactif &rarr;</a>
+    </div>
+    <button class="start-btn" onclick="resetQuiz()" style="margin-top:20px;font-size:.95rem;padding:12px 30px">Recommencer</button>
+    <button class="shuffle-btn" onclick="shuffleAndStart()">M&eacute;langer</button>
+    <br><a href="index.html" class="back-link">&larr; Retour &agrave; l'accueil</a>
   </div>
-  <div class="btn-row">
-    <button class="btn-nav" onclick="resetQuiz()">&#128260; Recommencer</button>
-    <a href="situations_referentiel_jury.html" class="btn-nav primary" style="text-decoration:none">Retour aux situations</a>
-  </div>
-</div>
-</div>
 </div>
 
 <script>
-var questions = [
+var qcmData = [
   {
     dc: "DC1 \u2014 Relation \u00e9ducative",
     dcColor: "#e10600",
     sitLabel: "B.2.2 \u2014 Journ\u00e9e compl\u00e8te",
     q: "Comment construisez-vous la relation \u00e9ducative dans une journ\u00e9e type en maison de quartier ?",
-    answer: "<p><strong>DC vis\u00e9 : DC1</strong></p><p>Je construis la relation \u00e9ducative \u00e0 travers les diff\u00e9rents temps de la journ\u00e9e \u2014 accueil, activit\u00e9s, repas, temps libres.</p><p>Je suis attentif aux signaux de chaque enfant pour adapter ma posture en temps r\u00e9el.</p><p>J\u2019utilise les temps informels comme supports \u00e0 la relation \u2014 \u00e9coute, disponibilit\u00e9, humour.</p><p><strong>R\u00e9sultat :</strong> les enfants investissent la relation et se sentent en s\u00e9curit\u00e9 dans l\u2019espace.</p>"
+    opts: [
+      "Je construis la relation \u00e0 travers les diff\u00e9rents temps de la journ\u00e9e \u2014 accueil, activit\u00e9s, repas. Je suis attentif aux signaux de chaque enfant pour adapter ma posture. J\u2019utilise les temps informels comme supports \u00e0 la relation. R\u00e9sultat : les enfants se sentent en s\u00e9curit\u00e9 dans l\u2019espace.",
+      "Je planifie des entretiens individuels formels avec chaque enfant en d\u00e9but de journ\u00e9e. Je remplis une grille d\u2019\u00e9valuation comportementale pour chacun. Je transmets les r\u00e9sultats \u00e0 la direction en fin de journ\u00e9e. R\u00e9sultat : un suivi administratif rigoureux.",
+      "Je laisse les enfants g\u00e9rer seuls leurs interactions pour favoriser l\u2019autonomie. Je n\u2019interviens que lorsqu\u2019un conflit \u00e9clate. Je privil\u00e9gie la distance professionnelle stricte. R\u00e9sultat : les enfants apprennent par eux-m\u00eames.",
+      "Je m\u2019appuie exclusivement sur les activit\u00e9s structur\u00e9es pour cr\u00e9er du lien. Je ne prends pas en compte les temps informels car ils ne sont pas \u00e9ducatifs. Je maintiens un cadre identique pour tous. R\u00e9sultat : une journ\u00e9e bien organis\u00e9e."
+    ],
+    correct: 0,
+    why: "<p><strong>DC vis\u00e9 : DC1</strong></p><p>Je construis la relation \u00e9ducative \u00e0 travers les diff\u00e9rents temps de la journ\u00e9e \u2014 accueil, activit\u00e9s, repas, temps libres.</p><p>Je suis attentif aux signaux de chaque enfant pour adapter ma posture en temps r\u00e9el.</p><p>J\u2019utilise les temps informels comme supports \u00e0 la relation \u2014 \u00e9coute, disponibilit\u00e9, humour.</p><p><strong>R\u00e9sultat :</strong> les enfants investissent la relation et se sentent en s\u00e9curit\u00e9 dans l\u2019espace.</p>"
   },
   {
     dc: "DC2 \u2014 Projet \u00e9ducatif",
     dcColor: "#2563eb",
     sitLabel: "B.2.2 \u2014 Journ\u00e9e compl\u00e8te",
     q: "Comment concevez-vous le projet \u00e9ducatif d\u2019une journ\u00e9e ?",
-    answer: "<p><strong>DC vis\u00e9 : DC2</strong></p><p>Je con\u00e7ois la journ\u00e9e en articulant des temps structur\u00e9s et des temps libres, avec des objectifs \u00e9ducatifs.</p><p>Je d\u00e9finis des activit\u00e9s adapt\u00e9es aux besoins du groupe \u2014 socialisation, autonomie, expression.</p><p>J\u2019observe les dynamiques pour ajuster le programme en cours de journ\u00e9e.</p><p>L\u2019\u00e9valuation en fin de journ\u00e9e me permet de r\u00e9ajuster pour les prochaines s\u00e9ances.</p>"
+    opts: [
+      "Je reproduis le m\u00eame programme chaque semaine car la r\u00e9p\u00e9tition rassure les enfants. Je ne modifie les activit\u00e9s que si la direction le demande. Je ne fais pas d\u2019\u00e9valuation quotidienne. R\u00e9sultat : une routine stable et pr\u00e9visible.",
+      "Je con\u00e7ois la journ\u00e9e en articulant temps structur\u00e9s et temps libres avec des objectifs \u00e9ducatifs. Je d\u00e9finis des activit\u00e9s adapt\u00e9es aux besoins du groupe \u2014 socialisation, autonomie, expression. J\u2019observe les dynamiques pour ajuster le programme. L\u2019\u00e9valuation en fin de journ\u00e9e me permet de r\u00e9ajuster.",
+      "Je laisse les enfants choisir librement toutes les activit\u00e9s sans cadre pr\u00e9d\u00e9fini. Je ne fixe pas d\u2019objectifs \u00e9ducatifs pour ne pas brider leur cr\u00e9ativit\u00e9. Je note simplement ce qui s\u2019est pass\u00e9. R\u00e9sultat : un cadre souple et ouvert.",
+      "Je me concentre uniquement sur les activit\u00e9s p\u00e9dagogiques formelles. Les temps libres ne font pas partie de mon projet \u00e9ducatif. Je pr\u00e9pare un rapport d\u00e9taill\u00e9 pour chaque activit\u00e9 men\u00e9e. R\u00e9sultat : des activit\u00e9s bien document\u00e9es."
+    ],
+    correct: 1,
+    why: "<p><strong>DC vis\u00e9 : DC2</strong></p><p>Je con\u00e7ois la journ\u00e9e en articulant des temps structur\u00e9s et des temps libres, avec des objectifs \u00e9ducatifs.</p><p>Je d\u00e9finis des activit\u00e9s adapt\u00e9es aux besoins du groupe \u2014 socialisation, autonomie, expression.</p><p>J\u2019observe les dynamiques pour ajuster le programme en cours de journ\u00e9e.</p><p>L\u2019\u00e9valuation en fin de journ\u00e9e me permet de r\u00e9ajuster pour les prochaines s\u00e9ances.</p>"
   },
   {
     dc: "DC3 \u2014 Communication professionnelle",
     dcColor: "#059669",
     sitLabel: "B.2.2 \u2014 Journ\u00e9e compl\u00e8te",
     q: "Comment communiquez-vous avec l\u2019\u00e9quipe au cours de la journ\u00e9e ?",
-    answer: "<p><strong>DC vis\u00e9 : DC3</strong></p><p>Je fais des transmissions orales en d\u00e9but et fin de journ\u00e9e avec mes coll\u00e8gues.</p><p>Je signale imm\u00e9diatement les situations pr\u00e9occupantes ou les incidents.</p><p>Je participe au bilan d\u2019\u00e9quipe pour analyser collectivement le d\u00e9roulement de la journ\u00e9e.</p><p>Cela assure une continuit\u00e9 \u00e9ducative et une coh\u00e9rence d\u2019\u00e9quipe au quotidien.</p>"
+    opts: [
+      "Je communique principalement par \u00e9crit via des mails en fin de semaine. Je ne fais pas de transmissions orales pour \u00e9viter les oublis. Je pr\u00e9f\u00e8re un compte-rendu hebdomadaire complet. R\u00e9sultat : une tra\u00e7abilit\u00e9 \u00e9crite.",
+      "Je g\u00e8re seul les situations de la journ\u00e9e et ne sollicite l\u2019\u00e9quipe qu\u2019en cas de crise majeure. Je consid\u00e8re que trop de communication ralentit l\u2019action. Je fais un rapport \u00e0 la direction uniquement. R\u00e9sultat : une autonomie professionnelle.",
+      "Je fais des transmissions orales en d\u00e9but et fin de journ\u00e9e avec mes coll\u00e8gues. Je signale imm\u00e9diatement les situations pr\u00e9occupantes. Je participe au bilan d\u2019\u00e9quipe pour analyser le d\u00e9roulement. Cela assure une continuit\u00e9 \u00e9ducative et une coh\u00e9rence d\u2019\u00e9quipe.",
+      "Je partage les informations avec les parents directement, sans passer par l\u2019\u00e9quipe. Je privil\u00e9gie la transparence avec les familles. Je ne participe aux r\u00e9unions que si elles sont obligatoires. R\u00e9sultat : un lien fort avec les familles."
+    ],
+    correct: 2,
+    why: "<p><strong>DC vis\u00e9 : DC3</strong></p><p>Je fais des transmissions orales en d\u00e9but et fin de journ\u00e9e avec mes coll\u00e8gues.</p><p>Je signale imm\u00e9diatement les situations pr\u00e9occupantes ou les incidents.</p><p>Je participe au bilan d\u2019\u00e9quipe pour analyser collectivement le d\u00e9roulement de la journ\u00e9e.</p><p>Cela assure une continuit\u00e9 \u00e9ducative et une coh\u00e9rence d\u2019\u00e9quipe au quotidien.</p>"
   },
   {
     dc: "DC4 \u2014 Dynamiques institutionnelles",
     dcColor: "#7c3aed",
     sitLabel: "B.2.2 \u2014 Journ\u00e9e compl\u00e8te",
     q: "Comment inscrivez-vous cette journ\u00e9e dans le cadre institutionnel ?",
-    answer: "<p><strong>DC vis\u00e9 : DC4</strong></p><p>J\u2019inscris la journ\u00e9e dans le cadre du projet de la maison de quartier et des missions de la FASe.</p><p>Je respecte les orientations du dispositif FINC \u2014 inclusion, socialisation, pr\u00e9vention.</p><p>Je fais le lien entre les activit\u00e9s propos\u00e9es et les objectifs institutionnels.</p><p>Cela donne du sens \u00e0 chaque temps de la journ\u00e9e et l\u00e9gitime mon action \u00e9ducative.</p>"
+    opts: [
+      "Je me concentre sur le bien-\u00eatre imm\u00e9diat des enfants sans me r\u00e9f\u00e9rer au projet institutionnel. Je consid\u00e8re que le terrain prime sur les orientations th\u00e9oriques. Je ne fais pas de lien avec les missions de la FASe. R\u00e9sultat : une action centr\u00e9e sur le concret.",
+      "Je respecte uniquement le r\u00e8glement int\u00e9rieur de la maison de quartier. Je ne m\u2019int\u00e9resse pas aux orientations du dispositif FINC. Je consid\u00e8re que le cadre institutionnel est l\u2019affaire de la direction. R\u00e9sultat : une conformit\u00e9 au r\u00e8glement.",
+      "J\u2019applique les directives de la direction sans les questionner. Je ne fais pas le lien entre mes activit\u00e9s et les objectifs institutionnels. Je remplis les formulaires institutionnels demand\u00e9s. R\u00e9sultat : un suivi administratif correct.",
+      "J\u2019inscris la journ\u00e9e dans le cadre du projet de la maison de quartier et des missions de la FASe. Je respecte les orientations du dispositif FINC \u2014 inclusion, socialisation, pr\u00e9vention. Je fais le lien entre les activit\u00e9s et les objectifs institutionnels. Cela donne du sens \u00e0 chaque temps de la journ\u00e9e."
+    ],
+    correct: 3,
+    why: "<p><strong>DC vis\u00e9 : DC4</strong></p><p>J\u2019inscris la journ\u00e9e dans le cadre du projet de la maison de quartier et des missions de la FASe.</p><p>Je respecte les orientations du dispositif FINC \u2014 inclusion, socialisation, pr\u00e9vention.</p><p>Je fais le lien entre les activit\u00e9s propos\u00e9es et les objectifs institutionnels.</p><p>Cela donne du sens \u00e0 chaque temps de la journ\u00e9e et l\u00e9gitime mon action \u00e9ducative.</p>"
   },
   {
     dc: "DC1 \u2014 Relation \u00e9ducative",
     dcColor: "#e10600",
     sitLabel: "B.2.3 \u2014 Projet collectif",
     q: "Comment construisez-vous la relation \u00e9ducative dans un projet collectif ?",
-    answer: "<p><strong>DC vis\u00e9 : DC1</strong></p><p>Dans le projet collectif, je construis la relation en valorisant la place de chacun dans le groupe.</p><p>Je suis attentif aux dynamiques relationnelles \u2014 conflits, exclusions, leadership.</p><p>J\u2019interviens pour r\u00e9guler et favoriser la coop\u00e9ration entre les jeunes.</p><p><strong>R\u00e9sultat :</strong> le groupe s\u2019est soud\u00e9 autour du projet et chacun a trouv\u00e9 sa place.</p>"
+    opts: [
+      "Je d\u00e9signe un leader dans le groupe et je m\u2019appuie sur lui pour g\u00e9rer les dynamiques. Je ne m\u2019implique pas dans les conflits entre jeunes. Je laisse le groupe s\u2019autog\u00e9rer pour d\u00e9velopper leur autonomie. R\u00e9sultat : un groupe qui fonctionne seul.",
+      "Je construis la relation en valorisant la place de chacun dans le groupe. Je suis attentif aux dynamiques relationnelles \u2014 conflits, exclusions, leadership. J\u2019interviens pour r\u00e9guler et favoriser la coop\u00e9ration. R\u00e9sultat : le groupe s\u2019est soud\u00e9 et chacun a trouv\u00e9 sa place.",
+      "Je mets en place des entretiens individuels en parall\u00e8le du projet collectif. Je ne travaille la relation que dans un cadre individuel formel. Je consid\u00e8re que le collectif ne permet pas un vrai lien \u00e9ducatif. R\u00e9sultat : un suivi individuel rigoureux.",
+      "Je maintiens une posture neutre et distante pour ne pas influencer le groupe. Je n\u2019interviens pas dans les dynamiques relationnelles. Je me concentre sur l\u2019avancement technique du projet. R\u00e9sultat : un projet r\u00e9alis\u00e9 dans les d\u00e9lais."
+    ],
+    correct: 1,
+    why: "<p><strong>DC vis\u00e9 : DC1</strong></p><p>Dans le projet collectif, je construis la relation en valorisant la place de chacun dans le groupe.</p><p>Je suis attentif aux dynamiques relationnelles \u2014 conflits, exclusions, leadership.</p><p>J\u2019interviens pour r\u00e9guler et favoriser la coop\u00e9ration entre les jeunes.</p><p><strong>R\u00e9sultat :</strong> le groupe s\u2019est soud\u00e9 autour du projet et chacun a trouv\u00e9 sa place.</p>"
   },
   {
     dc: "DC2 \u2014 Projet \u00e9ducatif",
     dcColor: "#2563eb",
     sitLabel: "B.2.3 \u2014 Projet collectif",
     q: "Comment avez-vous con\u00e7u et conduit ce projet collectif ?",
-    answer: "<p><strong>DC vis\u00e9 : DC2</strong></p><p>J\u2019ai co-construit le projet avec les jeunes en partant de leurs envies et besoins.</p><p>J\u2019ai d\u00e9fini des objectifs \u00e9ducatifs \u2014 coop\u00e9ration, autonomie, responsabilisation.</p><p>J\u2019ai structur\u00e9 les \u00e9tapes du projet avec un calendrier et des r\u00f4les r\u00e9partis.</p><p>L\u2019\u00e9valuation avec le groupe a permis de mesurer les apprentissages et d\u2019ajuster en cours de route.</p>"
+    opts: [
+      "J\u2019ai d\u00e9cid\u00e9 seul du th\u00e8me du projet pour gagner du temps. J\u2019ai fix\u00e9 les r\u00f4les de chacun sans consulter les jeunes. J\u2019ai \u00e9valu\u00e9 le r\u00e9sultat final uniquement. R\u00e9sultat : un projet abouti et efficace.",
+      "J\u2019ai demand\u00e9 aux jeunes de proposer un projet mais sans fixer d\u2019objectifs \u00e9ducatifs. Je n\u2019ai pas structur\u00e9 les \u00e9tapes pour laisser place \u00e0 la spontan\u00e9it\u00e9. Je n\u2019ai pas fait d\u2019\u00e9valuation formelle. R\u00e9sultat : une exp\u00e9rience libre.",
+      "J\u2019ai co-construit le projet avec les jeunes en partant de leurs envies et besoins. J\u2019ai d\u00e9fini des objectifs \u00e9ducatifs \u2014 coop\u00e9ration, autonomie, responsabilisation. J\u2019ai structur\u00e9 les \u00e9tapes avec un calendrier et des r\u00f4les r\u00e9partis. L\u2019\u00e9valuation avec le groupe a permis de mesurer les apprentissages.",
+      "J\u2019ai repris un projet existant de l\u2019ann\u00e9e pr\u00e9c\u00e9dente sans le modifier. J\u2019ai appliqu\u00e9 le m\u00eame calendrier et les m\u00eames activit\u00e9s. Je n\u2019ai pas impliqu\u00e9 les jeunes dans la conception. R\u00e9sultat : un projet \u00e9prouv\u00e9 et fiable."
+    ],
+    correct: 2,
+    why: "<p><strong>DC vis\u00e9 : DC2</strong></p><p>J\u2019ai co-construit le projet avec les jeunes en partant de leurs envies et besoins.</p><p>J\u2019ai d\u00e9fini des objectifs \u00e9ducatifs \u2014 coop\u00e9ration, autonomie, responsabilisation.</p><p>J\u2019ai structur\u00e9 les \u00e9tapes du projet avec un calendrier et des r\u00f4les r\u00e9partis.</p><p>L\u2019\u00e9valuation avec le groupe a permis de mesurer les apprentissages et d\u2019ajuster en cours de route.</p>"
   },
   {
     dc: "DC3 \u2014 Communication professionnelle",
     dcColor: "#059669",
     sitLabel: "B.2.3 \u2014 Projet collectif",
     q: "Comment communiquez-vous avec l\u2019\u00e9quipe autour de ce projet ?",
-    answer: "<p><strong>DC vis\u00e9 : DC3</strong></p><p>Je pr\u00e9sente le projet \u00e0 l\u2019\u00e9quipe pour recueillir les avis et assurer la coh\u00e9rence avec le projet global.</p><p>Je fais des points r\u00e9guliers sur l\u2019avancement et les ajustements n\u00e9cessaires.</p><p>Je r\u00e9dige un bilan \u00e9crit pour formaliser les r\u00e9sultats et les apprentissages.</p><p>Cela inscrit le projet dans une dynamique d\u2019\u00e9quipe et de transmission professionnelle.</p>"
+    opts: [
+      "Je pr\u00e9sente le projet \u00e0 l\u2019\u00e9quipe pour recueillir les avis et assurer la coh\u00e9rence. Je fais des points r\u00e9guliers sur l\u2019avancement et les ajustements. Je r\u00e9dige un bilan \u00e9crit pour formaliser les r\u00e9sultats. Cela inscrit le projet dans une dynamique d\u2019\u00e9quipe.",
+      "Je g\u00e8re le projet de mani\u00e8re autonome et je pr\u00e9sente les r\u00e9sultats \u00e0 la fin. Je ne sollicite l\u2019\u00e9quipe que pour des questions logistiques. Je ne r\u00e9dige pas de bilan \u00e9crit car l\u2019oral suffit. R\u00e9sultat : une gestion efficace du temps.",
+      "Je communique uniquement avec ma hi\u00e9rarchie directe. Je ne consulte pas les coll\u00e8gues car le projet est sous ma responsabilit\u00e9. Je transmets un rapport \u00e0 la direction. R\u00e9sultat : un circuit d\u2019information clair.",
+      "J\u2019informe l\u2019\u00e9quipe par mail sans attendre de retour. Je ne fais pas de points d\u2019\u00e9tape car cela prend trop de temps. Je pr\u00e9sente les r\u00e9sultats en r\u00e9union annuelle. R\u00e9sultat : une information descendante."
+    ],
+    correct: 0,
+    why: "<p><strong>DC vis\u00e9 : DC3</strong></p><p>Je pr\u00e9sente le projet \u00e0 l\u2019\u00e9quipe pour recueillir les avis et assurer la coh\u00e9rence avec le projet global.</p><p>Je fais des points r\u00e9guliers sur l\u2019avancement et les ajustements n\u00e9cessaires.</p><p>Je r\u00e9dige un bilan \u00e9crit pour formaliser les r\u00e9sultats et les apprentissages.</p><p>Cela inscrit le projet dans une dynamique d\u2019\u00e9quipe et de transmission professionnelle.</p>"
   },
   {
     dc: "DC4 \u2014 Dynamiques institutionnelles",
     dcColor: "#7c3aed",
     sitLabel: "B.2.3 \u2014 Projet collectif",
     q: "Comment inscrivez-vous ce projet dans les dynamiques institutionnelles ?",
-    answer: "<p><strong>DC vis\u00e9 : DC4</strong></p><p>J\u2019inscris le projet dans les orientations de la FASe et du dispositif FINC.</p><p>Je mobilise les partenaires locaux \u2014 associations, \u00e9coles, familles \u2014 pour enrichir le projet.</p><p>Je fais le lien entre le projet et les politiques d\u2019inclusion et de pr\u00e9vention du canton.</p><p>Cela donne une dimension institutionnelle et partenariale au projet collectif.</p>"
+    opts: [
+      "Je r\u00e9alise le projet ind\u00e9pendamment des orientations institutionnelles. Je ne mobilise pas de partenaires car le projet est interne. Je ne fais pas de lien avec les politiques cantonales. R\u00e9sultat : un projet autonome et autosuffisant.",
+      "Je me r\u00e9f\u00e8re uniquement au r\u00e8glement int\u00e9rieur pour cadrer le projet. Je ne contacte pas de partenaires ext\u00e9rieurs. Je consid\u00e8re que le projet collectif est purement \u00e9ducatif, pas institutionnel. R\u00e9sultat : un projet conforme au r\u00e8glement.",
+      "J\u2019inscris le projet dans les orientations de la FASe et du dispositif FINC. Je mobilise les partenaires locaux \u2014 associations, \u00e9coles, familles. Je fais le lien entre le projet et les politiques d\u2019inclusion et de pr\u00e9vention. Cela donne une dimension institutionnelle et partenariale.",
+      "Je demande l\u2019autorisation de la direction avant chaque \u00e9tape du projet. Je me conforme aux directives sans les adapter au terrain. Je ne prends pas d\u2019initiative partenariale sans validation. R\u00e9sultat : un cadre hi\u00e9rarchique respect\u00e9."
+    ],
+    correct: 2,
+    why: "<p><strong>DC vis\u00e9 : DC4</strong></p><p>J\u2019inscris le projet dans les orientations de la FASe et du dispositif FINC.</p><p>Je mobilise les partenaires locaux \u2014 associations, \u00e9coles, familles \u2014 pour enrichir le projet.</p><p>Je fais le lien entre le projet et les politiques d\u2019inclusion et de pr\u00e9vention du canton.</p><p>Cela donne une dimension institutionnelle et partenariale au projet collectif.</p>"
   }
 ];
 
-var currentIndex = 0;
+var order = [];
+var idx = 0;
+var score = 0;
+var errors = 0;
 var answered = false;
-var timerInterval = null;
-var seconds = 0;
+
+function init() { order = qcmData.map(function(_, i) { return i; }); }
+function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+function updateStats() {
+  document.getElementById("statCurrent").textContent = (idx + 1) + " / " + qcmData.length;
+  document.getElementById("statCorrect").innerHTML = "&#10003; " + score;
+  document.getElementById("statWrong").innerHTML = "&#10007; " + errors;
+  document.getElementById("progressFill").style.width = ((idx + 1) / qcmData.length * 100) + "%";
+}
 
 function startQuiz() {
-  currentIndex = 0; answered = false; seconds = 0;
+  if (order.length === 0) init();
+  idx = 0; score = 0; errors = 0; answered = false;
   document.getElementById("welcomeScreen").classList.add("hidden");
+  document.getElementById("resultsScreen").classList.add("hidden");
   document.getElementById("quizArea").classList.remove("hidden");
-  document.getElementById("resultScreen").classList.add("hidden");
-  timerInterval = setInterval(function() {
-    seconds++;
-    var m = Math.floor(seconds / 60), s = seconds % 60;
-    document.getElementById("timer").textContent = (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
-  }, 1000);
-  renderQuestion();
+  renderQcm();
 }
 
-function renderQuestion() {
-  answered = false;
-  var q = questions[currentIndex];
-  var html = "<div class=\"q-number\">Question " + (currentIndex + 1) + " / " + questions.length + "</div>";
-  html += "<span class=\"dc-badge\" style=\"background:" + q.dcColor + "\">" + q.dc + "</span>";
-  html += "<span class=\"sit-label\">" + q.sitLabel + "</span>";
-  html += "<div class=\"q-text\">" + q.q + "</div>";
-  html += "<button class=\"btn-reveal\" onclick=\"revealAnswer()\">Afficher la r\u00e9ponse mod\u00e8le</button>";
-  html += "<div class=\"answer-section\" id=\"answerSection\">";
-  html += "<h3>R\u00e9ponse mod\u00e8le</h3>";
-  html += "<div>" + q.answer + "</div>";
-  html += "</div>";
-  document.getElementById("questionCard").innerHTML = html;
-  document.getElementById("progressFill").style.width = ((currentIndex + 1) / questions.length * 100) + "%";
-  document.getElementById("progressText").textContent = (currentIndex + 1) + " / " + questions.length;
-  window.scrollTo({top: 0, behavior: "smooth"});
-  if(window.Mentor) Mentor.onQuestionShown(q);
-}
-
-function revealAnswer() {
-  answered = true;
-  document.getElementById("answerSection").style.display = "block";
-  var btn = document.querySelector(".btn-reveal");
-  if (btn) btn.style.display = "none";
-  if(window.Mentor) Mentor.onAnswerCorrect(questions[currentIndex]);
-  setTimeout(function() { document.getElementById("answerSection").scrollIntoView({behavior: "smooth", block: "nearest"}); }, 150);
-}
-
-function prevQ() {
-  if (currentIndex === 0) {
-    clearInterval(timerInterval);
-    document.getElementById("quizArea").classList.add("hidden");
-    document.getElementById("welcomeScreen").classList.remove("hidden");
-    return;
-  }
-  currentIndex--;
-  renderQuestion();
-}
-
-function nextQ() {
-  if (currentIndex >= questions.length - 1) { showResults(); return; }
-  currentIndex++;
-  renderQuestion();
-}
-
-function showResults() {
-  clearInterval(timerInterval);
-  document.getElementById("quizArea").classList.add("hidden");
-  document.getElementById("resultScreen").classList.remove("hidden");
-  window.scrollTo({top: 0, behavior: "smooth"});
+function shuffleAndStart() {
+  order = shuffle(qcmData.map(function(_, i) { return i; }));
+  idx = 0; score = 0; errors = 0; answered = false;
+  document.getElementById("welcomeScreen").classList.add("hidden");
+  document.getElementById("resultsScreen").classList.add("hidden");
+  document.getElementById("quizArea").classList.remove("hidden");
+  renderQcm();
 }
 
 function resetQuiz() {
-  document.getElementById("resultScreen").classList.add("hidden");
-  startQuiz();
+  init();
+  document.getElementById("resultsScreen").classList.add("hidden");
+  document.getElementById("welcomeScreen").classList.remove("hidden");
+  document.getElementById("progressFill").style.width = "0%";
+  document.getElementById("statCurrent").textContent = "0 / " + qcmData.length;
+  document.getElementById("statCorrect").innerHTML = "&#10003; 0";
+  document.getElementById("statWrong").innerHTML = "&#10007; 0";
 }
+
+function renderQcm() {
+  answered = false;
+  var q = qcmData[order[idx]];
+  updateStats();
+  var optsHtml = "";
+  q.opts.forEach(function(o, i) {
+    optsHtml += "<div class=\"opt\" id=\"opt" + i + "\" onclick=\"selectQcm(" + i + ")\">" + String.fromCharCode(65 + i) + ". " + o + "</div>";
+  });
+  document.getElementById("quizArea").innerHTML =
+    "<div class=\"card\">" +
+      "<div class=\"card-header\">" +
+        "<span class=\"card-num\">Question " + (idx + 1) + " / " + qcmData.length + "</span>" +
+        "<span class=\"dc-badge\" style=\"background:" + q.dcColor + "\">" + q.dc + "</span>" +
+        "<span class=\"sit-label\">" + q.sitLabel + "</span>" +
+      "</div>" +
+      "<div class=\"question-section\">" +
+        "<h3>" + q.q + "</h3>" +
+        "<div class=\"options\">" + optsHtml + "</div>" +
+        "<div class=\"explanation\" id=\"explanation\">" + q.why + "</div>" +
+      "</div>" +
+    "</div>" +
+    "<div class=\"nav-buttons\">" +
+      "<button class=\"nav-btn\" onclick=\"prevQ()\">\u2190 Pr\u00e9c\u00e9dente</button>" +
+      "<button class=\"nav-btn primary\" id=\"nextBtn\" onclick=\"nextQ()\" disabled>Suivante \u2192</button>" +
+    "</div>";
+  window.scrollTo({top: 0, behavior: "smooth"});
+  if (window.Mentor) Mentor.onQuestionShown(q);
+}
+
+function selectQcm(i) {
+  if (answered) return;
+  answered = true;
+  var q = qcmData[order[idx]];
+  var allOpts = document.querySelectorAll(".opt");
+  for (var j = 0; j < allOpts.length; j++) {
+    allOpts[j].classList.add("disabled");
+    if (j === q.correct) allOpts[j].classList.add("correct");
+  }
+  if (i === q.correct) {
+    score++;
+  } else {
+    errors++;
+    document.getElementById("opt" + i).classList.add("wrong");
+  }
+  document.getElementById("explanation").classList.add("show");
+  document.getElementById("nextBtn").disabled = false;
+  updateStats();
+  if (window.Mentor) {
+    if (i === q.correct) Mentor.onAnswerCorrect(q);
+    else Mentor.onAnswerWrong(q, i);
+  }
+}
+
+function nextQ() {
+  if (idx < qcmData.length - 1) { idx++; renderQcm(); }
+  else showResults();
+}
+
+function prevQ() {
+  if (idx > 0) { idx--; renderQcm(); }
+  else { document.getElementById("quizArea").classList.add("hidden"); document.getElementById("welcomeScreen").classList.remove("hidden"); }
+}
+
+function showResults() {
+  document.getElementById("quizArea").classList.add("hidden");
+  var rs = document.getElementById("resultsScreen");
+  rs.classList.remove("hidden");
+  var total = score + errors;
+  var pct = total > 0 ? Math.round(score / total * 100) : 0;
+  document.getElementById("finalScore").textContent = pct + "%";
+  var msg = "";
+  if (pct >= 80) msg = "Excellent ! Bonne ma\u00eetrise des situations FINC.";
+  else if (pct >= 60) msg = "Bon niveau. Reprenez les DC \u00e9chou\u00e9s.";
+  else msg = "\u00c0 retravailler. Relisez les fiches situations.";
+  document.getElementById("finalMsg").textContent = "QCM : " + score + " r\u00e9ussies, " + errors + " \u00e0 revoir \u2014 " + msg;
+  document.getElementById("progressFill").style.width = "100%";
+  window.scrollTo({top: 0, behavior: "smooth"});
+}
+
+init();
 </script>
 <script src="mentor.js"></script>
 </body>
