@@ -384,11 +384,13 @@ function quizStarted(qi){
 }
 
 /* === PARCOURS ORDER === */
-/* Phase 1: Présentation (Lois→Posture→Oral1→Oral2)
-   Phase 2: Jury (QJury→JuryAv1→JuryAv2→Simul→Pièges→Livret)
-   Phase 3: Consolidation (Situations→SitDC2→SitDC3→MicroDC→MicroLois) */
-var PARCOURS_ORDER=[1,2,7,8,0,9,10,3,5,4,6,11,12,13,14];
-var PARCOURS_ICONS=['\u2696\uFE0F','\uD83D\uDEE0','\uD83C\uDFA4','\uD83C\uDFA4','\u26A1','\u26A1','\uD83D\uDCAC','\uD83C\uDF93','\u26A0\uFE0F','\uD83D\uDD0E','\uD83D\uDCD6','\uD83D\uDCCB','\uD83D\uDCCB','\uD83C\uDFAF','\u2696\uFE0F'];
+/* Phase 1: PRÉSENTATION (StructureOral → Oral1 → Oral2)
+   Phase 2: JURY (QJury → JuryAv1 → JuryAv2 → Simul → Pièges → Livret → Situations → SitDC2 → SitDC3)
+   Phase 3: CONTENU (Lois → Posture → MicroDC → MicroLois)
+   Phase 4: MÉMOIRE (boucle) */
+var PARCOURS_ORDER=[7,8,0,9,10,3,5,4,6,11,12,1,2,13,14];
+var PARCOURS_ICONS=['\uD83C\uDFA4','\uD83C\uDFA4','\u26A1','\u26A1','\uD83D\uDCAC','\uD83C\uDF93','\u26A0\uFE0F','\uD83D\uDD0E','\uD83D\uDCD6','\uD83D\uDCCB','\uD83D\uDCCB','\u2696\uFE0F','\uD83D\uDEE0','\uD83C\uDFAF','\u2696\uFE0F'];
+var PHASE_BREAKS={0:'PHASE 1 \u2014 PR\u00c9SENTATION',2:'PHASE 2 \u2014 JURY',11:'PHASE 3 \u2014 CONTENU'};
 
 function getCurrentStep(){
   var db=getDB();if(db._lastStep!==undefined)return db._lastStep;
@@ -417,12 +419,38 @@ function renderStats(){
   var db=getDB();document.getElementById('stSes').textContent=db._ses||0;
 }
 
+/* === ORAL STEPS IN PARCOURS === */
+function getOralChecked(){var db=getDB();return db._oralChecked||[]}
+function toggleOralStep(idx){
+  var db=getDB(),arr=db._oralChecked||[];
+  if(arr.indexOf(idx)>=0)arr.splice(arr.indexOf(idx),1);else arr.push(idx);
+  db._oralChecked=arr;saveDB(db);renderParcours();
+}
+
 /* === RENDER: PARCOURS GLOBAL TREE === */
 function renderParcours(){
   var step=getCurrentStep(),h='';
   h+='<div class="tree-node current" onclick="launchSmart()" style="border-left-color:#f59e0b;margin-bottom:2px"><div class="icon">\uD83C\uDFAF</div><div class="node-info"><h4>D\u00c9PART</h4><p>Cliquez pour lancer la session optimale</p></div><span class="badge badge-current">\u25B6 GO</span></div>';
   h+='<div class="connector current"></div>';
+  /* --- Phase 1 header + Oral Structure --- */
+  h+='<div style="text-align:center;padding:10px 0 6px;font-weight:800;font-size:.85rem;color:#8b5cf6;letter-spacing:1px">\uD83C\uDF99\uFE0F PHASE 1 \u2014 PR\u00c9SENTATION</div>';
+  h+='<div style="text-align:center;font-size:.8rem;color:#666;margin-bottom:10px">Structure de ton oral \u2014 coche chaque \u00e9tape r\u00e9vis\u00e9e</div>';
+  var oralChecked=getOralChecked();
+  for(var oi=0;oi<ORAL_STEPS.length;oi++){
+    var os=ORAL_STEPS[oi],checked=oralChecked.indexOf(oi)>=0;
+    var oCls=checked?'done':'locked';
+    h+='<div class="tree-node '+oCls+'" onclick="toggleOralStep('+oi+')" style="cursor:pointer;border-left-color:'+(checked?'#22c55e':'#cbd5e1')+'">';
+    h+='<div class="icon">'+os.icon+'</div>';
+    h+='<div class="node-info"><h4>'+(checked?'\u2705':'\u2B1C')+' '+os.name+'</h4><p>'+os.desc+'</p></div>';
+    h+='<span class="badge '+(checked?'badge-done':'badge-todo')+'">'+(checked?'r\u00e9vis\u00e9':'à cocher')+'</span></div>';
+    h+='<div class="connector '+(checked?'done':'')+'"></div>';
+  }
+  /* --- Quiz modules with phase headers --- */
+  var stepNum=1;
   for(var i=0;i<PARCOURS_ORDER.length;i++){
+    if(PHASE_BREAKS[i]&&i>0){
+      h+='<div style="text-align:center;padding:14px 0 6px;font-weight:800;font-size:.85rem;color:#8b5cf6;letter-spacing:1px">'+PHASE_BREAKS[i]+'</div>';
+    }
     var qi=PARCOURS_ORDER[i],qz=QUIZZES[qi],done=quizDone(qi),started=quizStarted(qi);
     var cls=done?'done':(i===step?'current':(i<step?'done':'locked'));
     var pct=quizMastery(qi);
@@ -430,11 +458,13 @@ function renderParcours(){
     var badgeTxt=done?(pct+'%'):(i===step?'\u25B6 EN COURS':'verrouill\u00e9');
     h+='<div class="tree-node '+cls+'" onclick="launchQuiz('+qi+')">';
     h+='<div class="icon">'+qz.icon+'</div>';
-    h+='<div class="node-info"><h4>\u00c9tape '+(i+1)+' \u2014 '+qz.name+'</h4><p>'+qz.desc+(started?' \u2014 '+pct+'% ma\u00eetris\u00e9':'')+'</p></div>';
+    h+='<div class="node-info"><h4>\u00c9tape '+stepNum+' \u2014 '+qz.name+'</h4><p>'+qz.desc+(started?' \u2014 '+pct+'% ma\u00eetris\u00e9':'')+'</p></div>';
     h+='<span class="badge '+badgeCls+'">'+badgeTxt+'</span></div>';
     if(i<PARCOURS_ORDER.length-1)h+='<div class="connector '+(done?'done':(i===step?'current':''))+'"></div>';
+    stepNum++;
   }
   h+='<div class="connector"></div>';
+  h+='<div style="text-align:center;padding:14px 0 6px;font-weight:800;font-size:.85rem;color:#8b5cf6;letter-spacing:1px">PHASE 4 \u2014 M\u00c9MOIRE</div>';
   h+='<div class="tree-node" style="border-left-color:#8b5cf6" onclick="launchSmart()"><div class="icon">\uD83D\uDD01</div><div class="node-info"><h4>BOUCLE M\u00c9MOIRE</h4><p>R\u00e9vision cibl\u00e9e + consolidation</p></div></div>';
   h+='<div class="branch-split">';
   h+='<div class="branch-side"><h5>\uD83D\uDD04 R\u00e9vision cibl\u00e9e</h5><div class="branch-node" onclick="launchType(\'due\')">'+dueCards().length+' questions dues</div></div>';
