@@ -3,147 +3,245 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Circuit Intelligent &mdash; VAE DEES</title>
+<title>Circuit R&eacute;vision &mdash; VAE DEES</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:0 0 60px}
+
 .navbar{width:100%;padding:14px 24px;background:linear-gradient(135deg,#1a1a2e 0%,#2d2d5e 100%);display:flex;justify-content:center;gap:6px;box-shadow:0 4px 20px rgba(0,0,0,.15)}
 .navbar a{text-decoration:none;color:rgba(255,255,255,.7);font-weight:700;font-size:.95rem;padding:10px 28px;border-radius:10px;transition:all .2s;display:flex;align-items:center;gap:8px;white-space:nowrap}
 .navbar a:hover{color:#fff;background:rgba(255,255,255,.1)}
 .navbar a.active{color:#fff;background:rgba(255,255,255,.15);box-shadow:inset 0 -3px 0 #f59e0b}
-.hero{text-align:center;padding:28px 20px 12px}
-.hero h1{font-size:1.7rem;color:#f59e0b;margin-bottom:6px}
-.hero p{color:#94a3b8;font-size:.9rem}
-.resume-banner{max-width:800px;margin:0 auto 16px;padding:16px 20px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:14px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:transform .2s}
-.resume-banner:hover{transform:scale(1.02)}
-.pulse-dot{width:14px;height:14px;background:#fff;border-radius:50%;animation:pulse 2s infinite;flex-shrink:0}
-.resume-banner .info{flex:1}
-.resume-banner .info h3{font-size:.95rem;color:#1a1a2e;margin-bottom:2px}
-.resume-banner .info p{font-size:.78rem;color:#451a03}
-.resume-banner .go{background:#1a1a2e;color:#f59e0b;border:none;padding:10px 20px;border-radius:10px;font-weight:800;font-size:.85rem;cursor:pointer}
-.stats{max-width:800px;margin:0 auto 16px;display:flex;gap:8px;padding:0 20px;flex-wrap:wrap}
-.stat-card{flex:1;min-width:80px;background:#1e293b;border-radius:12px;padding:12px;text-align:center}
-.stat-card .num{font-size:1.3rem;font-weight:800;color:#f59e0b}
-.stat-card .label{font-size:.68rem;color:#64748b;margin-top:2px}
-.section{max-width:800px;margin:0 auto 24px;padding:0 20px}
-.section-title{font-size:1.1rem;color:#f59e0b;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid #1e293b;display:flex;align-items:center;gap:8px}
-.tree-node{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#1e293b;border-radius:14px;border-left:4px solid #334155;transition:all .3s;cursor:pointer;margin-bottom:2px}
-.tree-node:hover{background:#263348;transform:translateX(4px)}
-.tree-node.done{border-left-color:#22c55e;background:#0f2a1a}
-.tree-node.current{border-left-color:#f59e0b;background:#2a2000;animation:glowNode 2s infinite}
-.tree-node.locked{opacity:.5;cursor:default}
-.tree-node.locked:hover{transform:none;background:#1e293b}
-.tree-node .icon{font-size:1.3rem;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:#0f172a;flex-shrink:0}
+.navbar .nav-icon{font-size:1.1rem}
+
+.hero{text-align:center;padding:32px 20px 16px}
+.hero h1{font-size:1.8rem;color:#f59e0b;margin-bottom:8px}
+.hero p{color:#94a3b8;font-size:.95rem}
+
+/* Guide bar */
+.guide-bar{max-width:800px;margin:0 auto 24px;padding:16px 20px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:transform .2s}
+.guide-bar:hover{transform:scale(1.02)}
+.guide-bar .arrow{font-size:2rem}
+.guide-bar .info{flex:1}
+.guide-bar .info h3{font-size:1rem;color:#1a1a2e;margin-bottom:2px}
+.guide-bar .info p{font-size:.82rem;color:#451a03}
+.guide-bar .go{background:#1a1a2e;color:#f59e0b;border:none;padding:10px 20px;border-radius:10px;font-weight:800;font-size:.85rem;cursor:pointer}
+
+/* Stats row */
+.stats{max-width:800px;margin:0 auto 28px;display:flex;gap:10px;padding:0 20px;flex-wrap:wrap}
+.stat-card{flex:1;min-width:120px;background:#1e293b;border-radius:14px;padding:14px;text-align:center}
+.stat-card .num{font-size:1.6rem;font-weight:800;color:#f59e0b}
+.stat-card .label{font-size:.72rem;color:#64748b;margin-top:2px}
+
+/* Tabs */
+.tabs{max-width:800px;margin:0 auto 20px;display:flex;gap:6px;padding:0 20px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tabs button{background:#1e293b;color:#94a3b8;border:none;padding:10px 18px;border-radius:10px;font-weight:700;font-size:.82rem;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s}
+.tabs button.active{background:#f59e0b;color:#1a1a2e}
+
+/* Tree container */
+.tree-container{max-width:800px;margin:0 auto;padding:0 20px}
+
+/* Organigramme tree */
+.tree{position:relative;padding:0}
+.tree-node{position:relative;display:flex;align-items:center;gap:12px;padding:12px 16px;margin:0 0 4px 0;background:#1e293b;border-radius:14px;border-left:4px solid #334155;cursor:pointer;transition:all .3s}
+.tree-node:hover{background:#263348}
+.tree-node.done{border-left-color:#22c55e;background:#1a2e1a}
+.tree-node.current{border-left-color:#f59e0b;background:#2a2210;box-shadow:0 0 20px rgba(245,158,11,.15)}
+.tree-node.locked{opacity:.5}
+.tree-node .icon{font-size:1.4rem;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:#0f172a;flex-shrink:0}
 .tree-node .node-info{flex:1}
-.tree-node .node-info h4{font-size:.85rem;color:#e2e8f0;margin-bottom:2px}
-.tree-node .node-info p{font-size:.7rem;color:#64748b}
+.tree-node .node-info h4{font-size:.9rem;color:#e2e8f0;margin-bottom:2px}
+.tree-node .node-info p{font-size:.72rem;color:#64748b}
 .tree-node .badge{padding:3px 10px;border-radius:20px;font-size:.65rem;font-weight:800;flex-shrink:0}
 .badge-done{background:#22c55e;color:#052e16}
-.badge-current{background:#f59e0b;color:#1a1a2e}
-.badge-todo{background:#334155;color:#64748b}
+.badge-next{background:#f59e0b;color:#451a03;animation:pulse 2s infinite}
 .badge-count{background:#334155;color:#94a3b8}
-.connector{width:3px;height:14px;background:#334155;margin:0 0 0 33px;border-radius:2px}
+.badge-locked{background:#1e293b;color:#475569}
+
+/* Connector line */
+.connector{width:3px;height:16px;background:#334155;margin:0 0 0 33px;border-radius:2px}
 .connector.done{background:#22c55e}
 .connector.current{background:#f59e0b}
-.branch-split{display:flex;gap:12px;margin:8px 0 8px 20px;padding:12px;background:#1e293b;border-radius:14px}
-.branch-side{flex:1;display:flex;flex-direction:column;gap:6px}
-.branch-side h5{font-size:.78rem;color:#f59e0b;margin-bottom:4px;text-align:center}
-.branch-node{padding:8px 12px;background:#0f172a;border-radius:10px;font-size:.75rem;color:#94a3b8;text-align:center;cursor:pointer;transition:all .2s;border:2px solid transparent}
-.branch-node:hover{border-color:#f59e0b;color:#e2e8f0}
-.dc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
-.dc-col{background:#1e293b;border-radius:14px;padding:14px;border-top:4px solid}
-.dc-col h4{font-size:.85rem;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.dc-col .dc-pct{font-size:1.4rem;font-weight:800;margin-bottom:6px}
-.dc-col .dc-bar{height:6px;background:#0f172a;border-radius:3px;overflow:hidden;margin-bottom:6px}
-.dc-col .dc-fill{height:100%;border-radius:3px;transition:width .5s}
-.dc-col .dc-items{display:flex;flex-direction:column;gap:4px}
-.dc-item{padding:6px 10px;background:#0f172a;border-radius:8px;font-size:.72rem;color:#94a3b8;display:flex;justify-content:space-between;align-items:center}
-.dc-item .di-badge{padding:2px 8px;border-radius:10px;font-size:.6rem;font-weight:800}
-.mem-stats{display:flex;gap:10px;margin-bottom:14px}
-.mem-box{flex:1;background:#1e293b;border-radius:12px;padding:12px;text-align:center}
-.mem-box .mb-num{font-size:1.5rem;font-weight:800}
-.mem-box .mb-label{font-size:.68rem;color:#64748b;margin-top:2px}
-.mb-new{color:#60a5fa}.mb-learn{color:#f59e0b}.mb-master{color:#22c55e}
-.mem-row{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:.78rem}
-.mem-label{width:120px;color:#94a3b8;flex-shrink:0;font-size:.74rem}
-.bar-bg{flex:1;height:8px;background:#0f172a;border-radius:4px;overflow:hidden}
-.bar-fill{height:100%;border-radius:4px;transition:width .5s}
-.mem-val{width:36px;text-align:right;color:#e2e8f0;font-weight:700;flex-shrink:0;font-size:.75rem}
+
+/* Branch split */
+.branch-split{display:flex;gap:12px;margin:12px 0}
+.branch-split .branch{flex:1;background:#1e293b;border-radius:14px;padding:14px;border-top:3px solid #334155}
+.branch-split .branch h5{font-size:.82rem;color:#e2e8f0;margin-bottom:8px}
+.branch-split .branch-item{font-size:.75rem;color:#94a3b8;padding:6px 10px;background:#0f172a;border-radius:8px;margin-bottom:4px}
+
+/* Memory loop */
+.memory-section{max-width:800px;margin:24px auto 0;padding:0 20px}
+.memory-card{background:linear-gradient(135deg,#1e293b,#0f172a);border:2px solid #334155;border-radius:16px;padding:20px}
+.memory-card h3{font-size:1rem;color:#f59e0b;margin-bottom:12px}
+.memory-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.mem-item{background:#0f172a;border:2px solid #334155;border-radius:10px;padding:10px;text-align:center;font-size:.78rem;transition:all .2s}
+.mem-item .mem-name{color:#e2e8f0;font-weight:700;margin-bottom:4px}
+.mem-item .mem-count{color:#64748b;font-size:.7rem}
+.mem-item .mem-bar{height:4px;background:#1e293b;border-radius:4px;margin-top:6px;overflow:hidden}
+.mem-item .mem-fill{height:100%;border-radius:4px;transition:width .5s}
+.mem-fill-low{background:#ef4444;width:20%}
+.mem-fill-mid{background:#f59e0b;width:60%}
+.mem-fill-high{background:#22c55e;width:100%}
+
+/* Reset */
+.reset-row{max-width:800px;margin:24px auto 0;padding:0 20px;text-align:center}
+.reset-btn{background:#1e293b;color:#64748b;border:2px solid #334155;padding:10px 20px;border-radius:10px;font-size:.8rem;cursor:pointer;transition:all .2s}
+.reset-btn:hover{border-color:#ef4444;color:#ef4444}
+
+/* Quiz inline */
 .quiz-inline{max-width:800px;margin:0 auto;padding:0 20px;display:none}
-.quiz-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.quiz-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
 .quiz-back{background:#334155;color:#e2e8f0;border:none;padding:8px 16px;border-radius:10px;font-size:.85rem;cursor:pointer;font-weight:700}
-.quiz-title{font-size:1.05rem;color:#f59e0b;font-weight:800}
-.quiz-progress{background:#1e293b;border-radius:10px;height:8px;margin-bottom:6px;overflow:hidden}
+.quiz-back:hover{background:#475569}
+.quiz-title{font-size:1.1rem;color:#f59e0b;font-weight:800}
+.quiz-progress{background:#1e293b;border-radius:10px;height:8px;margin-bottom:16px;overflow:hidden}
 .quiz-progress-fill{height:100%;background:#f59e0b;border-radius:10px;transition:width .3s}
-.quiz-progress-text{font-size:.72rem;color:#64748b;margin-bottom:10px;text-align:center}
-.quiz-question{background:#1e293b;border-radius:16px;padding:18px}
-.quiz-q-text{font-size:.95rem;color:#e2e8f0;line-height:1.6;margin-bottom:14px}
+.quiz-progress-text{font-size:.75rem;color:#64748b;margin-bottom:12px;text-align:center}
+.quiz-question{background:#1e293b;border-radius:16px;padding:20px;margin-bottom:16px}
+.quiz-q-text{font-size:1rem;color:#e2e8f0;line-height:1.6;margin-bottom:16px}
 .quiz-opts{display:flex;flex-direction:column;gap:8px}
-.quiz-opt{background:#0f172a;border:2px solid #334155;border-radius:12px;padding:12px 16px;color:#e2e8f0;font-size:.85rem;cursor:pointer;transition:all .2s;text-align:left;line-height:1.5}
+.quiz-opt{background:#0f172a;border:2px solid #334155;border-radius:12px;padding:12px 16px;color:#e2e8f0;font-size:.88rem;cursor:pointer;transition:all .2s;text-align:left;line-height:1.5}
 .quiz-opt:hover{border-color:#f59e0b;background:#1a1a2e}
 .quiz-opt.disabled{pointer-events:none;opacity:.7}
 .quiz-opt.correct{border-color:#22c55e;background:#052e16;color:#22c55e}
 .quiz-opt.wrong{border-color:#ef4444;background:#450a0a;color:#ef4444}
-.quiz-explain{display:none;background:#1a2e1a;border:2px solid #22c55e;border-radius:12px;padding:12px;margin-top:10px;font-size:.82rem;color:#86efac;line-height:1.5}
+.quiz-explain{display:none;background:#1a2e1a;border:2px solid #22c55e;border-radius:12px;padding:14px;margin-top:12px;font-size:.85rem;color:#86efac;line-height:1.5}
 .quiz-explain.visible{display:block}
-.quiz-next{display:none;margin-top:10px;background:#f59e0b;color:#1a1a2e;border:none;padding:12px 24px;border-radius:10px;font-weight:800;font-size:.88rem;cursor:pointer;width:100%}
+.quiz-next{display:none;margin-top:12px;background:#f59e0b;color:#1a1a2e;border:none;padding:12px 24px;border-radius:10px;font-weight:800;font-size:.9rem;cursor:pointer;width:100%}
 .quiz-next.visible{display:block}
-.sr-feedback{display:none;margin-top:8px;padding:8px 12px;border-radius:10px;font-size:.75rem;font-weight:700;text-align:center}
-.sr-feedback.visible{display:block}
-.sr-up{background:#052e16;border:1px solid #22c55e;color:#22c55e}
-.sr-down{background:#450a0a;border:1px solid #ef4444;color:#ef4444}
-.quiz-result{text-align:center;padding:28px 20px}
-.quiz-score{font-size:2.2rem;font-weight:800;color:#f59e0b}
-.quiz-score-label{font-size:.95rem;color:#94a3b8;margin-top:6px}
-.quiz-return{margin-top:18px;background:#f59e0b;color:#1a1a2e;border:none;padding:12px 24px;border-radius:12px;font-weight:800;font-size:.95rem;cursor:pointer}
-.reset-row{max-width:800px;margin:24px auto 0;padding:0 20px;text-align:center}
-.reset-btn{background:#1e293b;color:#64748b;border:2px solid #334155;padding:10px 20px;border-radius:10px;font-size:.8rem;cursor:pointer}
-.reset-btn:hover{border-color:#ef4444;color:#ef4444}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-@keyframes glowNode{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,.3)}50%{box-shadow:0 0 12px 4px rgba(245,158,11,.15)}}
+.quiz-result{text-align:center;padding:30px 20px}
+.quiz-score{font-size:2.5rem;font-weight:800;color:#f59e0b}
+.quiz-score-label{font-size:1rem;color:#94a3b8;margin-top:8px}
+.quiz-return{margin-top:20px;background:#f59e0b;color:#1a1a2e;border:none;padding:14px 28px;border-radius:12px;font-weight:800;font-size:1rem;cursor:pointer}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
 @media(max-width:640px){
   body{padding:0 0 40px}
-  .navbar{padding:10px 12px;gap:4px;overflow-x:auto;justify-content:flex-start}
-  .navbar a{padding:8px 14px;font-size:.78rem;flex-shrink:0}
-  .hero h1{font-size:1.3rem}
-  .dc-grid{grid-template-columns:1fr}
+  .navbar{padding:10px 12px;gap:4px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;justify-content:flex-start}
+  .navbar a{padding:8px 14px;font-size:.78rem;white-space:nowrap;flex-shrink:0}
+  .hero h1{font-size:1.4rem}
+  .stats{gap:6px}
+  .stat-card{min-width:80px;padding:10px 6px}
+  .stat-card .num{font-size:1.2rem}
   .branch-split{flex-direction:column}
-  .mem-stats{flex-direction:column}
-  .stats{gap:6px}.stat-card{min-width:70px;padding:10px 6px}.stat-card .num{font-size:1.1rem}
+  .memory-grid{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
 <body>
+
 <nav class="navbar">
-<a href="Top_r%C3%A9visions.html"><span>&#11088;</span> Top</a>
-<a href="index.html"><span>&#128221;</span> Quiz</a>
-<a href="revision.html"><span>&#128640;</span> R&eacute;vision</a>
-<a href="educateurs_specialises.html"><span>&#127922;</span> Jeu ES</a>
-<a href="quiz_oral.html"><span>&#127908;</span> Oral</a>
-<a href="circuit_revision.html" class="active"><span>&#128736;</span> Circuit</a>
-<a href="audio.html"><span>&#127911;</span> Audio</a>
+<a href="Top_r%C3%A9visions.html"><span class="nav-icon">&#11088;</span> Top R&eacute;visions</a>
+<a href="index.html"><span class="nav-icon">&#128221;</span> Quiz</a>
+<a href="revision.html"><span class="nav-icon">&#128640;</span> R&eacute;vision</a>
+<a href="educateurs_specialises.html"><span class="nav-icon">&#127922;</span> Jeu ES</a>
+<a href="quiz_oral.html"><span class="nav-icon">&#127908;</span> Oral</a>
+<a href="circuit_revision.html" class="active"><span class="nav-icon">&#128736;</span> Circuit</a>
+<a href="audio.html"><span class="nav-icon">&#127911;</span> Audio</a>
 </nav>
-<div class="hero"><h1>&#129504; Circuit Intelligent de M&eacute;morisation</h1>
-<p>GPS de r&eacute;vision &bull; M&eacute;tronome analytique &bull; Coach oral</p></div>
-<div class="resume-banner" id="resumeBanner" onclick="launchSmart()">
-<div class="pulse-dot"></div>
-<div class="info"><h3 id="resumeTitle">Chargement...</h3><p id="resumeSub"></p></div>
-<button class="go">LANCER &#9654;</button></div>
+
+<div class="hero">
+<h1>&#128736; Circuit R&eacute;vision</h1>
+<p>Ton GPS de r&eacute;vision &mdash; suis le chemin, m&eacute;morise, progresse</p>
+</div>
+
+<div class="guide-bar" id="guideBar" onclick="goNext()">
+<div class="arrow">&#9654;&#65039;</div>
+<div class="info">
+<h3 id="guideTitle">Chargement...</h3>
+<p id="guideSub"></p>
+</div>
+<button class="go">LANCER</button>
+</div>
+
 <div class="stats">
-<div class="stat-card"><div class="num" id="stDue">0</div><div class="label">&Agrave; revoir</div></div>
-<div class="stat-card"><div class="num" id="stMast">0</div><div class="label">Ma&icirc;tris&eacute;es</div></div>
-<div class="stat-card"><div class="num" id="stTot">0</div><div class="label">Total</div></div>
-<div class="stat-card"><div class="num" id="stSes">0</div><div class="label">Sessions</div></div></div>
-<div class="section" id="secParcours"><div class="section-title">&#127919; PARCOURS GLOBAL &mdash; Chemin de m&eacute;morisation</div><div id="treeParcours"></div></div>
-<div class="section" id="secOral"><div class="section-title">&#127908; STRUCTURE ORAL &mdash; Pr&eacute;sentation</div><div id="treeOral"></div></div>
-<div class="section" id="secJury"><div class="section-title">&#10067; QUESTIONS JURY &mdash; Par domaine de comp&eacute;tence</div><div id="treeJury"></div></div>
-<div class="section" id="secMemoire"><div class="section-title">&#129504; CYCLE M&Eacute;MOIRE &mdash; Apprentissage &amp; consolidation</div><div id="treeMem"></div></div>
+<div class="stat-card"><div class="num" id="statDone">0</div><div class="label">Termin&eacute;s</div></div>
+<div class="stat-card"><div class="num" id="statTotal">7</div><div class="label">Quiz total</div></div>
+<div class="stat-card"><div class="num" id="statCycle">1</div><div class="label">Cycle</div></div>
+<div class="stat-card"><div class="num" id="statStreak">0</div><div class="label">S&eacute;rie</div></div>
+</div>
+
+<div class="tabs">
+<button class="active" onclick="showTab(0)">&#127919; Parcours</button>
+<button onclick="showTab(1)">&#127908; Oral</button>
+<button onclick="showTab(2)">&#10067; Questions Jury</button>
+<button onclick="showTab(3)">&#129504; M&eacute;moire</button>
+</div>
+
+<!-- TAB 0 : PARCOURS GLOBAL -->
+<div class="tree-container" id="tab0">
+<div class="tree" id="mainTree"></div>
+</div>
+
+<!-- QUIZ INLINE (s'affiche quand on clique sur un noeud du parcours) -->
 <div class="quiz-inline" id="quizInline">
-<div class="quiz-header"><button class="quiz-back" onclick="exitQuiz()">&#8592; Retour</button><span class="quiz-title" id="quizTitle"></span></div>
-<div class="quiz-progress"><div class="quiz-progress-fill" id="qFill"></div></div>
-<div class="quiz-progress-text" id="qText"></div>
-<div id="quizBody"></div></div>
-<div class="reset-row"><button class="reset-btn" onclick="resetAll()">&#128260; R&eacute;initialiser</button></div>
+<div class="quiz-header">
+<button class="quiz-back" onclick="closeQuiz()">&#8592; Retour</button>
+<span class="quiz-title" id="quizTitle"></span>
+</div>
+<div class="quiz-progress"><div class="quiz-progress-fill" id="quizProgressFill"></div></div>
+<div class="quiz-progress-text" id="quizProgressText"></div>
+<div id="quizBody"></div>
+</div>
+
+<!-- TAB 1 : ORAL -->
+<div class="tree-container" id="tab1" style="display:none">
+<div class="tree" id="oralTree"></div>
+</div>
+
+<!-- TAB 2 : QUESTIONS JURY -->
+<div class="tree-container" id="tab2" style="display:none">
+<div class="branch-split">
+<div class="branch" style="border-color:#8b5cf6">
+<h5>&#129504; DC1 &mdash; Relation</h5>
+<div class="branch-item">Accompagnement</div>
+<div class="branch-item">Positionnement</div>
+<div class="branch-item">Analyse de pratique</div>
+<div class="branch-item">Juste distance</div>
+<div class="branch-item">&Eacute;coute active</div>
+</div>
+<div class="branch" style="border-color:#06b6d4">
+<h5>&#128736; DC2 &mdash; Projet</h5>
+<div class="branch-item">Projet &eacute;ducatif</div>
+<div class="branch-item">M&eacute;thodologie (7 &eacute;tapes)</div>
+<div class="branch-item">Organisation</div>
+<div class="branch-item">Co-construction</div>
+<div class="branch-item">&Eacute;valuation</div>
+</div>
+</div>
+<div class="branch-split">
+<div class="branch" style="border-color:#22c55e">
+<h5>&#129309; DC3 &mdash; &Eacute;quipe</h5>
+<div class="branch-item">Travail en &eacute;quipe</div>
+<div class="branch-item">Communication pro</div>
+<div class="branch-item">Transmissions</div>
+<div class="branch-item">R&eacute;gulation</div>
+<div class="branch-item">Coh&eacute;rence &eacute;ducative</div>
+</div>
+<div class="branch" style="border-color:#f59e0b">
+<h5>&#128202; DC4 &mdash; R&eacute;seau</h5>
+<div class="branch-item">Partenariat</div>
+<div class="branch-item">Familles</div>
+<div class="branch-item">Institutions</div>
+<div class="branch-item">Politiques sociales</div>
+<div class="branch-item">Orientation / relais</div>
+</div>
+</div>
+</div>
+
+<!-- TAB 3 : MEMOIRE -->
+<div class="tree-container" id="tab3" style="display:none">
+<div class="memory-card">
+<h3>&#129504; Boucle M&eacute;moire &mdash; Force de r&eacute;tention</h3>
+<div class="memory-grid" id="memGrid"></div>
+</div>
+</div>
+
+<div class="reset-row">
+<button class="reset-btn" onclick="resetAll()">&#128260; R&eacute;initialiser tout le circuit</button>
+</div>
+
 <script>
 var QUIZZES = [
   {id:'jury', name:'Questions Jury', icon:'&#9889;', desc:'Autisme, DEES, secret, projet'},
@@ -256,304 +354,188 @@ var ORAL_STEPS = [
   {name:'Posture + remerciement', icon:'&#127775;', desc:'Respect, adaptation, projection, merci'}
 ];
 
-/* === SM-2 SPACED REPETITION ENGINE === */
-var DB_KEY='circuit_sr';
-function getDB(){try{return JSON.parse(localStorage.getItem(DB_KEY))||{}}catch(e){return{}}}
-function saveDB(d){localStorage.setItem(DB_KEY,JSON.stringify(d))}
-function cardKey(qi,qj){return 'q_'+qi+'_'+qj}
-function getCard(qi,qj){var db=getDB();return db[cardKey(qi,qj)]||{ef:2.5,iv:0,reps:0,next:0,last:0,sc:-1}}
-function updateCard(qi,qj,quality){
-  var db=getDB(),k=cardKey(qi,qj),c=db[k]||{ef:2.5,iv:0,reps:0,next:0,last:0,sc:-1};
-  if(quality<3){c.reps=0;c.iv=1}else{
-    if(c.reps===0)c.iv=1;else if(c.reps===1)c.iv=3;else c.iv=Math.round(c.iv*c.ef);c.reps++;}
-  c.ef=Math.max(1.3,c.ef+(0.1-(5-quality)*(0.08+(5-quality)*0.02)));
-  c.next=Date.now()+c.iv*86400000;c.last=Date.now();c.sc=quality;
-  db[k]=c;saveDB(db);return c;
-}
+/* === STATE === */
+var inlineQuizIdx=-1, inlineQIdx=0, inlineScore=0, inlineAnswered=false;
 
-/* === ANALYTICS === */
-var TOTAL_Q=0;
-for(var _i=0;_i<ALL_QUESTIONS.length;_i++)TOTAL_Q+=ALL_QUESTIONS[_i].length;
+function getData(){try{return JSON.parse(localStorage.getItem('circuit_data'))||{}}catch(e){return {}}}
+function saveData(d){localStorage.setItem('circuit_data',JSON.stringify(d))}
+function getQuizCount(id){var d=getData();return (d[id]||0)}
+function markQuizDone(id){var d=getData();d[id]=(d[id]||0)+1;saveData(d)}
+function getCycle(){var d=getData();var min=999;QUIZZES.forEach(function(q){var c=d[q.id]||0;if(c<min)min=c});return min+1}
+function getNextQuiz(){var d=getData();var min=999;QUIZZES.forEach(function(q){var c=d[q.id]||0;if(c<min)min=c});for(var i=0;i<QUIZZES.length;i++){if((d[QUIZZES[i].id]||0)===min)return i}return 0}
+function getDoneCount(){var d=getData();var cycle=getCycle()-1;var count=0;QUIZZES.forEach(function(q){if((d[q.id]||0)>cycle)count++});return count}
 
-function allCards(){
-  var r=[];for(var i=0;i<ALL_QUESTIONS.length;i++)
-    for(var j=0;j<ALL_QUESTIONS[i].length;j++)
-      r.push({qi:i,qj:j,c:getCard(i,j),q:ALL_QUESTIONS[i][j]});return r;
-}
-function dueCards(){var now=Date.now();return allCards().filter(function(x){return x.c.sc>=0&&x.c.next<=now})}
-function newCards(){return allCards().filter(function(x){return x.c.sc<0})}
-function masteredCards(){return allCards().filter(function(x){return x.c.reps>=3&&x.c.ef>=2.0})}
-function learningCards(){return allCards().filter(function(x){return x.c.sc>=0&&(x.c.reps<3||x.c.ef<2.0)})}
-function weakCards(){return allCards().filter(function(x){return x.c.sc>=0&&x.c.sc<3}).sort(function(a,b){return a.c.ef-b.c.ef})}
-function quizMastery(qi){
-  var qs=ALL_QUESTIONS[qi],good=0;
-  for(var j=0;j<qs.length;j++){var c=getCard(qi,j);if(c.reps>=2)good++;}
-  return qs.length>0?Math.round(good/qs.length*100):0;
-}
-function quizDone(qi){
-  var qs=ALL_QUESTIONS[qi];
-  for(var j=0;j<qs.length;j++){if(getCard(qi,j).sc<0)return false;}return true;
-}
-function quizStarted(qi){
-  var qs=ALL_QUESTIONS[qi];
-  for(var j=0;j<qs.length;j++){if(getCard(qi,j).sc>=0)return true;}return false;
-}
-
-/* === PARCOURS ORDER === */
-var PARCOURS_ORDER=[1,2,0,6,4,3,5];
-var PARCOURS_ICONS=['\u2696\uFE0F','\uD83D\uDEE0','\u26A1','\uD83D\uDCD6','\uD83D\uDD0E','\uD83C\uDF93','\u26A0\uFE0F'];
-
-function getCurrentStep(){
-  var db=getDB();if(db._lastStep!==undefined)return db._lastStep;
-  for(var i=0;i<PARCOURS_ORDER.length;i++){if(!quizDone(PARCOURS_ORDER[i]))return i;}
-  return PARCOURS_ORDER.length;
-}
-function saveStep(s){var db=getDB();db._lastStep=s;saveDB(db)}
-
-/* === RENDER: SMART RESUME BANNER === */
-function renderResume(){
-  var step=getCurrentStep(),d=dueCards().length,w=weakCards().length,n=newCards().length;
-  var title,sub;
-  if(d>0){title='\u26A1 '+d+' question'+(d>1?'s':'')+' \u00e0 revoir maintenant';sub='R\u00e9p\u00e9tition espac\u00e9e : renforce ta m\u00e9moire'}
-  else if(step<PARCOURS_ORDER.length){var qz=QUIZZES[PARCOURS_ORDER[step]];title='\u25B6\uFE0F Continue : '+qz.name;sub='\u00c9tape '+(step+1)+'/'+PARCOURS_ORDER.length+' \u2014 '+qz.desc}
-  else if(w>0){title='\uD83D\uDD01 '+w+' question'+(w>1?'s':'')+' fragile'+(w>1?'s':'');sub='Consolide avant de valider'}
-  else if(n>0){title='\uD83C\uDD95 Nouvelles questions disponibles';sub=n+' questions \u00e0 d\u00e9couvrir'}
-  else{title='\uD83C\uDFC6 Parcours ma\u00eetris\u00e9 !';sub='Continue de r\u00e9viser pour maintenir'}
-  document.getElementById('resumeTitle').textContent=title;
-  document.getElementById('resumeSub').textContent=sub;
-}
-
-function renderStats(){
-  document.getElementById('stDue').textContent=dueCards().length;
-  document.getElementById('stMast').textContent=masteredCards().length;
-  document.getElementById('stTot').textContent=TOTAL_Q;
-  var db=getDB();document.getElementById('stSes').textContent=db._ses||0;
-}
-
-/* === RENDER: PARCOURS GLOBAL TREE === */
-function renderParcours(){
-  var step=getCurrentStep(),h='';
-  h+='<div class="tree-node current" onclick="launchSmart()" style="border-left-color:#f59e0b;margin-bottom:2px"><div class="icon">\uD83C\uDFAF</div><div class="node-info"><h4>D\u00c9PART</h4><p>Cliquez pour lancer la session optimale</p></div><span class="badge badge-current">\u25B6 GO</span></div>';
-  h+='<div class="connector current"></div>';
-  for(var i=0;i<PARCOURS_ORDER.length;i++){
-    var qi=PARCOURS_ORDER[i],qz=QUIZZES[qi],done=quizDone(qi),started=quizStarted(qi);
-    var cls=done?'done':(i===step?'current':(i<step?'done':'locked'));
-    var pct=quizMastery(qi);
-    var badgeCls=done?'badge-done':(i===step?'badge-current':'badge-todo');
-    var badgeTxt=done?(pct+'%'):(i===step?'\u25B6 EN COURS':'verrouill\u00e9');
-    h+='<div class="tree-node '+cls+'" onclick="launchQuiz('+qi+')">';
-    h+='<div class="icon">'+qz.icon+'</div>';
-    h+='<div class="node-info"><h4>\u00c9tape '+(i+1)+' \u2014 '+qz.name+'</h4><p>'+qz.desc+(started?' \u2014 '+pct+'% ma\u00eetris\u00e9':'')+'</p></div>';
-    h+='<span class="badge '+badgeCls+'">'+badgeTxt+'</span></div>';
-    if(i<PARCOURS_ORDER.length-1)h+='<div class="connector '+(done?'done':(i===step?'current':''))+'"></div>';
-  }
-  h+='<div class="connector"></div>';
-  h+='<div class="tree-node" style="border-left-color:#8b5cf6" onclick="launchSmart()"><div class="icon">\uD83D\uDD01</div><div class="node-info"><h4>BOUCLE M\u00c9MOIRE</h4><p>R\u00e9vision cibl\u00e9e + consolidation</p></div></div>';
-  h+='<div class="branch-split">';
-  h+='<div class="branch-side"><h5>\uD83D\uDD04 R\u00e9vision cibl\u00e9e</h5><div class="branch-node" onclick="launchType(\'due\')">'+dueCards().length+' questions dues</div></div>';
-  h+='<div class="branch-side"><h5>\uD83E\uDDE0 Quiz faibles</h5><div class="branch-node" onclick="launchType(\'consol\')">'+weakCards().length+' questions fragiles</div></div>';
-  h+='</div>';
-  h+='<div class="connector"></div>';
-  h+='<div class="tree-node" style="border-left-color:#06b6d4"><div class="icon">\uD83D\uDD01</div><div class="node-info"><h4>Repasser le cycle</h4><p>Reprendre depuis le d\u00e9but avec r\u00e9p\u00e9tition espac\u00e9e</p></div></div>';
-  h+='<div class="connector"></div>';
-  h+='<div class="tree-node" style="border-left-color:#22c55e"><div class="icon">\u2705</div><div class="node-info"><h4>Validation bloc</h4><p>'+masteredCards().length+'/'+TOTAL_Q+' questions ma\u00eetris\u00e9es</p></div></div>';
-  h+='<div class="connector"></div>';
-  h+='<div class="tree-node" style="border-left-color:#94a3b8"><div class="icon">\u23F8\uFE0F</div><div class="node-info"><h4>Pause / Reprise</h4><p>Le syst\u00e8me m\u00e9morise ton point d\'arr\u00eat</p></div></div>';
-  document.getElementById('treeParcours').innerHTML=h;
-}
-
-/* === RENDER: ORAL TREE === */
-function renderOral(){
-  var steps=[
-    {icon:'\uD83D\uDC64',name:'Pr\u00e9sentation personnelle',desc:'Qui suis-je, excuses anonymisation'},
-    {icon:'\uD83E\uDDED',name:'Parcours professionnel',desc:'AIS/DIP, FASe/FINC, basket, fil rouge'},
-    {icon:'\uD83E\uDDE0',name:'Positionnement \u00e9ducatif',desc:'Posture, valeurs, \u00e9thique professionnelle'},
-    {icon:'\uD83D\uDCDA',name:'Exp\u00e9riences principales',desc:'Situations choisies, contexte, enjeux'},
-    {icon:'\uD83D\uDD0D',name:'Analyse de pratique',desc:'R\u00e9flexivit\u00e9, ajustements, apprentissages'},
-    {icon:'\uD83E\uDD1D',name:'Travail en r\u00e9seau',desc:'Partenariats, \u00e9quipe, coordination'},
-    {icon:'\uD83C\uDFAF',name:'Conclusion / ouverture',desc:'Projection, remerciement, posture'}
-  ];
-  var h='<div class="tree-node current" style="border-left-color:#f59e0b"><div class="icon">\uD83C\uDFA4</div><div class="node-info"><h4>D\u00c9BUT PR\u00c9SENTATION</h4><p>~30 min d\'oral devant le jury</p></div><span class="badge badge-count">~30 min</span></div>';
-  h+='<div class="connector current"></div>';
-  for(var i=0;i<steps.length;i++){
-    var s=steps[i];
-    h+='<div class="tree-node"><div class="icon">'+s.icon+'</div><div class="node-info"><h4>'+(i+1)+'. '+s.name+'</h4><p>'+s.desc+'</p></div><span class="badge badge-count">~'+(i<2?'3':'5')+' min</span></div>';
-    if(i<steps.length-1)h+='<div class="connector"></div>';
-  }
-  document.getElementById('treeOral').innerHTML=h;
-}
-
-/* === RENDER: QUESTIONS JURY DC TREE === */
-function renderJuryDC(){
-  function assignDC(q){
-    var t=(q.q+' '+q.explain).toLowerCase();
-    if(/dc1|relation|posture|distance|observation|ajust|confiance|accompagn|pr.sence|retrait|.coute/.test(t))return'DC1';
-    if(/dc2|projet|objectif|.valuation|m.thodologie|7 .tapes|conception|livret/.test(t))return'DC2';
-    if(/dc3|.quipe|communication|transmission|coordination|r.gulation|coh.rence/.test(t))return'DC3';
-    if(/dc4|r.seau|partenariat|famille|institution|politique|loi|rgpd|226|2002|2007|cra/.test(t))return'DC4';
-    return'DC1';
-  }
-  var dcData={DC1:[],DC2:[],DC3:[],DC4:[]};
-  allCards().forEach(function(x){dcData[assignDC(x.q)].push(x)});
-  var colors={DC1:'#8b5cf6',DC2:'#06b6d4',DC3:'#22c55e',DC4:'#f59e0b'};
-  var names={DC1:'DC1 \uD83E\uDDE0 Accompagnement',DC2:'DC2 \uD83D\uDEE0 Projet \u00e9ducatif',DC3:'DC3 \uD83E\uDD1D Travail d\'\u00e9quipe',DC4:'DC4 \uD83D\uDCCA Partenariat'};
-  var subs={DC1:['Relation \u00e9ducative','Positionnement','Analyse'],DC2:['M\u00e9thodologie','Organisation','Conception'],DC3:['Communication','Coordination','R\u00e9gulation'],DC4:['R\u00e9seau','Institutions','Politiques']};
-  var h='<div class="tree-node" style="border-left-color:#f59e0b"><div class="icon">\u2753</div><div class="node-info"><h4>QUESTIONS JURY</h4><p>'+TOTAL_Q+' questions r\u00e9parties par domaine de comp\u00e9tence</p></div></div>';
-  h+='<div class="connector"></div><div class="dc-grid">';
-  ['DC1','DC2','DC3','DC4'].forEach(function(dc){
-    var cards=dcData[dc],m=cards.filter(function(x){return x.c.reps>=3&&x.c.ef>=2.0}).length;
-    var pct=cards.length>0?Math.round(m/cards.length*100):0;
-    h+='<div class="dc-col" style="border-color:'+colors[dc]+'">';
-    h+='<h4 style="color:'+colors[dc]+'">'+names[dc]+'</h4>';
-    h+='<div class="dc-pct" style="color:'+colors[dc]+'">'+pct+'%</div>';
-    h+='<div class="dc-bar"><div class="dc-fill" style="width:'+pct+'%;background:'+colors[dc]+'"></div></div>';
-    h+='<div class="dc-items">';
-    subs[dc].forEach(function(s){h+='<div class="dc-item">'+s+'<span class="di-badge" style="background:'+colors[dc]+'22;color:'+colors[dc]+'">'+cards.length+'q</span></div>'});
-    h+='</div></div>';
-  });
-  h+='</div>';
-  document.getElementById('treeJury').innerHTML=h;
-}
-
-/* === RENDER: MEMORY CYCLE === */
-function renderMemoire(){
-  var n=newCards().length,l=learningCards().length,m=masteredCards().length;
-  var h='<div class="mem-stats">';
-  h+='<div class="mem-box"><div class="mb-num mb-new">'+n+'</div><div class="mb-label">Nouvelles</div></div>';
-  h+='<div class="mem-box"><div class="mb-num mb-learn">'+l+'</div><div class="mb-label">En cours</div></div>';
-  h+='<div class="mem-box"><div class="mb-num mb-master">'+m+'</div><div class="mb-label">Ma\u00eetris\u00e9es</div></div></div>';
-  var memSteps=[
-    {icon:'\uD83D\uDCE5',name:'Apprentissage',desc:'D\u00e9couvrir les nouvelles questions',val:n+' nouvelles'},
-    {icon:'\uD83D\uDD01',name:'R\u00e9p\u00e9tition',desc:'Revoir les questions en cours',val:l+' en cours'},
-    {icon:'\uD83E\uDDE0',name:'Compr\u00e9hension',desc:'Analyser les erreurs et comprendre'},
-    {icon:'\u26A1',name:'Rappel actif',desc:'Tester sa m\u00e9moire sans aide'},
-    {icon:'\u2757',name:'Erreurs d\u00e9tect\u00e9es',desc:weakCards().length+' questions fragiles identifi\u00e9es'}
-  ];
-  memSteps.forEach(function(s,i){
-    h+='<div class="tree-node"><div class="icon">'+s.icon+'</div><div class="node-info"><h4>'+s.name+'</h4><p>'+s.desc+'</p></div>'+(s.val?'<span class="badge badge-count">'+s.val+'</span>':'')+'</div>';
-    if(i<memSteps.length-1)h+='<div class="connector"></div>';
-  });
-  h+='<div class="connector"></div>';
-  h+='<div class="branch-split">';
-  h+='<div class="branch-side"><h5>\uD83D\uDD04 R\u00e9vision cibl\u00e9e</h5><div class="branch-node" onclick="launchType(\'consol\')">Consolider les faiblesses</div></div>';
-  h+='<div class="branch-side"><h5>\u2705 Validation</h5><div class="branch-node" onclick="launchType(\'due\')">Questions ma\u00eetris\u00e9es: '+m+'</div></div>';
-  h+='</div><div class="connector"></div>';
-  h+='<div class="tree-node" style="border-left-color:#8b5cf6"><div class="icon">\uD83D\uDD01</div><div class="node-info"><h4>Consolidation</h4><p>Cycle continu de renforcement m\u00e9moriel</p></div></div>';
-  h+='<div style="margin-top:14px"><h4 style="color:#f59e0b;font-size:.88rem;margin-bottom:8px">\uD83D\uDCC8 R\u00e9tention par module</h4>';
-  QUIZZES.forEach(function(qz,qi){
-    var pct=quizMastery(qi),color=pct>=80?'#22c55e':pct>=40?'#f59e0b':'#ef4444';
-    h+='<div class="mem-row"><div class="mem-label">'+qz.icon+' '+qz.name+'</div>';
-    h+='<div class="bar-bg"><div class="bar-fill" style="width:'+pct+'%;background:'+color+'"></div></div>';
-    h+='<div class="mem-val">'+pct+'%</div></div>';
-  });
-  h+='</div>';
-  document.getElementById('treeMem').innerHTML=h;
-}
-
-/* === QUIZ SESSION === */
-var curSession=[],sesIdx=0,sesScore=0,sesType='',sesAnswered=false;
-
-function buildSession(type){
-  var cards;
-  if(type==='due'){cards=dueCards().sort(function(a,b){return a.c.ef-b.c.ef}).slice(0,10)}
-  else if(type==='new'){cards=newCards().slice(0,10)}
-  else if(type==='consol'){var w=weakCards();cards=w.length>0?w.slice(0,10):learningCards().slice(0,10)}
-  else if(type==='quiz'){return null}
-  else{
-    var d=dueCards();if(d.length>=3)return{type:'due',cards:d.sort(function(a,b){return a.c.ef-b.c.ef}).slice(0,10)};
-    var step=getCurrentStep();
-    if(step<PARCOURS_ORDER.length){
-      var qi=PARCOURS_ORDER[step];
-      cards=[];for(var j=0;j<ALL_QUESTIONS[qi].length;j++)cards.push({qi:qi,qj:j,c:getCard(qi,j),q:ALL_QUESTIONS[qi][j]});
-      return{type:'parcours',cards:cards};
+function renderMainTree(){
+  var tree=document.getElementById('mainTree');
+  var nextIdx=getNextQuiz();
+  var d=getData();
+  var cycle=getCycle()-1;
+  var html='';
+  QUIZZES.forEach(function(q,i){
+    var count=d[q.id]||0;
+    var doneThisCycle=count>cycle;
+    var isCurrent=i===nextIdx;
+    var cls=doneThisCycle?'done':isCurrent?'current':'';
+    var badge='';
+    if(doneThisCycle) badge='<span class="badge badge-done">&#10003; Fait ('+count+'x)</span>';
+    else if(isCurrent) badge='<span class="badge badge-next">&#9654; SUIVANT</span>';
+    else badge='<span class="badge badge-count">'+count+'x</span>';
+    html+='<div class="tree-node '+cls+'" onclick="launchQuiz('+i+')">';
+    html+='<div class="icon">'+q.icon+'</div>';
+    html+='<div class="node-info"><h4>'+q.name+'</h4><p>'+q.desc+'</p></div>';
+    html+=badge+'</div>';
+    if(i<QUIZZES.length-1){
+      var connCls=doneThisCycle?'done':isCurrent?'current':'';
+      html+='<div class="connector '+connCls+'"></div>';
     }
-    var w2=weakCards();if(w2.length>=2)return{type:'consol',cards:w2.slice(0,10)};
-    return{type:'new',cards:newCards().slice(0,10)};
-  }
-  return{type:type,cards:cards||[]};
-}
-
-function startSession(cards,type,title){
-  if(!cards||cards.length===0){alert('Aucune question disponible.');return}
-  curSession=cards;sesIdx=0;sesScore=0;sesType=type;sesAnswered=false;
-  hideMain();document.getElementById('quizInline').style.display='block';
-  document.getElementById('quizTitle').textContent=title||('\uD83E\uDDE0 '+(
-    {due:'R\u00e9vision due',new:'D\u00e9couverte',consol:'Consolidation',parcours:'Parcours'}[type]||'Session'));
-  renderQ();window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function launchSmart(){var s=buildSession('smart');if(s)startSession(s.cards,s.type)}
-function launchType(type){var s=buildSession(type);if(s)startSession(s.cards,s.type)}
-function launchQuiz(qi){
-  var cards=[];for(var j=0;j<ALL_QUESTIONS[qi].length;j++)cards.push({qi:qi,qj:j,c:getCard(qi,j),q:ALL_QUESTIONS[qi][j]});
-  startSession(cards,'quiz',QUIZZES[qi].icon+' '+QUIZZES[qi].name);
-}
-
-function hideMain(){
-  ['resumeBanner','secParcours','secOral','secJury','secMemoire'].forEach(function(id){document.getElementById(id).style.display='none'});
-  document.querySelector('.stats').style.display='none';
-  document.querySelector('.reset-row').style.display='none';
-}
-function showMain(){
-  document.getElementById('quizInline').style.display='none';
-  ['resumeBanner'].forEach(function(id){document.getElementById(id).style.display='flex'});
-  ['secParcours','secOral','secJury','secMemoire'].forEach(function(id){document.getElementById(id).style.display='block'});
-  document.querySelector('.stats').style.display='flex';
-  document.querySelector('.reset-row').style.display='block';
-  renderAll();window.scrollTo({top:0,behavior:'smooth'});
-}
-function exitQuiz(){showMain()}
-
-function renderQ(){
-  sesAnswered=false;var item=curSession[sesIdx],q=item.q,total=curSession.length;
-  document.getElementById('qFill').style.width=(sesIdx/total*100)+'%';
-  document.getElementById('qText').textContent='Question '+(sesIdx+1)+' / '+total;
-  var h='<div class="quiz-question"><div class="quiz-q-text">'+q.q+'</div><div class="quiz-opts">';
-  for(var i=0;i<q.opts.length;i++)h+='<button class="quiz-opt" onclick="sesAnswer('+i+')">'+String.fromCharCode(65+i)+'. '+q.opts[i]+'</button>';
-  h+='</div><div class="quiz-explain" id="sesExp">'+q.explain+'</div>';
-  h+='<div class="sr-feedback" id="srFb"></div>';
-  h+='<button class="quiz-next" id="sesNext" onclick="sesNext()">Suivante \u2192</button></div>';
-  document.getElementById('quizBody').innerHTML=h;
-}
-
-function sesAnswer(idx){
-  if(sesAnswered)return;sesAnswered=true;
-  var item=curSession[sesIdx],q=item.q,ok=idx===q.correct;
-  document.querySelectorAll('.quiz-opt').forEach(function(b,i){
-    b.classList.add('disabled');if(i===q.correct)b.classList.add('correct');if(i===idx&&!ok)b.classList.add('wrong');
   });
-  if(ok)sesScore++;
-  var updated=updateCard(item.qi,item.qj,ok?5:1);
-  document.getElementById('sesExp').classList.add('visible');
-  var fb=document.getElementById('srFb');
-  if(ok){fb.className='sr-feedback visible sr-up';fb.textContent='\u2705 Prochaine r\u00e9vision dans '+updated.iv+' jour'+(updated.iv>1?'s':'')+' (EF: '+updated.ef.toFixed(2)+')'}
-  else{fb.className='sr-feedback visible sr-down';fb.textContent='\u274C Replanifi\u00e9e demain \u2014 sera repropos\u00e9e'}
-  document.getElementById('sesNext').classList.add('visible');
+  tree.innerHTML=html;
 }
 
-function sesNext(){
-  sesIdx++;if(sesIdx>=curSession.length){showResult();return}
-  renderQ();document.querySelector('.quiz-question').scrollIntoView({behavior:'smooth',block:'start'});
+function renderOralTree(){
+  var tree=document.getElementById('oralTree');
+  var html='';
+  ORAL_STEPS.forEach(function(s,i){
+    html+='<div class="tree-node"><div class="icon">'+s.icon+'</div>';
+    html+='<div class="node-info"><h4>'+(i+1)+'. '+s.name+'</h4><p>'+s.desc+'</p></div>';
+    html+='<span class="badge badge-count">~30s</span></div>';
+    if(i<ORAL_STEPS.length-1) html+='<div class="connector"></div>';
+  });
+  tree.innerHTML=html;
 }
 
-function showResult(){
-  var total=curSession.length,pct=Math.round(sesScore/total*100);
-  var msg=pct>=80?'Excellent ! M\u00e9moire renforc\u00e9e !':pct>=60?'Bien ! Encore un passage.':'Continue, tu progresses !';
-  document.getElementById('qFill').style.width='100%';
-  document.getElementById('qText').textContent='Termin\u00e9 !';
-  var h='<div class="quiz-result"><div class="quiz-score">'+sesScore+'/'+total+'</div>';
-  h+='<div class="quiz-score-label">'+pct+'% \u2014 '+msg+'</div>';
-  h+='<button class="quiz-return" onclick="showMain()">\u2713 Retour au circuit</button></div>';
-  document.getElementById('quizBody').innerHTML=h;
-  if(sesType==='parcours'){var step=getCurrentStep();if(pct>=50&&step<PARCOURS_ORDER.length){saveStep(step+1)}}
-  var db=getDB();db._ses=(db._ses||0)+1;saveDB(db);
+function renderMemory(){
+  var grid=document.getElementById('memGrid');
+  var d=getData();
+  var html='';
+  QUIZZES.forEach(function(q){
+    var count=d[q.id]||0;
+    var lvl=count===0?'low':count<3?'mid':'high';
+    var pct=Math.min(count*33,100);
+    html+='<div class="mem-item"><div class="mem-name">'+q.icon+' '+q.name+'</div>';
+    html+='<div class="mem-count">'+count+' passage'+(count>1?'s':'')+'</div>';
+    html+='<div class="mem-bar"><div class="mem-fill mem-fill-'+lvl+'" style="width:'+pct+'%"></div></div></div>';
+  });
+  grid.innerHTML=html;
 }
 
-/* === RESET === */
-function resetAll(){if(confirm('R\u00e9initialiser tout le circuit intelligent ?')){localStorage.removeItem(DB_KEY);renderAll()}}
+function updateStats(){
+  var done=getDoneCount();
+  document.getElementById('statDone').textContent=done;
+  document.getElementById('statTotal').textContent=QUIZZES.length;
+  document.getElementById('statCycle').textContent=getCycle();
+  var d=getData();var total=0;QUIZZES.forEach(function(q){total+=(d[q.id]||0)});
+  document.getElementById('statStreak').textContent=total;
+}
 
-/* === INIT === */
-function renderAll(){renderResume();renderStats();renderParcours();renderOral();renderJuryDC();renderMemoire()}
+function updateGuide(){
+  var idx=getNextQuiz();
+  var q=QUIZZES[idx];
+  document.getElementById('guideTitle').innerHTML='&#9654; Prochain : '+q.name;
+  document.getElementById('guideSub').textContent=q.desc;
+}
+
+function goNext(){launchQuiz(getNextQuiz())}
+
+/* === LAUNCH QUIZ INLINE === */
+function launchQuiz(idx){
+  inlineQuizIdx=idx;inlineQIdx=0;inlineScore=0;inlineAnswered=false;
+  document.getElementById('tab0').style.display='none';
+  document.getElementById('quizInline').style.display='block';
+  document.getElementById('quizTitle').innerHTML=QUIZZES[idx].icon+' '+QUIZZES[idx].name;
+  document.querySelector('.guide-bar').style.display='none';
+  document.querySelector('.stats').style.display='none';
+  document.querySelector('.tabs').style.display='none';
+  document.querySelector('.reset-row').style.display='none';
+  renderInlineQuestion();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function closeQuiz(){
+  document.getElementById('quizInline').style.display='none';
+  document.getElementById('tab0').style.display='block';
+  document.querySelector('.guide-bar').style.display='flex';
+  document.querySelector('.stats').style.display='flex';
+  document.querySelector('.tabs').style.display='flex';
+  document.querySelector('.reset-row').style.display='block';
+  renderAll();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderInlineQuestion(){
+  var qs=ALL_QUESTIONS[inlineQuizIdx];
+  var q=qs[inlineQIdx];
+  var total=qs.length;
+  var pct=((inlineQIdx)/total*100);
+  document.getElementById('quizProgressFill').style.width=pct+'%';
+  document.getElementById('quizProgressText').textContent='Question '+(inlineQIdx+1)+' / '+total;
+  var html='<div class="quiz-question"><div class="quiz-q-text">'+q.q+'</div><div class="quiz-opts">';
+  for(var i=0;i<q.opts.length;i++){
+    html+='<button class="quiz-opt" onclick="inlineAnswer('+i+')">'+String.fromCharCode(65+i)+'. '+q.opts[i]+'</button>';
+  }
+  html+='</div><div class="quiz-explain" id="inlineExplain">'+q.explain+'</div>';
+  html+='<button class="quiz-next" id="inlineNext" onclick="inlineNextQ()">Suivante &#8594;</button></div>';
+  document.getElementById('quizBody').innerHTML=html;
+  inlineAnswered=false;
+}
+
+function inlineAnswer(idx){
+  if(inlineAnswered)return;
+  inlineAnswered=true;
+  var q=ALL_QUESTIONS[inlineQuizIdx][inlineQIdx];
+  var btns=document.querySelectorAll('.quiz-opt');
+  btns.forEach(function(b,i){
+    b.classList.add('disabled');
+    if(i===q.correct)b.classList.add('correct');
+    if(i===idx&&idx!==q.correct)b.classList.add('wrong');
+  });
+  if(idx===q.correct)inlineScore++;
+  document.getElementById('inlineExplain').classList.add('visible');
+  document.getElementById('inlineNext').classList.add('visible');
+}
+
+function inlineNextQ(){
+  inlineQIdx++;
+  if(inlineQIdx>=ALL_QUESTIONS[inlineQuizIdx].length){
+    showInlineResult();return;
+  }
+  renderInlineQuestion();
+  document.querySelector('.quiz-question').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function showInlineResult(){
+  var total=ALL_QUESTIONS[inlineQuizIdx].length;
+  var pct=Math.round(inlineScore/total*100);
+  var msg=pct>=80?'Excellent ! Tu ma\u00eetrises ce quiz !':pct>=60?'Bien ! Encore un passage pour consolider.':'Continue de r\u00e9viser, tu progresses !';
+  document.getElementById('quizProgressFill').style.width='100%';
+  document.getElementById('quizProgressText').textContent='Termin\u00e9 !';
+  var html='<div class="quiz-result">';
+  html+='<div class="quiz-score">'+inlineScore+' / '+total+'</div>';
+  html+='<div class="quiz-score-label">'+pct+'% \u2014 '+msg+'</div>';
+  html+='<button class="quiz-return" onclick="finishInlineQuiz()">&#10003; Retour au parcours</button></div>';
+  document.getElementById('quizBody').innerHTML=html;
+  markQuizDone(QUIZZES[inlineQuizIdx].id);
+}
+
+function finishInlineQuiz(){closeQuiz()}
+
+function showTab(n){
+  document.getElementById('quizInline').style.display='none';
+  document.querySelector('.guide-bar').style.display='flex';
+  document.querySelector('.stats').style.display='flex';
+  document.querySelector('.tabs').style.display='flex';
+  document.querySelector('.reset-row').style.display='block';
+  for(var i=0;i<4;i++){document.getElementById('tab'+i).style.display=i===n?'block':'none'}
+  document.querySelectorAll('.tabs button').forEach(function(b,i){b.classList.toggle('active',i===n)});
+}
+
+function resetAll(){
+  if(confirm('R\u00e9initialiser tout le circuit ?')){
+    localStorage.removeItem('circuit_data');renderAll();
+  }
+}
+
+function renderAll(){renderMainTree();renderOralTree();renderMemory();updateStats();updateGuide()}
 renderAll();
 </script>
 <script src="mentor.js"></script>
