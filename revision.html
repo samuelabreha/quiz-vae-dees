@@ -674,7 +674,16 @@ function showSit(exp){
 // Auto-select tab from URL parameter ?tab=0..5
 var urlParams=new URLSearchParams(window.location.search);
 var tabParam=urlParams.get('tab');
-if(tabParam!==null&&!isNaN(tabParam)&&tabParam>=0&&tabParam<6){selectQuiz(parseInt(tabParam))}else{renderQuestion()}
+if(tabParam!==null&&!isNaN(tabParam)&&tabParam>=0&&tabParam<6){
+  selectQuiz(parseInt(tabParam));
+  // Hide header, situations, planning - show only quiz
+  document.querySelector('h1').style.display='none';
+  document.querySelector('.sub').style.display='none';
+  var sits=document.querySelector('.situations');if(sits)sits.style.display='none';
+  var plan=document.querySelector('.planning');if(plan)plan.style.display='none';
+  // Scroll to quiz area
+  setTimeout(function(){document.querySelector('.quiz-tabs').scrollIntoView({behavior:'auto',block:'start'})},50);
+}else{renderQuestion()}
 </script>
 <script src="mentor.js"></script>
 </body>
