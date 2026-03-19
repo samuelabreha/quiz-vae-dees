@@ -159,7 +159,8 @@ var QUIZZES = [
   {id:'sit_dc2', name:'Situations DC (2)', icon:'&#128203;', desc:'\u00c9l\u00e8ve J + Enfant A par domaine DC'},
   {id:'sit_dc3', name:'Situations DC (3)', icon:'&#128204;', desc:'Journ\u00e9e type + projet collectif par DC'},
   {id:'micro_dc', name:'Micro Quiz DC', icon:'&#127919;', desc:'Identifier le DC dominant rapidement'},
-  {id:'micro_lois', name:'Micro Quiz Lois', icon:'&#9878;', desc:'Lois 2002-2, 2005, 2007, secret pro'}
+  {id:'micro_lois', name:'Micro Quiz Lois', icon:'&#9878;', desc:'Lois 2002-2, 2005, 2007, secret pro'},
+  {id:'memo_oral', name:'M\u00e9morisation Oral', icon:'&#127908;', desc:'Ordre des \u00e9tapes + mots-cl\u00e9s de ta pr\u00e9sentation'}
 ];
 
 var ALL_QUESTIONS=[
@@ -322,6 +323,28 @@ var ALL_QUESTIONS=[
 {q:"Risque ou danger pour un enfant : quel cadre est prioritairement mobilis\u00e9 ?",opts:["Loi 2007","Loi 2005","CIDE art. 31","Code du sport"],correct:0,explain:"Protection de l'enfance, pr\u00e9vention, signalement."},
 {q:"Partager uniquement les informations n\u00e9cessaires avec les professionnels concern\u00e9s correspond \u00e0 :",opts:["Libert\u00e9 d'expression CIDE","Secret professionnel et secret partag\u00e9","Projet de vie MDPH","R\u00e8glement de fonctionnement"],correct:1,explain:"Art. 226-13 Code p\u00e9nal et art. L.226-2-2 CASF."},
 {q:"\u00c0 l'oral, quelle r\u00e8gle de m\u00e9morisation est la plus efficace pour les lois ?",opts:["Citer des num\u00e9ros de loi sans lien pratique","Relier chaque loi \u00e0 une situation v\u00e9cue du livret","Ne citer aucune loi","Citer toutes les lois dans chaque r\u00e9ponse"],correct:1,explain:"Le jury attend du droit appliqu\u00e9, pas une r\u00e9citation abstraite."}
+],
+[
+{q:"Quelle est la 1\u00e8re \u00e9tape de ton oral ?",opts:["Fonction scolaire \u2014 AIS","Introduction","Fil rouge","Service civil"],correct:1,explain:"\u00c9tape 1 : Introduction. Tu te pr\u00e9sentes, tu annonces ton parcours et la VAE."},
+{q:"Que vient juste APR\u00c8S l'introduction ?",opts:["Sport \u2014 Basket","Socio-\u00e9ducatif \u2014 FASe","Fonction scolaire \u2014 AIS / DIP","Fil rouge"],correct:2,explain:"\u00c9tape 2 : Fonction scolaire \u2014 AIS / DIP. Tu parles de ton r\u00f4le de rempla\u00e7ant AIS depuis 2018."},
+{q:"Quelle \u00e9tape vient en 3\u00e8me position ?",opts:["Socio-\u00e9ducatif \u2014 FASe / FINC","Pr\u00e9vention sp\u00e9cialis\u00e9e","Sport \u2014 Basket","Formations"],correct:0,explain:"\u00c9tape 3 : Socio-\u00e9ducatif \u2014 FASe / FINC. Depuis 2014, moniteur d'encadrement sp\u00e9cialis\u00e9."},
+{q:"Quelle \u00e9tape vient juste APR\u00c8S le socio-\u00e9ducatif ?",opts:["Fil rouge","Service civil","Sport \u2014 Basket","Formations"],correct:2,explain:"\u00c9tape 4 : Sport \u2014 Basket. Outil \u00e9ducatif : coop\u00e9ration, confiance, gestion des \u00e9motions."},
+{q:"Quelle est l'\u00e9tape 5 ?",opts:["D\u00e9buts \u2014 Service civil","Fil rouge \u2014 sens de la d\u00e9marche","Pr\u00e9vention sp\u00e9cialis\u00e9e","Posture et projection"],correct:1,explain:"\u00c9tape 5 : Fil rouge. Tu prends du recul : inclusion, relation, comp\u00e9tences. La VAE = suite logique."},
+{q:"Que vient APR\u00c8S le fil rouge ?",opts:["Formations","D\u00e9buts \u2014 Service civil (D\u00e9clic)","Situation pr\u00e9sent\u00e9e","Pr\u00e9vention sp\u00e9cialis\u00e9e"],correct:1,explain:"\u00c9tape 6 : D\u00e9buts \u2014 Service civil. Le d\u00e9clic entre 2013-2014."},
+{q:"Quelle \u00e9tape vient en 7\u00e8me position ?",opts:["Formations","Posture et projection","Pr\u00e9vention sp\u00e9cialis\u00e9e \u2014 Transit / Vaudagne","R\u00e9ponse \u00e9ducative"],correct:2,explain:"\u00c9tape 7 : Pr\u00e9vention sp\u00e9cialis\u00e9e. Travail hors murs avec Transit."},
+{q:"Que vient APR\u00c8S la pr\u00e9vention sp\u00e9cialis\u00e9e ?",opts:["Situation pr\u00e9sent\u00e9e","Posture et projection","Mont\u00e9e en comp\u00e9tences \u2014 Formations","Introduction"],correct:2,explain:"\u00c9tape 8 : Formations. HETS, Jeunesse+Sport, gestion de l'agressivit\u00e9, TSA."},
+{q:"Les \u00e9tapes 9 et 10 sont optionnelles. Lesquelles ?",opts:["Fil rouge + Formations","Situation pr\u00e9sent\u00e9e + R\u00e9ponse \u00e9ducative","Service civil + Pr\u00e9vention","Posture + Remerciement"],correct:1,explain:"\u00c9tapes 9-10 (optionnelles) : Situation pr\u00e9sent\u00e9e (match U15) + R\u00e9ponse \u00e9ducative."},
+{q:"Quelle est la DERNI\u00c8RE \u00e9tape de ton oral ?",opts:["Formations","R\u00e9ponse \u00e9ducative","Fil rouge","Posture & projection + remerciement"],correct:3,explain:"\u00c9tape 11 : Posture & projection + remerciement. Respect, adaptation, collectif. \u00c9voluer vers le sp\u00e9cialis\u00e9."},
+{q:"Dans l'INTRODUCTION, quel est le mot-cl\u00e9 pour d\u00e9crire tes 3 axes ?",opts:["Scolaire, socio-\u00e9ducatif, sport","M\u00e9dical, juridique, social","Enseignement, animation, th\u00e9rapie","Recherche, formation, gestion"],correct:0,explain:"Tes 3 axes : scolaire (AIS), socio-\u00e9ducatif (FASe/FINC), sport (basket)."},
+{q:"\u00c9tape AIS/DIP : depuis quelle ann\u00e9e travailles-tu comme rempla\u00e7ant AIS ?",opts:["2014","2016","2018","2020"],correct:2,explain:"Depuis 2018, rempla\u00e7ant AIS au DIP \u00e0 Gen\u00e8ve."},
+{q:"\u00c9tape AIS/DIP : quel est ton r\u00f4le principal ?",opts:["Remplacer l'enseignant","S\u00e9curiser les temps de classe et aider l'acc\u00e8s aux apprentissages","Donner des cours particuliers","G\u00e9rer les punitions"],correct:1,explain:"S\u00e9curiser + acc\u00e8s aux apprentissages, sans prendre la place de l'enseignant."},
+{q:"\u00c9tape FASe/FINC : depuis quelle ann\u00e9e ?",opts:["2010","2014","2018","2016"],correct:1,explain:"Depuis 2014, moniteur d'encadrement sp\u00e9cialis\u00e9 \u00e0 la FASe."},
+{q:"\u00c9tape FASe/FINC : sur quoi repose ton travail ?",opts:["Les notes scolaires","Le lien, la m\u00e9diation et le cadre","La th\u00e9rapie individuelle","Le sport"],correct:1,explain:"Lien + m\u00e9diation + cadre. Chacun trouve sa place dans le groupe."},
+{q:"\u00c9tape BASKET : qu'est-ce que le basket t'a permis de travailler ?",opts:["La comp\u00e9tition et la performance","La coop\u00e9ration, la confiance, la gestion des \u00e9motions, le respect","La technique sportive uniquement","L'endurance physique"],correct:1,explain:"Outil \u00e9ducatif : coop\u00e9ration, confiance en soi, gestion des \u00e9motions, respect des r\u00e8gles."},
+{q:"\u00c9tape FIL ROUGE : quels sont les 3 mots qui reviennent toujours ?",opts:["Discipline, autorit\u00e9, performance","Inclusion, relation, comp\u00e9tences","Th\u00e9orie, pratique, stage","Budget, planning, objectifs"],correct:1,explain:"Fil rouge = inclusion + relation + d\u00e9veloppement des comp\u00e9tences."},
+{q:"\u00c9tape SERVICE CIVIL : quel mot d\u00e9crit ce moment ?",opts:["Routine","Obligation","D\u00e9clic","Hasard"],correct:2,explain:"Le d\u00e9clic. 2013-2014 : d\u00e9couverte du travail \u00e9ducatif."},
+{q:"\u00c9tape TRANSIT : quel type de travail social ?",opts:["Travail en bureau","Travail social hors murs","Travail hospitalier","Travail scolaire"],correct:1,explain:"Pr\u00e9vention sp\u00e9cialis\u00e9e = travail social hors murs avec l'association Transit."},
+{q:"\u00c9tape POSTURE FINALE : quels 3 mots d\u00e9crivent ta posture ?",opts:["Autorit\u00e9, contr\u00f4le, distance","Respect, adaptation, travail en collectif","Intuition, exp\u00e9rience, habitude","Th\u00e9orie, m\u00e9thode, protocole"],correct:1,explain:"Posture = respect + adaptation + collectif. Projection : structures plus sp\u00e9cialis\u00e9es."}
 ]
 ];
 
@@ -383,13 +406,13 @@ function quizStarted(qi){
 }
 
 /* === PARCOURS ORDER === */
-/* Phase 1: PRÉSENTATION (StructureOral → Oral1 → Oral2)
-   Phase 2: JURY (QJury → JuryAv1 → JuryAv2 → Simul → Pièges → Livret → Situations → SitDC2 → SitDC3)
-   Phase 3: CONTENU (Lois → Posture → MicroDC → MicroLois)
+/* Phase 1: PRÉSENTATION (StructureOral → MémoOral(15) → Oral1(7) → Oral2(8))
+   Phase 2: JURY (QJury(0) → JuryAv1(9) → JuryAv2(10) → Simul(3) → Pièges(5) → Livret(4) → Situations(6) → SitDC2(11) → SitDC3(12))
+   Phase 3: CONTENU (Lois(1) → Posture(2) → MicroDC(13) → MicroLois(14))
    Phase 4: MÉMOIRE (boucle) */
-var PARCOURS_ORDER=[7,8,0,9,10,3,5,4,6,11,12,1,2,13,14];
-var PARCOURS_ICONS=['\uD83C\uDFA4','\uD83C\uDFA4','\u26A1','\u26A1','\uD83D\uDCAC','\uD83C\uDF93','\u26A0\uFE0F','\uD83D\uDD0E','\uD83D\uDCD6','\uD83D\uDCCB','\uD83D\uDCCB','\u2696\uFE0F','\uD83D\uDEE0','\uD83C\uDFAF','\u2696\uFE0F'];
-var PHASE_BREAKS={0:'PHASE 1 \u2014 PR\u00c9SENTATION',2:'PHASE 2 \u2014 JURY',11:'PHASE 3 \u2014 CONTENU'};
+var PARCOURS_ORDER=[15,7,8,0,9,10,3,5,4,6,11,12,1,2,13,14];
+var PARCOURS_ICONS=['\uD83C\uDFA4','\uD83C\uDFA4','\uD83C\uDFA4','\u26A1','\u26A1','\uD83D\uDCAC','\uD83C\uDF93','\u26A0\uFE0F','\uD83D\uDD0E','\uD83D\uDCD6','\uD83D\uDCCB','\uD83D\uDCCB','\u2696\uFE0F','\uD83D\uDEE0','\uD83C\uDFAF','\u2696\uFE0F'];
+var PHASE_BREAKS={0:'PHASE 1 \u2014 PR\u00c9SENTATION',3:'PHASE 2 \u2014 JURY',12:'PHASE 3 \u2014 CONTENU'};
 
 function getCurrentStep(){
   var db=getDB();if(db._lastStep!==undefined)return db._lastStep;
@@ -411,7 +434,7 @@ function renderResume(){
     sub='\u00c9tape '+(firstUnchecked+1)+'/'+ORAL_STEPS.length+' \u2014 '+ORAL_STEPS[firstUnchecked].desc;
   }
   else if(d>0){title='\u26A1 '+d+' question'+(d>1?'s':'')+' \u00e0 revoir maintenant';sub='R\u00e9p\u00e9tition espac\u00e9e : renforce ta m\u00e9moire'}
-  else if(step<PARCOURS_ORDER.length){var qz=QUIZZES[PARCOURS_ORDER[step]];title='\u25B6\uFE0F Continue : '+qz.name;sub='\u00c9tape '+(step+12)+'/26 \u2014 '+qz.desc}
+  else if(step<PARCOURS_ORDER.length){var qz=QUIZZES[PARCOURS_ORDER[step]];title='\u25B6\uFE0F Continue : '+qz.name;sub='\u00c9tape '+(step+12)+'/27 \u2014 '+qz.desc}
   else if(w>0){title='\uD83D\uDD01 '+w+' question'+(w>1?'s':'')+' fragile'+(w>1?'s':'');sub='Consolide avant de valider'}
   else if(n>0){title='\uD83C\uDD95 Nouvelles questions disponibles';sub=n+' questions \u00e0 d\u00e9couvrir'}
   else{title='\uD83C\uDFC6 Parcours ma\u00eetris\u00e9 !';sub='Continue de r\u00e9viser pour maintenir'}
