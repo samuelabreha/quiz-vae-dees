@@ -467,10 +467,10 @@ function renderParcours(){
       h+='<div style="text-align:center;padding:14px 0 6px;font-weight:800;font-size:.85rem;color:#8b5cf6;letter-spacing:1px">'+PHASE_BREAKS[i]+'</div>';
     }
     var qi=PARCOURS_ORDER[i],qz=QUIZZES[qi],done=quizDone(qi),started=quizStarted(qi);
-    var cls=done?'done':(i===step?'current':(i<step?'done':'locked'));
+    var cls=done?'done':(i===step?'current':(i<step?'done':''));
     var pct=quizMastery(qi);
     var badgeCls=done?'badge-done':(i===step?'badge-current':'badge-todo');
-    var badgeTxt=done?(pct+'%'):(i===step?'\u25B6 EN COURS':'verrouill\u00e9');
+    var badgeTxt=done?(pct+'%'):(i===step?'\u25B6 EN COURS':(started?pct+'%':'\u25B6 LANCER'));
     h+='<div class="tree-node '+cls+'" onclick="launchQuiz('+qi+')">';
     h+='<div class="icon">'+qz.icon+'</div>';
     h+='<div class="node-info"><h4>\u00c9tape '+stepNum+' \u2014 '+qz.name+'</h4><p>'+qz.desc+(started?' \u2014 '+pct+'% ma\u00eetris\u00e9':'')+'</p></div>';
