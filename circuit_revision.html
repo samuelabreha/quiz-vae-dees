@@ -131,7 +131,8 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0f172
 <div class="stat-card"><div class="num" id="stDue">0</div><div class="label">&Agrave; revoir</div></div>
 <div class="stat-card"><div class="num" id="stMast">0</div><div class="label">Ma&icirc;tris&eacute;es</div></div>
 <div class="stat-card"><div class="num" id="stTot">0</div><div class="label">Total</div></div>
-<div class="stat-card"><div class="num" id="stSes">0</div><div class="label">Sessions</div></div></div>
+<div class="stat-card"><div class="num" id="stSes">0</div><div class="label">Sessions</div></div>
+<div class="stat-card" style="border-top-color:#8b5cf6"><div class="num" id="stPass">0/3</div><div class="label">Passage</div></div></div>
 <div class="section" id="secParcours"><div class="section-title">&#127919; PARCOURS GLOBAL &mdash; Chemin de m&eacute;morisation</div><div id="treeParcours"></div></div>
 <div class="section" id="secOral"><div class="section-title">&#127908; STRUCTURE ORAL &mdash; Pr&eacute;sentation</div><div id="treeOral"></div></div>
 <div class="section" id="secJury"><div class="section-title">&#10067; QUESTIONS JURY &mdash; Par domaine de comp&eacute;tence</div><div id="treeJury"></div></div>
@@ -410,11 +411,25 @@ function renderResume(){
   document.getElementById('resumeSub').textContent=sub;
 }
 
+var PASSAGE_GOAL=3;
+function getPassage(){var db=getDB();return db._passage||0}
+function checkPassageComplete(){
+  for(var i=0;i<ALL_QUESTIONS.length;i++){if(!quizDone(i))return false;}return true;
+}
+function advancePassage(){
+  var db=getDB(),p=(db._passage||0)+1;
+  db._passage=p;db._lastStep=0;saveDB(db);
+  return p;
+}
+
 function renderStats(){
   document.getElementById('stDue').textContent=dueCards().length;
   document.getElementById('stMast').textContent=masteredCards().length;
   document.getElementById('stTot').textContent=TOTAL_Q;
   var db=getDB();document.getElementById('stSes').textContent=db._ses||0;
+  var p=db._passage||0;
+  document.getElementById('stPass').textContent=Math.min(p+1,PASSAGE_GOAL)+'/'+PASSAGE_GOAL;
+  document.getElementById('stPass').style.color=p>=PASSAGE_GOAL?'#22c55e':'#8b5cf6';
 }
 
 /* === ORAL STEPS IN PARCOURS === */
@@ -428,6 +443,8 @@ function toggleOralStep(idx){
 /* === RENDER: PARCOURS GLOBAL TREE === */
 function renderParcours(){
   var step=getCurrentStep(),h='';
+  var curPass=getPassage();
+  h+='<div style="text-align:center;padding:12px 0 8px"><span style="display:inline-block;padding:8px 20px;border-radius:20px;background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;font-weight:800;font-size:.9rem;letter-spacing:1px">\uD83D\uDD01 PASSAGE '+(Math.min(curPass+1,PASSAGE_GOAL))+' / '+PASSAGE_GOAL+(curPass>=PASSAGE_GOAL?' \u2014 TERMIN\u00c9 \uD83C\uDFC6':'')+'</span></div>';
   h+='<div class="tree-node current" onclick="launchSmart()" style="border-left-color:#f59e0b;margin-bottom:2px"><div class="icon">\uD83C\uDFAF</div><div class="node-info"><h4>D\u00c9PART</h4><p>Cliquez pour lancer la session optimale</p></div><span class="badge badge-current">\u25B6 GO</span></div>';
   h+='<div class="connector current"></div>';
   /* --- Phase 1 header + Oral Structure --- */
@@ -675,6 +692,11 @@ function showResult(){
   document.getElementById('quizBody').innerHTML=h;
   if(sesType==='parcours'){var step=getCurrentStep();if(pct>=50&&step<PARCOURS_ORDER.length){saveStep(step+1)}}
   var db=getDB();db._ses=(db._ses||0)+1;saveDB(db);
+  if(checkPassageComplete()&&(db._passage||0)<PASSAGE_GOAL){
+    var newP=advancePassage();
+    if(newP<PASSAGE_GOAL){alert('\uD83C\uDF89 Passage '+newP+'/'+PASSAGE_GOAL+' termin\u00e9 ! Le suivant commence.')}
+    else{alert('\uD83C\uDFC6 F\u00e9licitations ! 3 passages termin\u00e9s ! Tu es pr\u00eat pour le jury.')}
+  }
 }
 
 /* === RESET === */
