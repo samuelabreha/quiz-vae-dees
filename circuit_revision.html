@@ -402,8 +402,16 @@ function saveStep(s){var db=getDB();db._lastStep=s;saveDB(db)}
 function renderResume(){
   var step=getCurrentStep(),d=dueCards().length,w=weakCards().length,n=newCards().length;
   var title,sub;
-  if(d>0){title='\u26A1 '+d+' question'+(d>1?'s':'')+' \u00e0 revoir maintenant';sub='R\u00e9p\u00e9tition espac\u00e9e : renforce ta m\u00e9moire'}
-  else if(step<PARCOURS_ORDER.length){var qz=QUIZZES[PARCOURS_ORDER[step]];title='\u25B6\uFE0F Continue : '+qz.name;sub='\u00c9tape '+(step+1)+'/'+PARCOURS_ORDER.length+' \u2014 '+qz.desc}
+  /* Priorit\u00e9 1 : \u00e9tapes orales non coch\u00e9es */
+  var oralDone=getOralChecked();
+  var firstUnchecked=-1;
+  for(var oi=0;oi<ORAL_STEPS.length;oi++){if(oralDone.indexOf(oi)<0){firstUnchecked=oi;break;}}
+  if(firstUnchecked>=0){
+    title='\uD83C\uDFA4 R\u00e9cite : '+ORAL_STEPS[firstUnchecked].name;
+    sub='\u00c9tape '+(firstUnchecked+1)+'/'+ORAL_STEPS.length+' \u2014 '+ORAL_STEPS[firstUnchecked].desc;
+  }
+  else if(d>0){title='\u26A1 '+d+' question'+(d>1?'s':'')+' \u00e0 revoir maintenant';sub='R\u00e9p\u00e9tition espac\u00e9e : renforce ta m\u00e9moire'}
+  else if(step<PARCOURS_ORDER.length){var qz=QUIZZES[PARCOURS_ORDER[step]];title='\u25B6\uFE0F Continue : '+qz.name;sub='\u00c9tape '+(step+12)+'/26 \u2014 '+qz.desc}
   else if(w>0){title='\uD83D\uDD01 '+w+' question'+(w>1?'s':'')+' fragile'+(w>1?'s':'');sub='Consolide avant de valider'}
   else if(n>0){title='\uD83C\uDD95 Nouvelles questions disponibles';sub=n+' questions \u00e0 d\u00e9couvrir'}
   else{title='\uD83C\uDFC6 Parcours ma\u00eetris\u00e9 !';sub='Continue de r\u00e9viser pour maintenir'}
