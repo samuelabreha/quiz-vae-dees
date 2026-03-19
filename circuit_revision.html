@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Circuit R&eacute;vision &mdash; VAE DEES</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:0 0 60px}
+
+.navbar{width:100%;padding:14px 24px;background:linear-gradient(135deg,#1a1a2e 0%,#2d2d5e 100%);display:flex;justify-content:center;gap:6px;box-shadow:0 4px 20px rgba(0,0,0,.15)}
+.navbar a{text-decoration:none;color:rgba(255,255,255,.7);font-weight:700;font-size:.95rem;padding:10px 28px;border-radius:10px;transition:all .2s;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.navbar a:hover{color:#fff;background:rgba(255,255,255,.1)}
+.navbar a.active{color:#fff;background:rgba(255,255,255,.15);box-shadow:inset 0 -3px 0 #f59e0b}
+.navbar .nav-icon{font-size:1.1rem}
+
+.hero{text-align:center;padding:32px 20px 16px}
+.hero h1{font-size:1.8rem;color:#f59e0b;margin-bottom:8px}
+.hero p{color:#94a3b8;font-size:.95rem}
+
+/* Guide bar */
+.guide-bar{max-width:800px;margin:0 auto 24px;padding:16px 20px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:transform .2s}
+.guide-bar:hover{transform:scale(1.02)}
+.guide-bar .arrow{font-size:2rem}
+.guide-bar .info{flex:1}
+.guide-bar .info h3{font-size:1rem;color:#1a1a2e;margin-bottom:2px}
+.guide-bar .info p{font-size:.82rem;color:#451a03}
+.guide-bar .go{background:#1a1a2e;color:#f59e0b;border:none;padding:10px 20px;border-radius:10px;font-weight:800;font-size:.85rem;cursor:pointer}
+
+/* Stats row */
+.stats{max-width:800px;margin:0 auto 28px;display:flex;gap:10px;padding:0 20px;flex-wrap:wrap}
+.stat-card{flex:1;min-width:120px;background:#1e293b;border-radius:14px;padding:14px;text-align:center}
+.stat-card .num{font-size:1.6rem;font-weight:800;color:#f59e0b}
+.stat-card .label{font-size:.72rem;color:#64748b;margin-top:2px}
+
+/* Tabs */
+.tabs{max-width:800px;margin:0 auto 20px;display:flex;gap:6px;padding:0 20px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tabs button{background:#1e293b;color:#94a3b8;border:none;padding:10px 18px;border-radius:10px;font-weight:700;font-size:.82rem;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s}
+.tabs button.active{background:#f59e0b;color:#1a1a2e}
+
+/* Tree container */
+.tree-container{max-width:800px;margin:0 auto;padding:0 20px}
+
+/* Organigramme tree */
+.tree{position:relative;padding:0}
+.tree-node{position:relative;display:flex;align-items:center;gap:12px;padding:12px 16px;margin:0 0 4px 0;background:#1e293b;border-radius:14px;border-left:4px solid #334155;cursor:pointer;transition:all .3s}
+.tree-node:hover{background:#263348}
+.tree-node.done{border-left-color:#22c55e;background:#1a2e1a}
+.tree-node.current{border-left-color:#f59e0b;background:#2a2210;box-shadow:0 0 20px rgba(245,158,11,.15)}
+.tree-node.locked{opacity:.5}
+.tree-node .icon{font-size:1.4rem;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:#0f172a;flex-shrink:0}
+.tree-node .node-info{flex:1}
+.tree-node .node-info h4{font-size:.9rem;color:#e2e8f0;margin-bottom:2px}
+.tree-node .node-info p{font-size:.72rem;color:#64748b}
+.tree-node .badge{padding:3px 10px;border-radius:20px;font-size:.65rem;font-weight:800;flex-shrink:0}
+.badge-done{background:#22c55e;color:#052e16}
+.badge-next{background:#f59e0b;color:#451a03;animation:pulse 2s infinite}
+.badge-count{background:#334155;color:#94a3b8}
+.badge-locked{background:#1e293b;color:#475569}
+
+/* Connector line */
+.connector{width:3px;height:16px;background:#334155;margin:0 0 0 33px;border-radius:2px}
+.connector.done{background:#22c55e}
+.connector.current{background:#f59e0b}
+
+/* Branch split */
+.branch-split{display:flex;gap:12px;margin:12px 0}
+.branch-split .branch{flex:1;background:#1e293b;border-radius:14px;padding:14px;border-top:3px solid #334155}
+.branch-split .branch h5{font-size:.82rem;color:#e2e8f0;margin-bottom:8px}
+.branch-split .branch-item{font-size:.75rem;color:#94a3b8;padding:6px 10px;background:#0f172a;border-radius:8px;margin-bottom:4px}
+
+/* Memory loop */
+.memory-section{max-width:800px;margin:24px auto 0;padding:0 20px}
+.memory-card{background:linear-gradient(135deg,#1e293b,#0f172a);border:2px solid #334155;border-radius:16px;padding:20px}
+.memory-card h3{font-size:1rem;color:#f59e0b;margin-bottom:12px}
+.memory-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.mem-item{background:#0f172a;border:2px solid #334155;border-radius:10px;padding:10px;text-align:center;font-size:.78rem;transition:all .2s}
+.mem-item .mem-name{color:#e2e8f0;font-weight:700;margin-bottom:4px}
+.mem-item .mem-count{color:#64748b;font-size:.7rem}
+.mem-item .mem-bar{height:4px;background:#1e293b;border-radius:4px;margin-top:6px;overflow:hidden}
+.mem-item .mem-fill{height:100%;border-radius:4px;transition:width .5s}
+.mem-fill-low{background:#ef4444;width:20%}
+.mem-fill-mid{background:#f59e0b;width:60%}
+.mem-fill-high{background:#22c55e;width:100%}
+
+/* Reset */
+.reset-row{max-width:800px;margin:24px auto 0;padding:0 20px;text-align:center}
+.reset-btn{background:#1e293b;color:#64748b;border:2px solid #334155;padding:10px 20px;border-radius:10px;font-size:.8rem;cursor:pointer;transition:all .2s}
+.reset-btn:hover{border-color:#ef4444;color:#ef4444}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+@media(max-width:640px){
+  body{padding:0 0 40px}
+  .navbar{padding:10px 12px;gap:4px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;justify-content:flex-start}
+  .navbar a{padding:8px 14px;font-size:.78rem;white-space:nowrap;flex-shrink:0}
+  .hero h1{font-size:1.4rem}
+  .stats{gap:6px}
+  .stat-card{min-width:80px;padding:10px 6px}
+  .stat-card .num{font-size:1.2rem}
+  .branch-split{flex-direction:column}
+  .memory-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+<a href="Top_r%C3%A9visions.html"><span class="nav-icon">&#11088;</span> Top R&eacute;visions</a>
+<a href="index.html"><span class="nav-icon">&#128221;</span> Quiz</a>
+<a href="revision.html"><span class="nav-icon">&#128640;</span> R&eacute;vision</a>
+<a href="educateurs_specialises.html"><span class="nav-icon">&#127922;</span> Jeu ES</a>
+<a href="quiz_oral.html"><span class="nav-icon">&#127908;</span> Oral</a>
+<a href="circuit_revision.html" class="active"><span class="nav-icon">&#128736;</span> Circuit</a>
+<a href="audio.html"><span class="nav-icon">&#127911;</span> Audio</a>
+</nav>
+
+<div class="hero">
+<h1>&#128736; Circuit R&eacute;vision</h1>
+<p>Ton GPS de r&eacute;vision &mdash; suis le chemin, m&eacute;morise, progresse</p>
+</div>
+
+<div class="guide-bar" id="guideBar" onclick="goNext()">
+<div class="arrow">&#9654;&#65039;</div>
+<div class="info">
+<h3 id="guideTitle">Chargement...</h3>
+<p id="guideSub"></p>
+</div>
+<button class="go">LANCER</button>
+</div>
+
+<div class="stats">
+<div class="stat-card"><div class="num" id="statDone">0</div><div class="label">Termin&eacute;s</div></div>
+<div class="stat-card"><div class="num" id="statTotal">7</div><div class="label">Quiz total</div></div>
+<div class="stat-card"><div class="num" id="statCycle">1</div><div class="label">Cycle</div></div>
+<div class="stat-card"><div class="num" id="statStreak">0</div><div class="label">S&eacute;rie</div></div>
+</div>
+
+<div class="tabs">
+<button class="active" onclick="showTab(0)">&#127919; Parcours</button>
+<button onclick="showTab(1)">&#127908; Oral</button>
+<button onclick="showTab(2)">&#10067; Questions Jury</button>
+<button onclick="showTab(3)">&#129504; M&eacute;moire</button>
+</div>
+
+<!-- TAB 0 : PARCOURS GLOBAL -->
+<div class="tree-container" id="tab0">
+<div class="tree" id="mainTree"></div>
+</div>
+
+<!-- TAB 1 : ORAL -->
+<div class="tree-container" id="tab1" style="display:none">
+<div class="tree" id="oralTree"></div>
+</div>
+
+<!-- TAB 2 : QUESTIONS JURY -->
+<div class="tree-container" id="tab2" style="display:none">
+<div class="branch-split">
+<div class="branch" style="border-color:#8b5cf6">
+<h5>&#129504; DC1 &mdash; Relation</h5>
+<div class="branch-item">Accompagnement</div>
+<div class="branch-item">Positionnement</div>
+<div class="branch-item">Analyse de pratique</div>
+<div class="branch-item">Juste distance</div>
+<div class="branch-item">&Eacute;coute active</div>
+</div>
+<div class="branch" style="border-color:#06b6d4">
+<h5>&#128736; DC2 &mdash; Projet</h5>
+<div class="branch-item">Projet &eacute;ducatif</div>
+<div class="branch-item">M&eacute;thodologie (7 &eacute;tapes)</div>
+<div class="branch-item">Organisation</div>
+<div class="branch-item">Co-construction</div>
+<div class="branch-item">&Eacute;valuation</div>
+</div>
+</div>
+<div class="branch-split">
+<div class="branch" style="border-color:#22c55e">
+<h5>&#129309; DC3 &mdash; &Eacute;quipe</h5>
+<div class="branch-item">Travail en &eacute;quipe</div>
+<div class="branch-item">Communication pro</div>
+<div class="branch-item">Transmissions</div>
+<div class="branch-item">R&eacute;gulation</div>
+<div class="branch-item">Coh&eacute;rence &eacute;ducative</div>
+</div>
+<div class="branch" style="border-color:#f59e0b">
+<h5>&#128202; DC4 &mdash; R&eacute;seau</h5>
+<div class="branch-item">Partenariat</div>
+<div class="branch-item">Familles</div>
+<div class="branch-item">Institutions</div>
+<div class="branch-item">Politiques sociales</div>
+<div class="branch-item">Orientation / relais</div>
+</div>
+</div>
+</div>
+
+<!-- TAB 3 : MEMOIRE -->
+<div class="tree-container" id="tab3" style="display:none">
+<div class="memory-card">
+<h3>&#129504; Boucle M&eacute;moire &mdash; Force de r&eacute;tention</h3>
+<div class="memory-grid" id="memGrid"></div>
+</div>
+</div>
+
+<div class="reset-row">
+<button class="reset-btn" onclick="resetAll()">&#128260; R&eacute;initialiser tout le circuit</button>
+</div>
+
+<script>
+var QUIZZES = [
+  {id:'lois', name:'Lois & Concepts', icon:'&#9878;', link:'revision.html', desc:'Loi 2002-2, RGPD, loi 2007, art. 226-14'},
+  {id:'posture', name:'Posture & DC', icon:'&#128736;', link:'revision.html', desc:'4 DC, ajustement, relation de confiance'},
+  {id:'jury', name:'Questions Jury', icon:'&#9889;', link:'revision.html', desc:'Autisme, DEES, secret, projet'},
+  {id:'situations', name:'Relecture Situations', icon:'&#128214;', link:'revision.html', desc:'N., R., M., B., A. - vos situations'},
+  {id:'livret', name:'Livret & Jury', icon:'&#128270;', link:'revision.html', desc:'Transfert, autonomie, outils, limites'},
+  {id:'simulation', name:'Simulation Jury', icon:'&#127891;', link:'revision.html', desc:'Discours ES, arguments, cadre'},
+  {id:'pieges', name:'Pi\u00e8ges Jury', icon:'&#9888;', link:'revision.html', desc:'Retrait, observation fine, \u00e9motions'}
+];
+
+var ORAL_STEPS = [
+  {name:'Introduction', icon:'&#128075;', desc:'Pr\u00e9sentation, excuses anonymisation, parcours'},
+  {name:'Fonction scolaire \u2013 AIS/DIP', icon:'&#127979;', desc:'Remplacant AIS depuis 2018, \u00e9l\u00e8ves \u00e0 besoins sp\u00e9cifiques'},
+  {name:'Socio-\u00e9ducatif \u2013 FASe/FINC', icon:'&#127968;', desc:'Moniteur depuis 2014, maisons de quartier, lien et m\u00e9diation'},
+  {name:'Sport \u2013 Basket', icon:'&#127936;', desc:'Jeunes 12-20 ans, outil \u00e9ducatif, coop\u00e9ration'},
+  {name:'Fil rouge', icon:'&#129517;', desc:'Accompagnement, inclusion, relation, d\u00e9veloppement'},
+  {name:'D\u00e9buts \u2013 Service civil', icon:'&#128161;', desc:'2013-2014, d\u00e9clic, gestion des conflits'},
+  {name:'Pr\u00e9vention \u2013 Transit', icon:'&#128694;', desc:'Travail hors murs, compr\u00e9hension des jeunes'},
+  {name:'Formations', icon:'&#127891;', desc:'HETS, Jeunesse+Sport, TSA, agressivit\u00e9'},
+  {name:'Situation pr\u00e9sent\u00e9e', icon:'&#128214;', desc:'Match U15, crise, \u00e9motions (optionnel)'},
+  {name:'R\u00e9ponse \u00e9ducative', icon:'&#129309;', desc:'S\u00e9curiser, analyser, m\u00e9diation (optionnel)'},
+  {name:'Posture + remerciement', icon:'&#127775;', desc:'Respect, adaptation, projection, merci'}
+];
+
+function getData(){
+  try{return JSON.parse(localStorage.getItem('circuit_data'))||{}}catch(e){return {}}
+}
+function saveData(d){localStorage.setItem('circuit_data',JSON.stringify(d))}
+
+function getQuizCount(id){var d=getData();return (d[id]||0)}
+function markQuizDone(id){var d=getData();d[id]=(d[id]||0)+1;saveData(d)}
+function getCycle(){var d=getData();var min=999;QUIZZES.forEach(function(q){var c=d[q.id]||0;if(c<min)min=c});return min+1}
+function getNextQuiz(){var d=getData();var min=999;QUIZZES.forEach(function(q){var c=d[q.id]||0;if(c<min)min=c});for(var i=0;i<QUIZZES.length;i++){if((d[QUIZZES[i].id]||0)===min)return i}return 0}
+function getDoneCount(){var d=getData();var cycle=getCycle()-1;var count=0;QUIZZES.forEach(function(q){if((d[q.id]||0)>cycle)count++});return count}
+
+function renderMainTree(){
+  var tree=document.getElementById('mainTree');
+  var nextIdx=getNextQuiz();
+  var d=getData();
+  var cycle=getCycle()-1;
+  var html='';
+  QUIZZES.forEach(function(q,i){
+    var count=d[q.id]||0;
+    var doneThisCycle=count>cycle;
+    var isCurrent=i===nextIdx;
+    var cls=doneThisCycle?'done':isCurrent?'current':'';
+    var badge='';
+    if(doneThisCycle) badge='<span class="badge badge-done">&#10003; Fait ('+count+'x)</span>';
+    else if(isCurrent) badge='<span class="badge badge-next">&#9654; SUIVANT</span>';
+    else badge='<span class="badge badge-count">'+count+'x</span>';
+    html+='<div class="tree-node '+cls+'" onclick="launchQuiz('+i+')">';
+    html+='<div class="icon">'+q.icon+'</div>';
+    html+='<div class="node-info"><h4>'+q.name+'</h4><p>'+q.desc+'</p></div>';
+    html+=badge;
+    html+='</div>';
+    if(i<QUIZZES.length-1){
+      var connCls=doneThisCycle?'done':isCurrent?'current':'';
+      html+='<div class="connector '+connCls+'"></div>';
+    }
+  });
+  tree.innerHTML=html;
+}
+
+function renderOralTree(){
+  var tree=document.getElementById('oralTree');
+  var html='';
+  ORAL_STEPS.forEach(function(s,i){
+    html+='<div class="tree-node">';
+    html+='<div class="icon">'+s.icon+'</div>';
+    html+='<div class="node-info"><h4>'+(i+1)+'. '+s.name+'</h4><p>'+s.desc+'</p></div>';
+    html+='<span class="badge badge-count">~30s</span>';
+    html+='</div>';
+    if(i<ORAL_STEPS.length-1) html+='<div class="connector"></div>';
+  });
+  tree.innerHTML=html;
+}
+
+function renderMemory(){
+  var grid=document.getElementById('memGrid');
+  var d=getData();
+  var html='';
+  QUIZZES.forEach(function(q){
+    var count=d[q.id]||0;
+    var lvl=count===0?'low':count<3?'mid':'high';
+    var pct=Math.min(count*33,100);
+    html+='<div class="mem-item">';
+    html+='<div class="mem-name">'+q.icon+' '+q.name+'</div>';
+    html+='<div class="mem-count">'+count+' passage'+(count>1?'s':'')+'</div>';
+    html+='<div class="mem-bar"><div class="mem-fill mem-fill-'+lvl+'" style="width:'+pct+'%"></div></div>';
+    html+='</div>';
+  });
+  grid.innerHTML=html;
+}
+
+function updateStats(){
+  var done=getDoneCount();
+  document.getElementById('statDone').textContent=done;
+  document.getElementById('statTotal').textContent=QUIZZES.length;
+  document.getElementById('statCycle').textContent=getCycle();
+  var d=getData();var total=0;QUIZZES.forEach(function(q){total+=(d[q.id]||0)});
+  document.getElementById('statStreak').textContent=total;
+}
+
+function updateGuide(){
+  var idx=getNextQuiz();
+  var q=QUIZZES[idx];
+  document.getElementById('guideTitle').innerHTML='&#9654; Prochain : '+q.name;
+  document.getElementById('guideSub').textContent=q.desc;
+}
+
+function goNext(){
+  var idx=getNextQuiz();
+  launchQuiz(idx);
+}
+
+function launchQuiz(idx){
+  var q=QUIZZES[idx];
+  markQuizDone(q.id);
+  window.location.href=q.link;
+}
+
+function showTab(n){
+  for(var i=0;i<4;i++){
+    document.getElementById('tab'+i).style.display=i===n?'block':'none';
+  }
+  document.querySelectorAll('.tabs button').forEach(function(b,i){b.classList.toggle('active',i===n)});
+}
+
+function resetAll(){
+  if(confirm('R\u00e9initialiser tout le circuit ? Toutes les donn\u00e9es de progression seront perdues.')){
+    localStorage.removeItem('circuit_data');
+    renderAll();
+  }
+}
+
+function renderAll(){
+  renderMainTree();
+  renderOralTree();
+  renderMemory();
+  updateStats();
+  updateGuide();
+}
+
+renderAll();
+</script>
+<script src="mentor.js"></script>
+</body>
+</html>
