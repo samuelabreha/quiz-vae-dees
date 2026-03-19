@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jeu Organigramme &mdash; &Eacute;ducateur Sp&eacute;cialis&eacute;</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 20px 40px}
+
+.navbar{width:100vw;margin:0 -20px 24px;padding:14px 24px;background:linear-gradient(135deg,#1a1a2e 0%,#2d2d5e 100%);display:flex;justify-content:center;gap:6px;box-shadow:0 4px 20px rgba(0,0,0,.15)}
+.navbar a{text-decoration:none;color:rgba(255,255,255,.7);font-weight:700;font-size:.95rem;padding:10px 28px;border-radius:10px;transition:all .2s;display:flex;align-items:center;gap:8px}
+.navbar a:hover{color:#fff;background:rgba(255,255,255,.1)}
+.navbar a.active{color:#fff;background:rgba(255,255,255,.15);box-shadow:inset 0 -3px 0 #7c3aed}
+.navbar .nav-icon{font-size:1.1rem}
+
+h1{font-size:1.5rem;color:#1a1a2e;margin:12px 0 4px;text-align:center}
+p.sub{font-size:.9rem;color:#666;margin-bottom:18px;text-align:center}
+
+.page-wrap{max-width:960px;width:100%}
+
+/* Tree root */
+.tree-root{text-align:center;margin-bottom:14px}
+.tree-root-label{display:inline-block;padding:12px 28px;background:linear-gradient(135deg,#1a1a2e,#2d2d5e);color:#fff;font-size:1.1rem;font-weight:800;border-radius:14px;letter-spacing:.5px}
+.tree-line-down{width:3px;height:16px;background:#1a1a2e;margin:0 auto}
+
+/* Branches grid */
+.branches-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-bottom:20px}
+
+.branch-card{background:#fff;border-radius:16px;box-shadow:0 4px 18px rgba(0,0,0,.07);overflow:hidden;transition:transform .2s}
+.branch-header{padding:12px 16px;color:#fff;font-weight:800;font-size:.92rem;display:flex;align-items:center;gap:8px;cursor:pointer;transition:opacity .2s}
+.branch-header:hover{opacity:.85}
+.branch-header .play-icon{margin-left:auto;font-size:.8rem;opacity:.7}
+.branch-items{padding:6px 14px 12px}
+.branch-item{padding:7px 12px;margin:4px 0;border-radius:10px;font-size:.82rem;font-weight:600;border:2px solid #e2e8f0;color:#1a1a2e;transition:all .3s;display:flex;align-items:center;gap:8px}
+.branch-item .item-num{width:20px;height:20px;border-radius:50%;background:#e2e8f0;color:#666;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.branch-item.revealed{border-color:var(--bc);background:color-mix(in srgb,var(--bc) 8%,white)}
+.branch-item.revealed .item-num{background:var(--bc);color:#fff}
+.branch-item.hidden{border-color:#e2e8f0;background:#f8fafc;color:#cbd5e1}
+.branch-item.hidden .item-num{background:#e2e8f0;color:#94a3b8}
+.branch-item.hidden .item-text{filter:blur(5px);user-select:none}
+.branch-item.current{border-color:var(--bc);animation:pulse 1.2s infinite;background:#fff}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--bc) 30%,transparent)}50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--bc) 0%,transparent)}}
+
+.branch-score{text-align:center;padding:6px 0 10px;font-size:.78rem;font-weight:700;color:#888}
+.branch-score.done{color:#059669}
+
+/* Game overlay */
+.game-overlay{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;box-shadow:0 -8px 40px rgba(0,0,0,.15);padding:20px 24px 28px;z-index:100;max-width:600px;margin:0 auto}
+.game-overlay.active{display:block;animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.game-q{font-size:1rem;font-weight:700;color:#1a1a2e;text-align:center;margin-bottom:16px;line-height:1.4}
+.game-choices{display:flex;gap:12px;justify-content:center;margin-bottom:12px}
+.game-choice{flex:1;max-width:260px;padding:16px 14px;border:3px solid #e2e8f0;border-radius:14px;background:#fff;font-size:.92rem;font-weight:700;cursor:pointer;transition:all .2s;text-align:center;color:#1a1a2e}
+.game-choice:hover{border-color:#7c3aed;background:#f5f3ff;transform:translateY(-2px)}
+.game-choice.correct{border-color:#059669;background:#ecfdf5;color:#059669}
+.game-choice.wrong{border-color:#dc2626;background:#fef2f2;color:#dc2626}
+.game-choice.disabled{pointer-events:none}
+.game-fb{text-align:center;min-height:30px;font-size:.85rem;font-weight:700}
+.game-fb.ok{color:#059669}
+.game-fb.ko{color:#dc2626}
+.game-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:1.3rem;cursor:pointer;color:#888;padding:4px}
+.game-close:hover{color:#1a1a2e}
+
+/* Global score */
+.global-bar{text-align:center;margin:16px 0;padding:14px 20px;background:#fff;border-radius:14px;box-shadow:0 4px 18px rgba(0,0,0,.07)}
+.global-bar .gb-text{font-size:.9rem;color:#555}
+.global-bar .gb-text strong{color:#7c3aed}
+.global-bar .gb-fill-wrap{height:10px;background:#e2e8f0;border-radius:10px;margin-top:8px;overflow:hidden}
+.global-bar .gb-fill{height:100%;background:linear-gradient(90deg,#7c3aed,#a78bfa);border-radius:10px;transition:width .5s ease}
+
+.reset-all{display:block;margin:12px auto 0;padding:10px 24px;background:#e2e8f0;border:none;border-radius:10px;font-size:.85rem;font-weight:700;cursor:pointer;color:#1a1a2e}
+.reset-all:hover{background:#cbd5e1}
+
+@media(max-width:640px){
+  body{padding:0 10px 24px}
+  .branches-grid{grid-template-columns:1fr}
+  .navbar a{padding:8px 12px;font-size:.8rem}
+  .game-choices{flex-direction:column;align-items:center}
+  .game-choice{max-width:100%;width:100%}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+<a href="Top_r%C3%A9visions.html"><span class="nav-icon">&#11088;</span> Top R&eacute;visions</a>
+<a href="index.html"><span class="nav-icon">&#128221;</span> Quiz</a>
+<a href="revision.html"><span class="nav-icon">&#128640;</span> R&eacute;vision</a>
+<a href="%C3%A9ducateurs_sp%C3%A9cialis%C3%A9s.html" class="active"><span class="nav-icon">&#127922;</span> Jeu ES</a>
+<a href="audio.html"><span class="nav-icon">&#127911;</span> Audio</a>
+</nav>
+
+<h1>&#127922; Jeu Organigramme</h1>
+<p class="sub">Clique sur une branche pour tester ta m&eacute;moire</p>
+
+<div class="page-wrap">
+
+<div class="tree-root">
+  <div class="tree-root-label">&#127795; &Eacute;DUCATEUR SP&Eacute;CIALIS&Eacute;</div>
+  <div class="tree-line-down"></div>
+</div>
+
+<div class="branches-grid" id="branchesGrid"></div>
+
+<div class="global-bar" id="globalBar">
+  <div class="gb-text" id="gbText"></div>
+  <div class="gb-fill-wrap"><div class="gb-fill" id="gbFill" style="width:0%"></div></div>
+</div>
+
+<button class="reset-all" onclick="resetAll()">&#128260; Tout recommencer</button>
+
+</div>
+
+<!-- Game panel (slides up from bottom) -->
+<div class="game-overlay" id="gameOverlay">
+  <button class="game-close" onclick="closeGame()">&times;</button>
+  <div class="game-q" id="gameQ"></div>
+  <div class="game-choices" id="gameChoices"></div>
+  <div class="game-fb" id="gameFb"></div>
+</div>
+
+<script>
+var branches = [
+  {name:"Posture", icon:"\uD83D\uDCAA", color:"#7c3aed",
+   items:["&Eacute;coute active","Respect inconditionnel","Juste distance","Ajustement permanent","S&eacute;curit&eacute; affective","Retrait progressif"]},
+  {name:"M&eacute;thode", icon:"\uD83D\uDEE0", color:"#0891b2",
+   items:["Observation fine","D&eacute;marche de projet (7 &eacute;t.)","Indicateurs observables","&Eacute;valuation crois&eacute;e","Co-construction"]},
+  {name:"Cadre", icon:"\u2696", color:"#dc2626",
+   items:["Loi 2002-2","Loi 2007","RGPD","Art. 226-14","Secret professionnel","&Eacute;thique"]},
+  {name:"Relation &eacute;ducative", icon:"\uD83E\uDD1D", color:"#059669",
+   items:["Relation de confiance","Autonomie (pas faire &agrave; la place)","Inclusion r&eacute;elle","Pr&eacute;vention (pas r&eacute;action)","Approche par les ressources"]},
+  {name:"&Eacute;quipe pluripro", icon:"\uD83D\uDC65", color:"#d97706",
+   items:["Transmissions","R&eacute;gulation d'&eacute;quipe","Coordination","Analyse de pratique","Coh&eacute;rence &eacute;ducative"]},
+  {name:"R&eacute;seau / Partenariat", icon:"\uD83C\uDF10", color:"#b91c1c",
+   items:["Familles","Institutions","Territoire","Politiques sociales","Orientation / relais"]},
+  {name:"Les 4 DC", icon:"\uD83C\uDFAF", color:"#2563eb",
+   items:["DC1 : Relation &eacute;ducative","DC2 : Projet &eacute;ducatif","DC3 : Communication pro","DC4 : Dynamiques interinstitutionnelles"]}
+];
+
+var distractors = [
+  ["Autorit&eacute; directive","Improvisation","Neutralit&eacute;","Distance maximale","Fusion affective","Contr&ocirc;le total"],
+  ["Intuition seule","Prescription m&eacute;dicale","Bilan annuel unique","Protocole fig&eacute;","D&eacute;cision unilat&eacute;rale"],
+  ["Loi 1998","Code du commerce","Loi 2015","Charte olympique","R&egrave;glement int&eacute;rieur","Convention collective"],
+  ["D&eacute;pendance &agrave; l'adulte","Exclusion temporaire","R&eacute;action punitive","Surprotection","Approche par les d&eacute;ficits"],
+  ["Travail isol&eacute;","Rapport hi&eacute;rarchique","D&eacute;cision individuelle","Silence professionnel","Comp&eacute;tition d'&eacute;quipe"],
+  ["Travail seul","Aucun lien externe","Autosuffisance","Rejet des partenaires","Fermeture institutionnelle"],
+  ["DC5 : Animation","DC1 : Gestion financi&egrave;re","DC2 : Th&eacute;rapie","DC3 : Direction","DC4 : Logistique"]
+];
+
+var state = [];
+var playingBranch = -1;
+var playingStep = 0;
+var playingScore = 0;
+var waiting = false;
+
+function init(){
+  state = [];
+  for(var i=0;i<branches.length;i++){
+    state.push({revealed:0, score:null, done:false});
+  }
+  render();
+}
+
+function render(){
+  var html='';
+  for(var i=0;i<branches.length;i++){
+    var b=branches[i], s=state[i];
+    html+='<div class="branch-card">';
+    html+='<div class="branch-header" style="background:'+b.color+'" onclick="startBranch('+i+')">';
+    html+=b.icon+' '+b.name;
+    html+='<span class="play-icon">'+(s.done?'&#9989;':'&#9654; Jouer')+'</span>';
+    html+='</div>';
+    html+='<div class="branch-items">';
+    for(var j=0;j<b.items.length;j++){
+      var cls='branch-item';
+      var isCurrent=(playingBranch===i && j===playingStep && !s.done);
+      if(j<s.revealed){
+        cls+=' revealed';
+      } else if(isCurrent){
+        cls+=' current';
+      } else {
+        cls+=' hidden';
+      }
+      html+='<div class="'+cls+'" style="--bc:'+b.color+'">';
+      html+='<span class="item-num">'+(j+1)+'</span>';
+      html+='<span class="item-text">'+b.items[j]+'</span>';
+      html+='</div>';
+    }
+    html+='</div>';
+    if(s.done){
+      html+='<div class="branch-score done">&#9989; '+s.score+' / '+b.items.length+'</div>';
+    } else {
+      html+='<div class="branch-score">'+s.revealed+' / '+b.items.length+'</div>';
+    }
+    html+='</div>';
+  }
+  document.getElementById('branchesGrid').innerHTML=html;
+  updateGlobal();
+}
+
+function updateGlobal(){
+  var total=0, found=0, doneCount=0;
+  for(var i=0;i<branches.length;i++){
+    total+=branches[i].items.length;
+    found+=state[i].revealed;
+    if(state[i].done) doneCount++;
+  }
+  var pct=total>0?Math.round(found/total*100):0;
+  var txt='<strong>'+found+' / '+total+'</strong> mots trouv&eacute;s &mdash; '+doneCount+' / '+branches.length+' branches';
+  if(doneCount===branches.length) txt='&#127942; <strong>Bravo ! Organigramme complet !</strong> '+found+'/'+total+' mots';
+  document.getElementById('gbText').innerHTML=txt;
+  document.getElementById('gbFill').style.width=pct+'%';
+}
+
+function startBranch(idx){
+  var b=branches[idx], s=state[idx];
+  if(s.done){
+    /* Reset this branch to replay */
+    s.revealed=0; s.score=null; s.done=false;
+  }
+  playingBranch=idx;
+  playingStep=s.revealed;
+  playingScore=0;
+  waiting=false;
+  render();
+  showStep();
+}
+
+function showStep(){
+  var b=branches[playingBranch];
+  if(playingStep>=b.items.length){
+    finishBranch();
+    return;
+  }
+  var overlay=document.getElementById('gameOverlay');
+  overlay.classList.add('active');
+  var ord=playingStep===0?'1er':(playingStep+1)+'e';
+  document.getElementById('gameQ').innerHTML='Quel est le <strong>'+ord+'</strong> &eacute;l&eacute;ment de <strong>'+b.name+'</strong> ?';
+
+  var correct=b.items[playingStep];
+  /* Build distractor pool */
+  var pool=distractors[playingBranch].slice();
+  for(var j=0;j<branches.length;j++){
+    if(j!==playingBranch){
+      for(var k=0;k<branches[j].items.length;k++) pool.push(branches[j].items[k]);
+    }
+  }
+  pool=pool.filter(function(x){return x!==correct});
+  var wrong=pool[Math.floor(Math.random()*pool.length)];
+  var pair=Math.random()<0.5?[correct,wrong]:[wrong,correct];
+
+  var ch='';
+  ch+='<button class="game-choice" onclick="pick(this,'+(pair[0]===correct?1:0)+')">'+pair[0]+'</button>';
+  ch+='<button class="game-choice" onclick="pick(this,'+(pair[1]===correct?1:0)+')">'+pair[1]+'</button>';
+  document.getElementById('gameChoices').innerHTML=ch;
+  document.getElementById('gameFb').innerHTML='';
+  document.getElementById('gameFb').className='game-fb';
+  waiting=false;
+}
+
+function pick(btn,isCorrect){
+  if(waiting)return;
+  waiting=true;
+  var btns=document.querySelectorAll('.game-choice');
+  btns.forEach(function(b){b.classList.add('disabled')});
+  var fb=document.getElementById('gameFb');
+  if(isCorrect){
+    btn.classList.add('correct');
+    playingScore++;
+    state[playingBranch].revealed=playingStep+1;
+    fb.className='game-fb ok';
+    fb.innerHTML='&#9989; Correct !';
+  } else {
+    btn.classList.add('wrong');
+    btns.forEach(function(b){if(!b.classList.contains('wrong'))b.classList.add('correct')});
+    state[playingBranch].revealed=playingStep+1;
+    fb.className='game-fb ko';
+    fb.innerHTML='&#10060; C\'&eacute;tait : '+branches[playingBranch].items[playingStep];
+  }
+  render();
+  setTimeout(function(){
+    playingStep++;
+    if(playingStep>=branches[playingBranch].items.length){
+      finishBranch();
+    } else {
+      showStep();
+    }
+  },1200);
+}
+
+function finishBranch(){
+  state[playingBranch].done=true;
+  state[playingBranch].score=playingScore;
+  state[playingBranch].revealed=branches[playingBranch].items.length;
+  document.getElementById('gameOverlay').classList.remove('active');
+  playingBranch=-1;
+  render();
+}
+
+function closeGame(){
+  document.getElementById('gameOverlay').classList.remove('active');
+  playingBranch=-1;
+  render();
+}
+
+function resetAll(){
+  init();
+}
+
+init();
+</script>
+<script src="mentor.js"></script>
+</body>
+</html>
