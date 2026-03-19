@@ -440,6 +440,12 @@ function renderParcours(){
   h+='<div class="branch-side"><h5>\uD83D\uDD04 R\u00e9vision cibl\u00e9e</h5><div class="branch-node" onclick="launchType(\'due\')">'+dueCards().length+' questions dues</div></div>';
   h+='<div class="branch-side"><h5>\uD83E\uDDE0 Quiz faibles</h5><div class="branch-node" onclick="launchType(\'consol\')">'+weakCards().length+' questions fragiles</div></div>';
   h+='</div>';
+  var errCount=weakCards().length;
+  h+='<div class="connector" style="border-color:#ef4444"></div>';
+  h+='<div class="tree-node '+(errCount>0?'current':'done')+'" style="border-left-color:#ef4444;cursor:pointer" onclick="launchErrors()">';
+  h+='<div class="icon">\u274C</div><div class="node-info"><h4>QUIZ DES ERREURS</h4>';
+  h+='<p>'+(errCount>0?errCount+' question'+(errCount>1?'s':'')+' rat\u00e9e'+(errCount>1?'s':'')+' \u00e0 retravailler':'Aucune erreur \u2014 Bravo !')+'</p></div>';
+  h+='<span class="badge '+(errCount>0?'badge-current':'badge-done')+'">'+(errCount>0?'\u25B6 LANCER':'\u2705 0')+'</span></div>';
   h+='<div class="connector"></div>';
   h+='<div class="tree-node" style="border-left-color:#06b6d4"><div class="icon">\uD83D\uDD01</div><div class="node-info"><h4>Repasser le cycle</h4><p>Reprendre depuis le d\u00e9but avec r\u00e9p\u00e9tition espac\u00e9e</p></div></div>';
   h+='<div class="connector"></div>';
@@ -571,6 +577,11 @@ function startSession(cards,type,title){
 
 function launchSmart(){var s=buildSession('smart');if(s)startSession(s.cards,s.type)}
 function launchType(type){var s=buildSession(type);if(s)startSession(s.cards,s.type)}
+function launchErrors(){
+  var cards=weakCards();
+  if(cards.length===0){alert('Aucune question fausse ! Bravo !');return}
+  startSession(cards,'errors','❌ Quiz des erreurs — '+cards.length+' question'+(cards.length>1?'s':''));
+}
 function launchQuiz(qi){
   var cards=[];for(var j=0;j<ALL_QUESTIONS[qi].length;j++)cards.push({qi:qi,qj:j,c:getCard(qi,j),q:ALL_QUESTIONS[qi][j]});
   startSession(cards,'quiz',QUIZZES[qi].icon+' '+QUIZZES[qi].name);
@@ -628,8 +639,10 @@ function showResult(){
   var msg=pct>=80?'Excellent ! M\u00e9moire renforc\u00e9e !':pct>=60?'Bien ! Encore un passage.':'Continue, tu progresses !';
   document.getElementById('qFill').style.width='100%';
   document.getElementById('qText').textContent='Termin\u00e9 !';
+  var errCount=weakCards().length;
   var h='<div class="quiz-result"><div class="quiz-score">'+sesScore+'/'+total+'</div>';
   h+='<div class="quiz-score-label">'+pct+'% \u2014 '+msg+'</div>';
+  if(errCount>0&&sesType!=='errors'){h+='<button class="quiz-return" style="background:#ef4444;margin-bottom:10px" onclick="launchErrors()">\u274C Revoir mes '+errCount+' erreur'+(errCount>1?'s':'')+' \u2192</button>';}
   h+='<button class="quiz-return" onclick="showMain()">\u2713 Retour au circuit</button></div>';
   document.getElementById('quizBody').innerHTML=h;
   if(sesType==='parcours'){var step=getCurrentStep();if(pct>=50&&step<PARCOURS_ORDER.length){saveStep(step+1)}}
