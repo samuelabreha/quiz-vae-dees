@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Mon Livret 2 (Jury VAE DEES)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;min-height:100vh}
+.container{max-width:760px;margin:0 auto;padding:24px 16px}
+.back-link{display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;color:#1e40af;text-decoration:none;font-size:.9rem}
+.back-link:hover{text-decoration:underline}
+h1{font-size:1.5rem;color:#1a1a2e;margin-bottom:4px;text-align:center}
+.subtitle{font-size:.92rem;color:#666;margin-bottom:10px;text-align:center}
+.desc{font-size:.9rem;color:#444;margin:0 auto 18px;max-width:700px;text-align:center;line-height:1.6}
+.hidden{display:none}
+.welcome-card{background:#fff;border-radius:16px;padding:30px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.06);border-top:4px solid #1e40af}
+.welcome-card h2{margin:12px 0 8px;font-size:1.25rem;color:#1a1a2e}
+.welcome-card p{color:#666;font-size:.9rem;margin-bottom:6px;line-height:1.5}
+.badge-red{display:inline-block;padding:5px 16px;border-radius:20px;font-size:.75rem;font-weight:800;color:#fff;background:#1e40af}
+.info-row{display:flex;justify-content:center;gap:18px;margin:16px 0;font-size:.85rem;color:#666;flex-wrap:wrap}
+.info-row span{display:flex;align-items:center;gap:4px}
+.btn-start{display:inline-block;margin-top:18px;padding:14px 36px;background:#1e40af;color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:800;cursor:pointer;transition:background .2s}
+.btn-start:hover{background:#1e3a8a}
+.progress-bar{height:6px;background:#e5e7eb;border-radius:3px;margin-bottom:8px;overflow:hidden}
+.progress-fill{height:100%;background:#1e40af;border-radius:3px;transition:width .3s}
+.progress-text{font-size:.8rem;color:#999;margin-bottom:16px;text-align:right}
+.timer{font-size:.8rem;color:#1e40af;text-align:center;margin-bottom:12px;font-weight:800}
+.q-card{background:#fff;border-radius:16px;padding:26px;box-shadow:0 2px 16px rgba(0,0,0,.06)}
+.q-number{font-size:.8rem;color:#1e40af;font-weight:900;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.q-label{display:inline-block;padding:3px 10px;border-radius:8px;font-size:.75rem;font-weight:900;color:#fff;background:#1e40af;margin-bottom:12px}
+.q-text{font-size:1.02rem;color:#1a1a2e;line-height:1.7;margin-bottom:16px;white-space:pre-line}
+.options{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.opt{padding:14px 18px;border:2px solid #e5e7eb;border-radius:12px;cursor:pointer;font-size:.95rem;color:#333;transition:all .15s;background:#fff}
+.opt:hover:not(.disabled){border-color:#1e40af;background:#eff6ff}
+.opt.correct{border-color:#059669;background:#d1fae5;color:#065f46;font-weight:800}
+.opt.wrong{border-color:#dc2626;background:#fef2f2;color:#dc2626}
+.opt.disabled{cursor:default}
+.opt.disabled:not(.correct):not(.wrong){opacity:.6}
+.answer-section{display:none;margin-top:18px;padding:16px 16px;background:#eff6ff;border-radius:12px;border-left:4px solid #1e40af}
+.answer-section h3{font-size:.9rem;color:#1e40af;margin-bottom:8px;font-weight:900}
+.answer-section p{font-size:.9rem;color:#333;line-height:1.7;margin-bottom:6px}
+.answer-section strong{color:#1e3a8a}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:18px;gap:12px}
+.btn-nav{padding:10px 22px;border:2px solid #1e40af;color:#1e40af;background:#fff;border-radius:10px;font-size:.9rem;cursor:pointer;transition:all .2s;font-weight:900}
+.btn-nav:hover{background:#eff6ff}
+.btn-nav.primary{background:#1e40af;color:#fff;border-color:#1e40af}
+.btn-nav.primary:hover{background:#1e3a8a}
+.result-card{background:#fff;border-radius:16px;padding:30px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.06);border-top:4px solid #1e40af}
+.score-big{font-size:2.6rem;font-weight:900;color:#1e40af;margin:14px 0 6px}
+.score-label{font-size:1rem;color:#666;margin-bottom:16px}
+.checklist{margin-top:18px;text-align:left;padding:18px 18px;background:#f8fafc;border-radius:12px;border-left:4px solid #2563eb}
+.checklist h3{font-size:.9rem;color:#2563eb;margin-bottom:10px;font-weight:900}
+.cl-item{display:flex;gap:10px;align-items:flex-start;margin:10px 0;font-size:.9rem;color:#333;line-height:1.5}
+.cl-item input{margin-top:3px}
+.btn-row{display:flex;gap:12px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" class="back-link">&larr; Retour</a>
+<h1>Quiz Mon Livret 2</h1>
+<p class="subtitle">Questions que le jury posera apr&egrave;s lecture de votre livret</p>
+<p class="desc">Ce quiz vous pr&eacute;pare aux <strong>questions directes du jury</strong> sur votre livret 2. Le jury a lu vos &eacute;crits : il attend des r&eacute;ponses pr&eacute;cises, coh&eacute;rentes avec ce que vous avez r&eacute;dig&eacute;.</p>
+
+<div id="welcomeScreen">
+  <div class="welcome-card">
+    <span class="badge-red">Quiz Livret 2</span>
+    <h2>Mon Livret 2 &mdash; Questions jury</h2>
+    <p>Format : <strong>QCM</strong> sur vos exp&eacute;riences, situations et principes d'action.</p>
+    <div class="info-row">
+      <span>&#128221; 15 QCM</span>
+      <span>&#9201; 5-8 min</span>
+      <span>&#127919; Exp&eacute;riences AIS + FINC</span>
+    </div>
+    <p style="font-size:.85rem;color:#1e40af;font-weight:900;margin-top:10px">R&eacute;ponds &agrave; voix haute avant de cliquer.</p>
+    <button class="btn-start" onclick="startQuiz()">Commencer</button>
+  </div>
+</div>
+
+<div id="quizArea" class="hidden">
+  <div class="timer" id="timer">00:00</div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-text" id="progressText">1 / 15</div>
+  <div class="q-card" id="questionCard"></div>
+  <div class="nav-row">
+    <button class="btn-nav" onclick="prevQ()">&larr; Precedente</button>
+    <button class="btn-nav primary" onclick="nextQ()">Suivante &rarr;</button>
+  </div>
+</div>
+
+<div id="resultScreen" class="hidden">
+  <div class="result-card">
+    <span class="badge-red">Termin&eacute;</span>
+    <div class="score-big" id="scoreDisplay">0 / 0</div>
+    <div class="score-label">r&eacute;ponses QCM correctes</div>
+
+    <div class="checklist">
+      <h3>Checklist "coh&eacute;rence livret / oral"</h3>
+      <label class="cl-item"><input type="checkbox">Je connais par coeur mes <strong>situations cl&eacute;s</strong> (N., R., B., A.).</label>
+      <label class="cl-item"><input type="checkbox">Je peux <strong>nommer mes structures</strong> (DIP/DGEO, FASe, Maison de quartier Saint-Jean).</label>
+      <label class="cl-item"><input type="checkbox">Je sais relier chaque situation &agrave; un <strong>DC dominant</strong>.</label>
+      <label class="cl-item"><input type="checkbox">Je peux expliquer mes <strong>outils</strong> (carnet de suivi, routine, jeux en duo).</label>
+      <label class="cl-item"><input type="checkbox">Je peux citer mes <strong>principes d'action</strong> (respect inconditionnel, &eacute;coute active, co-construction).</label>
+      <label class="cl-item"><input type="checkbox">Je sais d&eacute;crire la <strong>progression</strong> de chaque enfant accompagn&eacute;.</label>
+      <label class="cl-item"><input type="checkbox">Je peux justifier mes <strong>choix &eacute;ducatifs</strong> avec des faits et des effets observ&eacute;s.</label>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-nav" onclick="resetQuiz()">&#128260; Recommencer</button>
+      <a href="index.html" class="btn-nav primary" style="text-decoration:none">Retour</a>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+var questions = [
+  { label: "Exp 1", q: "Dans quel dispositif exercez-vous en tant que rempla\u00e7ant depuis 2018 ?", options: ["Le dispositif AIS (Appui \u00e0 l\u2019Int\u00e9gration Scolaire)", "Le dispositif AESH", "Le dispositif SESSAD", "Le dispositif IME"], correct: 0, explanation: "J\u2019exerce dans le dispositif <strong>AIS</strong> depuis avril 2018, au sein de la <strong>DGEO/DIP</strong>." },
+  { label: "Exp 1", q: "Quel est le public que vous accompagnez en AIS ?", options: ["Des adultes en r\u00e9insertion", "Des enfants de 4 \u00e0 15 ans \u00e0 besoins \u00e9ducatifs particuliers", "Des personnes \u00e2g\u00e9es d\u00e9pendantes", "Des adolescents d\u00e9linquants"], correct: 1, explanation: "J\u2019accompagne des <strong>enfants et adolescents de 4 \u00e0 15 ans</strong>, scolaris\u00e9s en milieu ordinaire, pr\u00e9sentant des besoins \u00e9ducatifs particuliers." },
+  { label: "Situation N.", q: "Quelle est la probl\u00e9matique de N. dans votre premi\u00e8re situation ?", options: ["La maladie de Perthes (maladie de la hanche) limitant sa mobilit\u00e9", "Un trouble du spectre autistique", "Un trouble de l\u2019attention", "Une d\u00e9ficience visuelle"], correct: 0, explanation: "N. est une \u00e9l\u00e8ve de 1P atteinte de la <strong>maladie de Perthes</strong>, qui limite temporairement sa mobilit\u00e9 et son autonomie." },
+  { label: "Situation N.", q: "Quel DC principal mobilisez-vous dans l\u2019accompagnement de N. ?", options: ["DC4 uniquement", "DC1 : la relation \u00e9ducative individualis\u00e9e", "DC3 : la communication professionnelle", "DC2 uniquement"], correct: 1, explanation: "<strong>DC1</strong> est central : je construis une relation \u00e9ducative individualis\u00e9e pour soutenir N. dans son autonomie et son inclusion malgr\u00e9 ses contraintes physiques." },
+  { label: "Situation R.", q: "Quels sont les troubles principaux de R. ?", options: ["Troubles de l\u2019attention et impulsivit\u00e9", "Troubles du spectre autistique", "Handicap moteur", "Troubles du langage"], correct: 0, explanation: "R. pr\u00e9sente des <strong>troubles de l\u2019attention avec impulsivit\u00e9</strong>, n\u00e9cessitant des rep\u00e8res clairs et des m\u00e9diations adapt\u00e9es." },
+  { label: "Situation R.", q: "Comment adaptez-vous votre accompagnement face \u00e0 l\u2019impulsivit\u00e9 de R. ?", options: ["J\u2019isole R. du groupe classe", "Je mets en place des rep\u00e8res clairs, des m\u00e9diations adapt\u00e9es et des temps de r\u00e9gulation", "Je laisse l\u2019enseignant g\u00e9rer seul", "Je signale le comportement \u00e0 la direction"], correct: 1, explanation: "Face \u00e0 l\u2019impulsivit\u00e9, je mets en place des <strong>rep\u00e8res clairs</strong>, des <strong>m\u00e9diations adapt\u00e9es</strong> et des <strong>temps de r\u00e9gulation</strong> pour s\u00e9curiser R. dans ses apprentissages." },
+  { label: "Exp 2", q: "Dans quelle structure exercez-vous en tant que moniteur FINC ?", options: ["La maison de quartier de Saint-Jean (FASe)", "Un IME", "Un h\u00f4pital de jour", "Une \u00e9cole primaire"], correct: 0, explanation: "J\u2019exerce \u00e0 la <strong>maison de quartier de Saint-Jean</strong>, dans le cadre du dispositif FINC de la <strong>FASe</strong>." },
+  { label: "Exp 2", q: "Que signifie FINC ?", options: ["Formation \u00e0 l\u2019Inclusion Nationale des Citoyens", "Favoriser l\u2019Int\u00e9gration dans un Cadre collectif", "Fondation pour l\u2019Int\u00e9gration des Nouveaux Citoyens", "F\u00e9d\u00e9ration pour l\u2019Inclusion et la Coh\u00e9sion"], correct: 1, explanation: "FINC signifie <strong>Favoriser l\u2019Int\u00e9gration dans un Cadre collectif</strong>." },
+  { label: "Enfant B.", q: "Quelle est la probl\u00e9matique principale de B. ?", options: ["Il est tr\u00e8s anxieux, se retire ou r\u00e9agit violemment en cas de conflit", "Il a des troubles du spectre autistique", "Il a un handicap moteur", "Il est en \u00e9chec scolaire"], correct: 0, explanation: "B. est <strong>anxieux</strong>, a du mal \u00e0 exprimer ses besoins et <strong>se retire ou r\u00e9agit violemment</strong> en conflit." },
+  { label: "Enfant B.", q: "Quelle strat\u00e9gie mettez-vous en place pour B. ?", options: ["Un programme scolaire intensif", "Une routine s\u00e9curisante, des jeux en duo et des encouragements continus", "L\u2019isolement th\u00e9rapeutique", "Un suivi m\u00e9dical exclusif"], correct: 1, explanation: "Pour B., j\u2019instaure une <strong>routine s\u00e9curisante</strong>, des <strong>jeux en duo</strong>, des encouragements continus et une vigilance discr\u00e8te, en respectant son rythme." },
+  { label: "Enfant A.", q: "Quel outil cr\u00e9ez-vous pour accompagner A. ?", options: ["Un dossier m\u00e9dical", "Un carnet de suivi illustr\u00e9 avec micro-objectifs", "Un contrat de comportement punitif", "Un programme scolaire adapt\u00e9"], correct: 1, explanation: "Je cr\u00e9e un <strong>carnet de suivi illustr\u00e9</strong> pour visualiser les r\u00e9ussites de A. : attendre son tour, proposer un jeu, dire non sans crier." },
+  { label: "Enfant A.", q: "Sur quelle approche vous appuyez-vous pour A. ?", options: ["L\u2019approche par les ressources, en valorisant ses qualit\u00e9s", "L\u2019approche behavioriste par la punition", "L\u2019approche m\u00e9dicale", "L\u2019approche scolaire classique"], correct: 0, explanation: "Je m\u2019appuie sur l\u2019<strong>approche par les ressources</strong> : je valorise les qualit\u00e9s de A. (imagination, cr\u00e9ativit\u00e9) tout en travaillant ses fragilit\u00e9s." },
+  { label: "Principes", q: "Quel est votre premier principe d\u2019action dans l\u2019exp\u00e9rience FINC ?", options: ["L\u2019autorit\u00e9 bienveillante", "Le respect inconditionnel de la personne", "La performance \u00e9ducative", "La neutralit\u00e9 \u00e9motionnelle"], correct: 1, explanation: "Mon premier principe est le <strong>respect inconditionnel</strong> : accueillir chaque enfant tel qu\u2019il est, sans jugement, en reconnaissant ses besoins sp\u00e9cifiques." },
+  { label: "\u00c9valuation", q: "Comment \u00e9valuez-vous votre intervention dans le dispositif FINC ?", options: ["Par des tests scolaires uniquement", "Par des indicateurs crois\u00e9s : observations, retours familles, r\u00e9unions d\u2019\u00e9quipe, auto\u00e9val de l\u2019enfant", "Par le jugement du directeur", "Je n\u2019\u00e9value pas"], correct: 1, explanation: "J\u2019\u00e9value par des <strong>indicateurs formels et informels</strong> : observations, retours des familles, r\u00e9unions d\u2019\u00e9quipe et auto\u00e9valuation de l\u2019enfant." },
+  { label: "Transversal", q: "Combien d\u2019ann\u00e9es d\u2019accompagnement repr\u00e9sentent vos suivis de B. et A. au total ?", options: ["1 an", "3 ans", "Pr\u00e8s de 5 ans", "10 ans"], correct: 2, explanation: "Les suivis de B. et A. repr\u00e9sentent au total <strong>pr\u00e8s de cinq ann\u00e9es</strong> d\u2019engagement dans le dispositif FINC." }
+];
+
+var currentIndex = 0;
+var answered = false;
+var score = 0;
+var totalQcm = 0;
+var timerInterval = null;
+var seconds = 0;
+
+function startQuiz() {
+  currentIndex = 0;
+  answered = false;
+  score = 0;
+  totalQcm = questions.length;
+  seconds = 0;
+  document.getElementById('welcomeScreen').classList.add('hidden');
+  document.getElementById('quizArea').classList.remove('hidden');
+  document.getElementById('resultScreen').classList.add('hidden');
+  timerInterval = setInterval(function() {
+    seconds++;
+    var m = Math.floor(seconds / 60);
+    var s = seconds % 60;
+    document.getElementById('timer').textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  }, 1000);
+  renderQuestion();
+}
+
+function renderQuestion() {
+  answered = false;
+  var q = questions[currentIndex];
+  var html = '';
+  html += '<div class="q-number">Question ' + (currentIndex + 1) + ' / ' + questions.length + '</div>';
+  html += '<div class="q-label">' + q.label + '</div>';
+  html += '<div class="q-text">' + q.q + '</div>';
+  html += '<div class="options">';
+  for (var i = 0; i < q.options.length; i++) {
+    html += '<div class="opt" id="opt' + i + '" onclick="selectOption(' + i + ')">' + q.options[i] + '</div>';
+  }
+  html += '</div>';
+  html += '<div class="answer-section" id="answerSection">';
+  html += '<h3>Explication</h3><p>' + q.explanation + '</p>';
+  html += '</div>';
+  document.getElementById('questionCard').innerHTML = html;
+  document.getElementById('progressFill').style.width = ((currentIndex + 1) / questions.length * 100) + '%';
+  document.getElementById('progressText').textContent = (currentIndex + 1) + ' / ' + questions.length;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+  if(window.Mentor) Mentor.onQuestionShown(q);
+}
+
+function selectOption(i) {
+  if (answered) return;
+  answered = true;
+  var q = questions[currentIndex];
+  var opts = document.querySelectorAll('.opt');
+  for (var j = 0; j < opts.length; j++) {
+    opts[j].classList.add('disabled');
+    if (j === q.correct) opts[j].classList.add('correct');
+  }
+  if (i !== q.correct) {
+    document.getElementById('opt' + i).classList.add('wrong');
+  } else {
+    score++;
+  }
+  document.getElementById('answerSection').style.display = 'block';
+  if(window.Mentor){
+    if(i === q.correct) Mentor.onAnswerCorrect(q);
+    else Mentor.onAnswerWrong(q, i);
+  }
+  setTimeout(function() {
+    document.getElementById('answerSection').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+  }, 150);
+}
+
+function prevQ() {
+  if (currentIndex === 0) {
+    clearInterval(timerInterval);
+    document.getElementById('quizArea').classList.add('hidden');
+    document.getElementById('welcomeScreen').classList.remove('hidden');
+    return;
+  }
+  currentIndex--;
+  renderQuestion();
+}
+
+function nextQ() {
+  if (currentIndex >= questions.length - 1) {
+    showResults();
+    return;
+  }
+  currentIndex++;
+  renderQuestion();
+}
+
+function showResults() {
+  clearInterval(timerInterval);
+  document.getElementById('quizArea').classList.add('hidden');
+  document.getElementById('resultScreen').classList.remove('hidden');
+  document.getElementById('scoreDisplay').textContent = score + ' / ' + totalQcm;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function resetQuiz() {
+  document.getElementById('resultScreen').classList.add('hidden');
+  startQuiz();
+}
+</script>
+<script src="mentor.js"></script>
+</body>
+</html>
