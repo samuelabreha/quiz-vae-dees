@@ -325,7 +325,8 @@ var ALL_QUESTIONS=[
 {q:"\u00c0 l'oral, quelle r\u00e8gle de m\u00e9morisation est la plus efficace pour les lois ?",opts:["Citer des num\u00e9ros de loi sans lien pratique","Relier chaque loi \u00e0 une situation v\u00e9cue du livret","Ne citer aucune loi","Citer toutes les lois dans chaque r\u00e9ponse"],correct:1,explain:"Le jury attend du droit appliqu\u00e9, pas une r\u00e9citation abstraite."}
 ],
 [
-{q:"Quelle est la 1\u00e8re \u00e9tape de ton oral ?",opts:["Fonction scolaire \u2014 AIS","Introduction","Fil rouge","Service civil"],correct:1,explain:"\u00c9tape 1 : Introduction. Tu te pr\u00e9sentes, tu annonces ton parcours et la VAE."},
+{q:"Quelle est la 1\u00e8re \u00e9tape de ton oral ?",opts:["Fonction scolaire \u2014 AIS","Introduction","Fil rouge","Service civil"],correct:1,explain:"\u00c9tape 1 : Introduction. D'abord tu t'excuses pour l'anonymisation, puis tu te pr\u00e9sentes avec tes 3 axes."},
+{q:"Quelle est la PREMI\u00c8RE chose que tu fais dans l'introduction ?",opts:["Parler de tes 3 axes","T'excuser pour l'anonymisation incompl\u00e8te du dossier","Pr\u00e9senter ton parcours","Remercier le jury"],correct:1,explain:"Tu commences par t'excuser : certains \u00e9l\u00e9ments n'ont pas \u00e9t\u00e9 totalement anonymis\u00e9s. Ensuite tu te pr\u00e9sentes."},
 {q:"Que vient juste APR\u00c8S l'introduction ?",opts:["Sport \u2014 Basket","Socio-\u00e9ducatif \u2014 FASe","Fonction scolaire \u2014 AIS / DIP","Fil rouge"],correct:2,explain:"\u00c9tape 2 : Fonction scolaire \u2014 AIS / DIP. Tu parles de ton r\u00f4le de rempla\u00e7ant AIS depuis 2018."},
 {q:"Quelle \u00e9tape vient en 3\u00e8me position ?",opts:["Socio-\u00e9ducatif \u2014 FASe / FINC","Pr\u00e9vention sp\u00e9cialis\u00e9e","Sport \u2014 Basket","Formations"],correct:0,explain:"\u00c9tape 3 : Socio-\u00e9ducatif \u2014 FASe / FINC. Depuis 2014, moniteur d'encadrement sp\u00e9cialis\u00e9."},
 {q:"Quelle \u00e9tape vient juste APR\u00c8S le socio-\u00e9ducatif ?",opts:["Fil rouge","Service civil","Sport \u2014 Basket","Formations"],correct:2,explain:"\u00c9tape 4 : Sport \u2014 Basket. Outil \u00e9ducatif : coop\u00e9ration, confiance, gestion des \u00e9motions."},
@@ -349,17 +350,17 @@ var ALL_QUESTIONS=[
 ];
 
 var ORAL_STEPS = [
-  {name:'Introduction', icon:'&#128075;', desc:'Pr\u00e9sentation, excuses anonymisation, parcours'},
-  {name:'Fonction scolaire \u2013 AIS/DIP', icon:'&#127979;', desc:'Remplaçant AIS depuis 2018, \u00e9l\u00e8ves \u00e0 besoins sp\u00e9cifiques'},
-  {name:'Socio-\u00e9ducatif \u2013 FASe/FINC', icon:'&#127968;', desc:'Moniteur depuis 2014, maisons de quartier, lien et m\u00e9diation'},
-  {name:'Sport \u2013 Basket', icon:'&#127936;', desc:'Jeunes 12-20 ans, outil \u00e9ducatif, coop\u00e9ration'},
-  {name:'Fil rouge', icon:'&#129517;', desc:'Accompagnement, inclusion, relation, d\u00e9veloppement'},
-  {name:'D\u00e9buts \u2013 Service civil', icon:'&#128161;', desc:'2013-2014, d\u00e9clic, gestion des conflits'},
-  {name:'Pr\u00e9vention \u2013 Transit', icon:'&#128694;', desc:'Travail hors murs, compr\u00e9hension des jeunes'},
-  {name:'Formations', icon:'&#127891;', desc:'HETS, Jeunesse+Sport, TSA, agressivit\u00e9'},
-  {name:'Situation pr\u00e9sent\u00e9e', icon:'&#128214;', desc:'Match U15, crise, \u00e9motions (optionnel)'},
-  {name:'R\u00e9ponse \u00e9ducative', icon:'&#129309;', desc:'S\u00e9curiser, analyser, m\u00e9diation (optionnel)'},
-  {name:'Posture + remerciement', icon:'&#127775;', desc:'Respect, adaptation, projection, merci'}
+  {name:'Introduction', icon:'&#128075;', desc:'Excuses anonymisation, 3 axes (scolaire, socio-\u00e9ducatif, sport), posture, VAE'},
+  {name:'Fonction scolaire \u2013 AIS/DIP', icon:'&#127979;', desc:'Rempla\u00e7ant AIS depuis 2018, s\u00e9curiser, acc\u00e8s apprentissages'},
+  {name:'Socio-\u00e9ducatif \u2013 FASe/FINC', icon:'&#127968;', desc:'Moniteur depuis 2014, lien, m\u00e9diation, cadre'},
+  {name:'Sport \u2013 Basket', icon:'&#127936;', desc:'Jeunes 12-20 ans, coop\u00e9ration, confiance, \u00e9motions, respect'},
+  {name:'Fil rouge \u2013 sens de la d\u00e9marche', icon:'&#129517;', desc:'Inclusion, relation, comp\u00e9tences, VAE suite logique'},
+  {name:'D\u00e9buts \u2013 Service civil (D\u00e9clic)', icon:'&#128161;', desc:'2013-2014, d\u00e9clic, d\u00e9couverte travail \u00e9ducatif'},
+  {name:'Pr\u00e9vention \u2013 Transit / Vaudagne', icon:'&#128694;', desc:'Travail hors murs, compr\u00e9hension des jeunes, animation'},
+  {name:'Mont\u00e9e en comp\u00e9tences \u2013 Formations', icon:'&#127891;', desc:'HETS, Jeunesse+Sport, TSA, agressivit\u00e9, ajuster posture'},
+  {name:'Situation pr\u00e9sent\u00e9e', icon:'&#128214;', desc:'Match U15, crise, \u00e9motions, collectif (optionnel)'},
+  {name:'R\u00e9ponse \u00e9ducative', icon:'&#129309;', desc:'S\u00e9curiser, analyser, m\u00e9diation, r\u00e9seau, coh\u00e9sion (optionnel)'},
+  {name:'Posture + remerciement', icon:'&#127775;', desc:'Respect, adaptation, collectif, structures sp\u00e9cialis\u00e9es'}
 ];
 
 /* === SM-2 SPACED REPETITION ENGINE === */
@@ -533,21 +534,12 @@ function renderParcours(){
 
 /* === RENDER: ORAL TREE === */
 function renderOral(){
-  var steps=[
-    {icon:'\uD83D\uDC64',name:'Pr\u00e9sentation personnelle',desc:'Qui suis-je, excuses anonymisation'},
-    {icon:'\uD83E\uDDED',name:'Parcours professionnel',desc:'AIS/DIP, FASe/FINC, basket, fil rouge'},
-    {icon:'\uD83E\uDDE0',name:'Positionnement \u00e9ducatif',desc:'Posture, valeurs, \u00e9thique professionnelle'},
-    {icon:'\uD83D\uDCDA',name:'Exp\u00e9riences principales',desc:'Situations choisies, contexte, enjeux'},
-    {icon:'\uD83D\uDD0D',name:'Analyse de pratique',desc:'R\u00e9flexivit\u00e9, ajustements, apprentissages'},
-    {icon:'\uD83E\uDD1D',name:'Travail en r\u00e9seau',desc:'Partenariats, \u00e9quipe, coordination'},
-    {icon:'\uD83C\uDFAF',name:'Conclusion / ouverture',desc:'Projection, remerciement, posture'}
-  ];
-  var h='<div class="tree-node current" style="border-left-color:#f59e0b"><div class="icon">\uD83C\uDFA4</div><div class="node-info"><h4>D\u00c9BUT PR\u00c9SENTATION</h4><p>~30 min d\'oral devant le jury</p></div><span class="badge badge-count">~30 min</span></div>';
+  var h='<div class="tree-node current" style="border-left-color:#f59e0b"><div class="icon">\uD83C\uDFA4</div><div class="node-info"><h4>D\u00c9BUT PR\u00c9SENTATION</h4><p>~5 min 30 d\'oral devant le jury</p></div><span class="badge badge-count">~5m30</span></div>';
   h+='<div class="connector current"></div>';
-  for(var i=0;i<steps.length;i++){
-    var s=steps[i];
-    h+='<div class="tree-node"><div class="icon">'+s.icon+'</div><div class="node-info"><h4>'+(i+1)+'. '+s.name+'</h4><p>'+s.desc+'</p></div><span class="badge badge-count">~'+(i<2?'3':'5')+' min</span></div>';
-    if(i<steps.length-1)h+='<div class="connector"></div>';
+  for(var i=0;i<ORAL_STEPS.length;i++){
+    var s=ORAL_STEPS[i],opt=(i===8||i===9)?' (optionnel)':'';
+    h+='<div class="tree-node"><div class="icon">'+s.icon+'</div><div class="node-info"><h4>'+(i+1)+'. '+s.name+opt+'</h4><p>'+s.desc+'</p></div><span class="badge badge-count">~30s</span></div>';
+    if(i<ORAL_STEPS.length-1)h+='<div class="connector"></div>';
   }
   document.getElementById('treeOral').innerHTML=h;
 }
