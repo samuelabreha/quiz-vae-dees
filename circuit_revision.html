@@ -449,19 +449,19 @@ function renderParcours(){
   h+='<div class="connector current"></div>';
   /* --- Phase 1 header + Oral Structure --- */
   h+='<div style="text-align:center;padding:10px 0 6px;font-weight:800;font-size:.85rem;color:#8b5cf6;letter-spacing:1px">\uD83C\uDF99\uFE0F PHASE 1 \u2014 PR\u00c9SENTATION</div>';
-  h+='<div style="text-align:center;font-size:.8rem;color:#666;margin-bottom:10px">Structure de ton oral \u2014 coche chaque \u00e9tape r\u00e9vis\u00e9e</div>';
+  h+='<div style="text-align:center;font-size:.8rem;color:#666;margin-bottom:10px">R\u00e9cite chaque \u00e9tape \u00e0 voix haute puis coche</div>';
   var oralChecked=getOralChecked();
   for(var oi=0;oi<ORAL_STEPS.length;oi++){
     var os=ORAL_STEPS[oi],checked=oralChecked.indexOf(oi)>=0;
-    var oCls=checked?'done':'locked';
-    h+='<div class="tree-node '+oCls+'" onclick="toggleOralStep('+oi+')" style="cursor:pointer;border-left-color:'+(checked?'#22c55e':'#cbd5e1')+'">';
+    var oCls=checked?'done':'';
+    h+='<div class="tree-node '+oCls+'" onclick="toggleOralStep('+oi+')" style="cursor:pointer;border-left-color:'+(checked?'#22c55e':'#f59e0b')+'">';
     h+='<div class="icon">'+os.icon+'</div>';
-    h+='<div class="node-info"><h4>'+(checked?'\u2705':'\u2B1C')+' '+os.name+'</h4><p>'+os.desc+'</p></div>';
-    h+='<span class="badge '+(checked?'badge-done':'badge-todo')+'">'+(checked?'r\u00e9vis\u00e9':'à cocher')+'</span></div>';
-    h+='<div class="connector '+(checked?'done':'')+'"></div>';
+    h+='<div class="node-info"><h4>\u00c9tape '+(oi+1)+' \u2014 '+os.name+'</h4><p>'+os.desc+'</p></div>';
+    h+='<span class="badge '+(checked?'badge-done':'badge-current')+'">'+(checked?'\u2705 r\u00e9vis\u00e9':'\u25B6 R\u00c9CITER')+'</span></div>';
+    h+='<div class="connector '+(checked?'done':'')+'">'+'</div>';
   }
   /* --- Quiz modules with phase headers --- */
-  var stepNum=1;
+  var stepNum=12;
   for(var i=0;i<PARCOURS_ORDER.length;i++){
     if(PHASE_BREAKS[i]&&i>0){
       h+='<div style="text-align:center;padding:14px 0 6px;font-weight:800;font-size:.85rem;color:#8b5cf6;letter-spacing:1px">'+PHASE_BREAKS[i]+'</div>';
@@ -473,7 +473,7 @@ function renderParcours(){
     var badgeTxt=done?(pct+'%'):(i===step?'\u25B6 EN COURS':(started?pct+'%':'\u25B6 LANCER'));
     h+='<div class="tree-node '+cls+'" onclick="launchQuiz('+qi+')">';
     h+='<div class="icon">'+qz.icon+'</div>';
-    h+='<div class="node-info"><h4>\u00c9tape '+stepNum+' \u2014 '+qz.name+'</h4><p>'+qz.desc+(started?' \u2014 '+pct+'% ma\u00eetris\u00e9':'')+'</p></div>';
+    h+='<div class="node-info"><h4>\u00c9tape '+stepNum+' \u2014 '+qz.name+'</h4><p>'+qz.desc+(started?' \u2014 '+pct+'% ma\u00eetris\u00e9e':'')+'</p></div>';
     h+='<span class="badge '+badgeCls+'">'+badgeTxt+'</span></div>';
     if(i<PARCOURS_ORDER.length-1)h+='<div class="connector '+(done?'done':(i===step?'current':''))+'"></div>';
     stepNum++;
