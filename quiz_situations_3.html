@@ -60,7 +60,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f
 
 <div class="header">
   <h1>Quiz Situations &mdash; Journ&eacute;e &amp; Projet collectif</h1>
-  <p>FINC &bull; 8 questions QCM &bull; Pr&eacute;paration VAE DEES</p>
+  <p>Dispositif d'inclusion &bull; 8 questions QCM &bull; Pr&eacute;paration VAE DEES</p>
   <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
   <div class="stats">
     <span id="statCurrent">0 / 8</span>
@@ -94,7 +94,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f
   <div id="welcomeScreen" class="welcome">
     <h2>Quiz Situations &mdash; Journ&eacute;e &amp; Projet collectif</h2>
     <p><strong>8 QCM</strong> &mdash; 2 situations &times; 4 DC = 8 questions</p>
-    <p style="margin-top:8px;font-size:.85rem;color:#888">FINC &bull; R&eacute;pondez en &laquo; je &raquo;, 4 phrases max</p>
+    <p style="margin-top:8px;font-size:.85rem;color:#888">Dispositif d'inclusion &bull; R&eacute;pondez en &laquo; je &raquo;, 4 phrases max</p>
     <button class="start-btn" onclick="startQuiz()">Commencer</button>
     <br>
     <button class="shuffle-btn" onclick="shuffleAndStart()">M&eacute;langer et commencer</button>
@@ -167,13 +167,13 @@ var qcmData = [
     sitLabel: "B.2.2 \u2014 Journ\u00e9e compl\u00e8te",
     q: "Comment inscrivez-vous cette journ\u00e9e dans le cadre institutionnel ?",
     opts: [
-      "Je me concentre sur le bien-\u00eatre imm\u00e9diat des enfants sans me r\u00e9f\u00e9rer au projet institutionnel. Je consid\u00e8re que le terrain prime sur les orientations th\u00e9oriques. Je ne fais pas de lien avec les missions de la FASe. R\u00e9sultat : une action centr\u00e9e sur le concret.",
-      "Je respecte uniquement le r\u00e8glement int\u00e9rieur de la maison de quartier. Je ne m\u2019int\u00e9resse pas aux orientations du dispositif FINC. Je consid\u00e8re que le cadre institutionnel est l\u2019affaire de la direction. R\u00e9sultat : une conformit\u00e9 au r\u00e8glement.",
+      "Je me concentre sur le bien-\u00eatre imm\u00e9diat des enfants sans me r\u00e9f\u00e9rer au projet institutionnel. Je consid\u00e8re que le terrain prime sur les orientations th\u00e9oriques. Je ne fais pas de lien avec les missions de la structure. R\u00e9sultat : une action centr\u00e9e sur le concret.",
+      "Je respecte uniquement le r\u00e8glement int\u00e9rieur de la maison de quartier. Je ne m\u2019int\u00e9resse pas aux orientations du dispositif d\u2019inclusion. Je consid\u00e8re que le cadre institutionnel est l\u2019affaire de la direction. R\u00e9sultat : une conformit\u00e9 au r\u00e8glement.",
       "J\u2019applique les directives de la direction sans les questionner. Je ne fais pas le lien entre mes activit\u00e9s et les objectifs institutionnels. Je remplis les formulaires institutionnels demand\u00e9s. R\u00e9sultat : un suivi administratif correct.",
-      "J\u2019inscris la journ\u00e9e dans le cadre du projet de la maison de quartier et des missions de la FASe. Je respecte les orientations du dispositif FINC \u2014 inclusion, socialisation, pr\u00e9vention. Je fais le lien entre les activit\u00e9s et les objectifs institutionnels. Cela donne du sens \u00e0 chaque temps de la journ\u00e9e."
+      "J\u2019inscris la journ\u00e9e dans le cadre du projet de la maison de quartier et des missions de la structure d\u2019animation socioculturelle. Je respecte les orientations du dispositif d\u2019inclusion \u2014 inclusion, socialisation, pr\u00e9vention. Je fais le lien entre les activit\u00e9s et les objectifs institutionnels. Cela donne du sens \u00e0 chaque temps de la journ\u00e9e."
     ],
     correct: 3,
-    why: "<p><strong>DC vis\u00e9 : DC4</strong></p><p>J\u2019inscris la journ\u00e9e dans le cadre du projet de la maison de quartier et des missions de la FASe.</p><p>Je respecte les orientations du dispositif FINC \u2014 inclusion, socialisation, pr\u00e9vention.</p><p>Je fais le lien entre les activit\u00e9s propos\u00e9es et les objectifs institutionnels.</p><p>Cela donne du sens \u00e0 chaque temps de la journ\u00e9e et l\u00e9gitime mon action \u00e9ducative.</p>"
+    why: "<p><strong>DC vis\u00e9 : DC4</strong></p><p>J\u2019inscris la journ\u00e9e dans le cadre du projet de la maison de quartier et des missions de la structure d\u2019animation socioculturelle.</p><p>Je respecte les orientations du dispositif d\u2019inclusion \u2014 inclusion, socialisation, pr\u00e9vention.</p><p>Je fais le lien entre les activit\u00e9s propos\u00e9es et les objectifs institutionnels.</p><p>Cela donne du sens \u00e0 chaque temps de la journ\u00e9e et l\u00e9gitime mon action \u00e9ducative.</p>"
   },
   {
     dc: "DC1 \u2014 Relation \u00e9ducative",
@@ -223,13 +223,13 @@ var qcmData = [
     sitLabel: "B.2.3 \u2014 Projet collectif",
     q: "Comment inscrivez-vous ce projet dans les dynamiques institutionnelles ?",
     opts: [
-      "Je r\u00e9alise le projet ind\u00e9pendamment des orientations institutionnelles. Je ne mobilise pas de partenaires car le projet est interne. Je ne fais pas de lien avec les politiques cantonales. R\u00e9sultat : un projet autonome et autosuffisant.",
+      "Je r\u00e9alise le projet ind\u00e9pendamment des orientations institutionnelles. Je ne mobilise pas de partenaires car le projet est interne. Je ne fais pas de lien avec les politiques publiques. R\u00e9sultat : un projet autonome et autosuffisant.",
       "Je me r\u00e9f\u00e8re uniquement au r\u00e8glement int\u00e9rieur pour cadrer le projet. Je ne contacte pas de partenaires ext\u00e9rieurs. Je consid\u00e8re que le projet collectif est purement \u00e9ducatif, pas institutionnel. R\u00e9sultat : un projet conforme au r\u00e8glement.",
-      "J\u2019inscris le projet dans les orientations de la FASe et du dispositif FINC. Je mobilise les partenaires locaux \u2014 associations, \u00e9coles, familles. Je fais le lien entre le projet et les politiques d\u2019inclusion et de pr\u00e9vention. Cela donne une dimension institutionnelle et partenariale.",
+      "J\u2019inscris le projet dans les orientations de la structure d\u2019animation socioculturelle et du dispositif d\u2019inclusion. Je mobilise les partenaires locaux \u2014 associations, \u00e9coles, familles. Je fais le lien entre le projet et les politiques publiques d\u2019inclusion et de pr\u00e9vention. Cela donne une dimension institutionnelle et partenariale.",
       "Je demande l\u2019autorisation de la direction avant chaque \u00e9tape du projet. Je me conforme aux directives sans les adapter au terrain. Je ne prends pas d\u2019initiative partenariale sans validation. R\u00e9sultat : un cadre hi\u00e9rarchique respect\u00e9."
     ],
     correct: 2,
-    why: "<p><strong>DC vis\u00e9 : DC4</strong></p><p>J\u2019inscris le projet dans les orientations de la FASe et du dispositif FINC.</p><p>Je mobilise les partenaires locaux \u2014 associations, \u00e9coles, familles \u2014 pour enrichir le projet.</p><p>Je fais le lien entre le projet et les politiques d\u2019inclusion et de pr\u00e9vention du canton.</p><p>Cela donne une dimension institutionnelle et partenariale au projet collectif.</p>"
+    why: "<p><strong>DC vis\u00e9 : DC4</strong></p><p>J\u2019inscris le projet dans les orientations de la structure d\u2019animation socioculturelle et du dispositif d\u2019inclusion.</p><p>Je mobilise les partenaires locaux \u2014 associations, \u00e9coles, familles \u2014 pour enrichir le projet.</p><p>Je fais le lien entre le projet et les politiques publiques d\u2019inclusion et de pr\u00e9vention.</p><p>Cela donne une dimension institutionnelle et partenariale au projet collectif.</p>"
   }
 ];
 
@@ -348,7 +348,7 @@ function showResults() {
   var pct = total > 0 ? Math.round(score / total * 100) : 0;
   document.getElementById("finalScore").textContent = pct + "%";
   var msg = "";
-  if (pct >= 80) msg = "Excellent ! Bonne ma\u00eetrise des situations FINC.";
+  if (pct >= 80) msg = "Excellent ! Bonne ma\u00eetrise des situations.";
   else if (pct >= 60) msg = "Bon niveau. Reprenez les DC \u00e9chou\u00e9s.";
   else msg = "\u00c0 retravailler. Relisez les fiches situations.";
   document.getElementById("finalMsg").textContent = "QCM : " + score + " r\u00e9ussies, " + errors + " \u00e0 revoir \u2014 " + msg;

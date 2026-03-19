@@ -6,144 +6,92 @@
 <title>Quiz Jury (Partie 2/2) — VAE DEES</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;min-height:100vh;margin:0}
-.container{max-width:980px;margin:0 auto;padding:36px 18px;min-height:100vh}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;min-height:100vh}
+.container{max-width:760px;margin:0 auto;padding:24px 16px}
 .back-link{display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;color:#0d9488;text-decoration:none;font-size:.9rem}
 .back-link:hover{text-decoration:underline}
-h1{font-size:1.7rem;color:#111827;margin-bottom:6px;text-align:center}
-.subtitle{font-size:.98rem;color:#6b7280;margin-bottom:12px;text-align:center}
-.desc{font-size:.95rem;color:#374151;margin:0 auto 22px;max-width:860px;text-align:center;line-height:1.7}
+h1{font-size:1.5rem;color:#1a1a2e;margin-bottom:4px;text-align:center}
+.subtitle{font-size:.92rem;color:#666;margin-bottom:10px;text-align:center}
+.desc{font-size:.9rem;color:#444;margin:0 auto 18px;max-width:700px;text-align:center;line-height:1.6}
 .hidden{display:none}
-.welcome-card{background:#fff;border-radius:18px;padding:34px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.08);border-top:6px solid #0d9488}
+.welcome-card{background:#fff;border-radius:16px;padding:30px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.06);border-top:4px solid #0d9488}
 .welcome-card h2{margin:12px 0 8px;font-size:1.25rem;color:#1a1a2e}
 .welcome-card p{color:#666;font-size:.9rem;margin-bottom:6px;line-height:1.5}
-.badge{display:inline-block;padding:5px 16px;border-radius:20px;font-size:.75rem;font-weight:800;color:#fff;background:#0d9488}
+.badge-teal{display:inline-block;padding:5px 16px;border-radius:20px;font-size:.75rem;font-weight:800;color:#fff;background:#0d9488}
 .info-row{display:flex;justify-content:center;gap:18px;margin:16px 0;font-size:.85rem;color:#666;flex-wrap:wrap}
-.info-row span{display:flex;justify-content:center;gap:4px}
+.info-row span{display:flex;align-items:center;gap:4px}
 .btn-start{display:inline-block;margin-top:18px;padding:14px 36px;background:#0d9488;color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:800;cursor:pointer;transition:background .2s}
 .btn-start:hover{background:#0f766e}
 .progress-bar{height:6px;background:#e5e7eb;border-radius:3px;margin-bottom:8px;overflow:hidden}
 .progress-fill{height:100%;background:#0d9488;border-radius:3px;transition:width .3s}
 .progress-text{font-size:.8rem;color:#999;margin-bottom:16px;text-align:right}
-.timer{font-size:.85rem;color:#0d9488;text-align:center;margin-bottom:12px;font-weight:900}
-.q-card{background:#fff;border-radius:18px;padding:30px;box-shadow:0 10px 30px rgba(0,0,0,.08);border-top:6px solid #0d9488}
+.timer{font-size:.8rem;color:#0d9488;text-align:center;margin-bottom:12px;font-weight:800}
+.q-card{background:#fff;border-radius:16px;padding:26px;box-shadow:0 2px 16px rgba(0,0,0,.06)}
 .q-number{font-size:.8rem;color:#0d9488;font-weight:900;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
-.q-text{font-size:1.06rem;color:#111827;line-height:1.75;margin-bottom:16px;white-space:pre-line}
-.hint{font-size:.95rem;color:#374151;line-height:1.75;margin-bottom:16px}
-.btn-reveal{display:inline-block;padding:12px 28px;background:#0d9488;color:#fff;border:none;border-radius:12px;font-size:.95rem;cursor:pointer;transition:background .2s;font-weight:800}
-.btn-reveal:hover{background:#0f766e}
-.answer-section{display:none;margin-top:16px;padding:16px 16px;background:#fff7ed;border-radius:12px;border-left:4px solid #ea580c}
+.q-label{display:inline-block;padding:3px 10px;border-radius:8px;font-size:.75rem;font-weight:900;color:#fff;background:#0d9488;margin-bottom:12px}
+.q-text{font-size:1.02rem;color:#1a1a2e;line-height:1.7;margin-bottom:16px;white-space:pre-line}
+.options{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.opt{padding:14px 18px;border:2px solid #e5e7eb;border-radius:12px;cursor:pointer;font-size:.95rem;color:#333;transition:all .15s;background:#fff}
+.opt:hover:not(.disabled){border-color:#0d9488;background:#f0fdfa}
+.opt.correct{border-color:#059669;background:#d1fae5;color:#065f46;font-weight:800}
+.opt.wrong{border-color:#dc2626;background:#fef2f2;color:#dc2626}
+.opt.disabled{cursor:default}
+.opt.disabled:not(.correct):not(.wrong){opacity:.6}
+.answer-section{display:none;margin-top:18px;padding:16px 16px;background:#fff7ed;border-radius:12px;border-left:4px solid #ea580c}
 .answer-section h3{font-size:.9rem;color:#ea580c;margin-bottom:8px;font-weight:900}
-.answer-section p,.answer-section li{font-size:.9rem;color:#333;line-height:1.7}
-.nav-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-.nav-row .btn-nav{flex:1;min-width:220px}
-.btn-nav{padding:12px 22px;border:2px solid rgba(13,148,136,.45);color:#0f766e;background:#fff;border-radius:12px;font-size:.95rem;cursor:pointer;transition:transform .05s,background .2s,border-color .2s,color .2s,box-shadow .2s;font-weight:900;box-shadow:0 1px 0 rgba(0,0,0,.03)}
-.btn-nav:hover{background:#ecfeff;border-color:#0d9488;box-shadow:0 10px 24px rgba(13,148,136,.10)}
-.btn-nav:active{transform:translateY(1px)}
+.answer-section p{font-size:.9rem;color:#333;line-height:1.7;margin-bottom:6px}
+.answer-section strong{color:#9a3412}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:18px;gap:12px}
+.btn-nav{padding:10px 22px;border:2px solid #0d9488;color:#0d9488;background:#fff;border-radius:10px;font-size:.9rem;cursor:pointer;transition:all .2s;font-weight:900}
+.btn-nav:hover{background:#f0fdfa}
 .btn-nav.primary{background:#0d9488;color:#fff;border-color:#0d9488}
-.btn-nav.primary:hover{background:#0f766e;border-color:#0f766e;box-shadow:0 10px 24px rgba(15,118,110,.18)}
-.btn-nav:disabled{opacity:.55;cursor:default;box-shadow:none}
-.btn-nav:disabled:hover{background:#fff;border-color:rgba(13,148,136,.45)}
-.result-card{background:#fff;border-radius:18px;padding:30px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.08);border-top:6px solid #0d9488}
-.score-big{font-size:2.4rem;font-weight:900;color:#0d9488;margin:12px 0 6px}
+.btn-nav.primary:hover{background:#0f766e}
+.result-card{background:#fff;border-radius:16px;padding:30px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.06);border-top:4px solid #0d9488}
+.score-big{font-size:2.6rem;font-weight:900;color:#0d9488;margin:14px 0 6px}
 .score-label{font-size:1rem;color:#666;margin-bottom:16px}
-.checklist{margin-top:18px;text-align:left;padding:18px 18px;background:#f8fafc;border-radius:12px;border-left:4px solid #2563eb}
-.checklist h3{font-size:.9rem;color:#2563eb;margin-bottom:10px;font-weight:900}
-.cl-item{display:flex;gap:10px;align-items:flex-start;margin:10px 0;font-size:.92rem;color:#333;line-height:1.5}
-.cl-item input{margin-top:3px}
-.notice{margin-top:14px;padding:12px 14px;background:#f0fdf4;border-radius:12px;border-left:4px solid #059669;font-size:.9rem;line-height:1.6;color:#333;text-align:left}
-@media (max-width: 640px){
-  .container{padding:22px 14px}
-  .welcome-card{padding:26px}
-  .q-card{padding:22px}
-  .nav-row .btn-nav{min-width:0;width:100%}
-}
+.btn-row{display:flex;gap:12px;justify-content:center;margin-top:18px;flex-wrap:wrap}
 </style>
 </head>
 <body>
 <div class="container">
-<a href="index.html" class="back-link">&larr; Retour a l'accueil</a>
+<a href="index.html" class="back-link">&larr; Retour</a>
 <h1>Quiz Jury (Partie 2/2)</h1>
-<p class="subtitle">Active recall : reponds a voix haute, puis revele.</p>
-<p class="desc"><strong>Consigne :</strong> lis la question, <strong>reponds a voix haute</strong> (1 a 2 minutes) en suivant la structure ci-dessous, puis clique pour afficher la <strong>reponse modele</strong>.</p>
-
-<div style="background:linear-gradient(135deg,#0d9488 0%,#0f766e 100%);color:#fff;border-radius:14px;padding:16px 20px;margin:0 auto 22px;max-width:860px;box-shadow:0 4px 16px rgba(13,148,136,.25)">
-  <div style="font-size:.8rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;opacity:.85">Structure de reponse — Methode universelle (CPOAPRER)</div>
-  <div style="display:flex;flex-wrap:wrap;gap:6px 4px;align-items:center;font-size:.88rem;font-weight:700">
-    <span style="background:rgba(255,255,255,.2);padding:4px 10px;border-radius:8px">1. Contexte</span>
-    <span style="opacity:.6">&rarr;</span>
-    <span style="background:rgba(255,255,255,.2);padding:4px 10px;border-radius:8px">2. Problematique</span>
-    <span style="opacity:.6">&rarr;</span>
-    <span style="background:rgba(255,255,255,.2);padding:4px 10px;border-radius:8px">3. Objectifs</span>
-    <span style="opacity:.6">&rarr;</span>
-    <span style="background:rgba(255,255,255,.2);padding:4px 10px;border-radius:8px">4. Actions</span>
-    <span style="opacity:.6">&rarr;</span>
-    <span style="background:rgba(255,255,255,.2);padding:4px 10px;border-radius:8px">5. Posture</span>
-    <span style="opacity:.6">&rarr;</span>
-    <span style="background:rgba(255,255,255,.2);padding:4px 10px;border-radius:8px">6. Reseau</span>
-    <span style="opacity:.6">&rarr;</span>
-    <span style="background:rgba(255,255,255,.2);padding:4px 10px;border-radius:8px">7. Evaluation</span>
-    <span style="opacity:.6">&rarr;</span>
-    <span style="background:rgba(255,255,255,.2);padding:4px 10px;border-radius:8px">8. Referentiel</span>
-  </div>
-  <div style="font-size:.78rem;margin-top:8px;opacity:.8">Suis cette structure pour chaque reponse. Le jury verifie ta capacite d'analyse, ta posture et ta reflexivite.</div>
-</div>
+<p class="subtitle">7 questions QCM &mdash; R&eacute;ponses argument&eacute;es</p>
 
 <div id="welcomeScreen">
   <div class="welcome-card">
-    <span class="badge">Simulation Jury</span>
-    <h2>7 questions (Partie 2/2)</h2>
-    <p>1 question a la fois, comme les autres quiz du site.</p>
+    <span class="badge-teal">Simulation Jury</span>
+    <h2>Quiz Jury &mdash; Partie 2/2</h2>
+    <p>Format <strong>QCM</strong> : 4 options par question, une seule bonne r&eacute;ponse.</p>
     <div class="info-row">
-      <span>&#128221; 7 questions</span>
-      <span>&#9201; Timer</span>
-      <span>&#127897; Oral</span>
+      <span>&#128221; 7 QCM</span>
+      <span>&#9201; 3-5 min</span>
+      <span>&#127919; R&eacute;ponses argument&eacute;es</span>
     </div>
-    <p style="font-size:.85rem;color:#0d9488;font-weight:900;margin-top:10px">Astuce : enregistre-toi sur 3 questions au hasard, puis reecoute.</p>
-    <button class="btn-start" id="startBtn">Commencer les 7 questions</button>
+    <p style="font-size:.85rem;color:#0d9488;font-weight:900;margin-top:10px">R&eacute;ponds &agrave; voix haute avant de cliquer.</p>
+    <button class="btn-start" onclick="startQuiz()">Commencer</button>
   </div>
 </div>
 
 <div id="quizArea" class="hidden">
-  <div id="cpoaprerBanner" style="background:linear-gradient(135deg,#0d9488 0%,#0f766e 100%);color:#fff;border-radius:14px;padding:14px 18px;margin-bottom:14px;box-shadow:0 4px 16px rgba(13,148,136,.25)">
-    <div style="font-size:.75rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;opacity:.85">Methode universelle (CPOAPRER)</div>
-    <div style="display:flex;flex-wrap:wrap;gap:4px 3px;align-items:center;font-size:.82rem;font-weight:700">
-      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Contexte</span>
-      <span style="opacity:.6">&rarr;</span>
-      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Problematique</span>
-      <span style="opacity:.6">&rarr;</span>
-      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Objectifs</span>
-      <span style="opacity:.6">&rarr;</span>
-      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Actions</span>
-      <span style="opacity:.6">&rarr;</span>
-      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Posture</span>
-      <span style="opacity:.6">&rarr;</span>
-      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Reseau</span>
-      <span style="opacity:.6">&rarr;</span>
-      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Evaluation</span>
-      <span style="opacity:.6">&rarr;</span>
-      <span style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:6px">Referentiel</span>
-    </div>
-  </div>
   <div class="timer" id="timer">00:00</div>
   <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
   <div class="progress-text" id="progressText">1 / 7</div>
   <div class="q-card" id="questionCard"></div>
-  <div class="nav-row" style="margin-top:18px">
-    <button class="btn-nav" id="prevBtn">&larr; Precedente</button>
-    <button class="btn-nav primary" id="nextBtn">Suivante &rarr;</button>
+  <div class="nav-row">
+    <button class="btn-nav" onclick="prevQ()">&larr; Pr&eacute;c&eacute;dente</button>
+    <button class="btn-nav primary" onclick="nextQ()">Suivante &rarr;</button>
   </div>
 </div>
 
 <div id="resultScreen" class="hidden">
   <div class="result-card">
-    <span class="badge">Termine</span>
-    <div class="score-big" id="scoreDisplay">0 / 7</div>
-    <div class="score-label">reponses modele affichees</div>
-    <div class="notice"><strong>Conseil :</strong> enregistre-toi sur 3 questions au hasard, puis reecoute. Tu repereras immediatement ce qui est fluide et ce qui bloque.</div>
-    <div class="nav-row" style="margin-top:18px">
-      <button class="btn-nav" id="restartBtn">&#128260; Recommencer</button>
-      <a class="btn-nav primary" href="index.html" style="text-decoration:none">Retour a l'accueil</a>
+    <span class="badge-teal">Termin&eacute;</span>
+    <div class="score-big" id="scoreDisplay">0 / 0</div>
+    <div class="score-label">r&eacute;ponses QCM correctes</div>
+    <div class="btn-row">
+      <button class="btn-nav" onclick="resetQuiz()">&#128260; Recommencer</button>
+      <a href="index.html" class="btn-nav primary" style="text-decoration:none">Retour</a>
     </div>
   </div>
 </div>
@@ -151,141 +99,118 @@ h1{font-size:1.7rem;color:#111827;margin-bottom:6px;text-align:center}
 
 <script>
 var questions = [
-  {
-    title: "QUESTION 9 — Travail en equipe",
-    askHtml: "<strong>Le jury demande :</strong> \"Comment travaillez-vous en equipe ?\"",
-    answerHtml: "<p><strong>DC vise :</strong> DC3</p><p><strong>1.</strong> Je <strong>communique au quotidien</strong> — echanges reguliers avec enseignante, animateurs, coordinatrice sur les ajustements.</p><p><strong>2.</strong> Je <strong>participe aux reunions formelles</strong> — bilans, reunions de reseau. J'apporte des observations factuelles.</p><p><strong>3.</strong> Je <strong>coordonne les partenaires</strong> — transmissions ciblees aux parascolaires, psychologues, infirmiers (loi 2002-2).</p><p><strong>Exemple :</strong> En AIS, j'etais le lien entre l'enseignante, la famille et la coordinatrice pour garantir la coherence du projet de N.</p>"
-  },
-  {
-    title: "QUESTION 10 — L'autorite",
-    askHtml: "<strong>Le jury demande :</strong> \"Quelle est votre posture face a l'autorite ?\"",
-    answerHtml: "<p><strong>DC vise :</strong> DC1</p><p><strong>1.</strong> Je <strong>pose un cadre clair et coherent</strong> — pas autoritaire, mais structurant (Winnicott : cadre contenant).</p><p><strong>2.</strong> Je <strong>construis l'autorite par la coherence</strong> — regles simples, constantes, explicites. Pas par la menace.</p><p><strong>3.</strong> Je <strong>rends le cadre previsible</strong> — l'enfant se regule parce qu'il comprend les regles, pas par peur.</p><p><strong>Exemple :</strong> Avec R. (impulsivite), j'ai pose une regle simple : \"Tu peux bouger apres cette etape.\" R. a commence a se reguler grace a la previsibilite du cadre.</p>"
-  },
-  {
-    title: "QUESTION 11 — References theoriques",
-    askHtml: "<strong>Le jury demande :</strong> \"Avez-vous des references theoriques que vous utilisez ?\"",
-    answerHtml: "<p><strong>DC vise :</strong> Transversal</p><p><strong>1.</strong> Je <strong>m'appuie sur Vygotski</strong> (ZPD) — etayage adapte puis retire progressivement.</p><p><strong>2.</strong> Je <strong>m'appuie sur Winnicott</strong> (holding) — ma presence stable securise l'enfant.</p><p><strong>3.</strong> Je <strong>m'appuie sur Rogers</strong> (ecoute active) — regard non jugeant qui preserve le lien.</p><p><strong>4.</strong> Je mobilise aussi <strong>Boutinet</strong> (projet) et <strong>Maslow</strong> (besoins) dans ma pratique.</p><p><strong>Exemple :</strong> Avec N., j'ai d'abord assure sa securite (Maslow), puis propose un etayage progressif (Vygotski) dans un cadre stable (Winnicott).</p>"
-  },
-  {
-    title: "QUESTION 12 — Distance professionnelle",
-    askHtml: "<strong>Le jury demande :</strong> \"Comment gerez-vous la distance professionnelle ?\"",
-    answerHtml: "<p><strong>DC vise :</strong> DC1 + DC4</p><p><strong>1.</strong> Je <strong>reste present sans etre fusionnel</strong> — empathie oui, familiarite non.</p><p><strong>2.</strong> Je <strong>respecte le cadre institutionnel</strong> — pas de contacts hors perimetre professionnel (art. 226-13 : secret pro).</p><p><strong>3.</strong> Je <strong>traduis l'empathie en actions concretes</strong> — pas en affectif.</p><p><strong>Exemple :</strong> Quand N. pleurait de fatigue, je ne la consolais pas avec des mots affectifs. Je proposais du concret : \"Je vois que tu es fatiguee. On fait une pause de 5 minutes.\"</p>"
-  },
-  {
-    title: "QUESTION 13 — Comportements violents",
-    askHtml: "<strong>Le jury demande :</strong> \"Comment reagissez-vous aux comportements violents ?\"",
-    answerHtml: "<p><strong>DC vise :</strong> DC1 + DC2</p><p><strong>1.</strong> Je <strong>contiens sans punir</strong> — je separe, je nomme l'emotion, je laisse retomber la tension.</p><p><strong>2.</strong> Je <strong>propose un retour a froid</strong> — verbalisation puis reparation adaptee a l'enfant.</p><p><strong>3.</strong> Je <strong>previens les moments a risque</strong> — decompte temporel avant les transitions. Les incidents diminuent.</p><p><strong>Exemple :</strong> R. a pousse un camarade lors d'une transition. J'ai contenu calmement, puis travaille la reparation. Depuis, je donne un decompte avant chaque transition et les incidents ont diminue.</p>"
-  },
-  {
-    title: "QUESTION 14 — Travail avec les familles",
-    askHtml: "<strong>Le jury demande :</strong> \"Comment travaillez-vous avec les familles ?\"",
-    answerHtml: "<p><strong>DC vise :</strong> DC3 + DC4</p><p><strong>1.</strong> Je <strong>considere les familles comme partenaires</strong> — pas des destinataires passifs (loi 2002-2).</p><p><strong>2.</strong> Je <strong>recueille et transmets</strong> — echange quotidien factuel et valorisant avec les parents.</p><p><strong>3.</strong> Je <strong>maintiens le dialogue meme en cas de defiance</strong> — respect, transparence, langage adapte.</p><p><strong>Exemple :</strong> Avec N., sa maman me transmettait chaque matin l'etat de sa fille. J'ajustais mes interventions et faisais un retour en fin de journee.</p>"
-  },
-  {
-    title: "QUESTION 15 — Sens du diplome",
-    askHtml: "<strong>Le jury demande :</strong> \"Que represente pour vous la validation de ce diplome ?\"",
-    answerHtml: "<p><strong>DC vise :</strong> Transversal</p><p><strong>1.</strong> Je <strong>fais reconnaitre 10 ans de pratique</strong> — AIS, FINC, basketball. Ce n'est pas un depart, c'est une formalisation.</p><p><strong>2.</strong> Je <strong>m'engage pour la suite</strong> — assumer un role a responsabilite, concevoir des projets, coordonner.</p><p><strong>3.</strong> Je <strong>cherche la coherence</strong> — la VAE est l'aboutissement logique d'un parcours construit par l'experience et l'analyse.</p><p><strong>Exemple :</strong> Le diplome ne change pas ma pratique ni mon engagement. Il change ma legitimite institutionnelle et m'ouvre des perspectives d'evolution.</p>"
-  }
+  { label: "Equipe", q: "Comment travaillez-vous en \u00e9quipe ?", options: ["Observations factuelles en r\u00e9union, regards crois\u00e9s, coordination du projet personnalis\u00e9","Je fais mon travail seul et je rends compte","Je suis les d\u00e9cisions sans discuter","Je g\u00e8re les conflits en \u00e9vitant les r\u00e9unions"], correct: 0, explanation: "Le travail en \u00e9quipe repose sur la transmission d'observations factuelles, l'\u00e9coute des regards crois\u00e9s et la coordination dans le respect du projet personnalis\u00e9." },
+  { label: "Autorit\u00e9", q: "Quelle est votre posture face \u00e0 l'autorit\u00e9 ?", options: ["Autorit\u00e9 \u00e9ducative fond\u00e9e sur le cadre et la confiance (Winnicott), pas sur la force","L'autorit\u00e9 c'est se faire respecter par la sanction","Je n'exerce pas d'autorit\u00e9, je suis dans la bienveillance","L'autorit\u00e9 vient du statut professionnel"], correct: 0, explanation: "L'autorit\u00e9 \u00e9ducative se fonde sur le cadre et la relation de confiance (Winnicott), pas sur le rapport de force." },
+  { label: "Th\u00e9orie", q: "Avez-vous des r\u00e9f\u00e9rences th\u00e9oriques ?", options: ["Non, je me fie \u00e0 mon instinct","Je connais Freud uniquement","Vygotski (ZPD), Winnicott (holding), Rogers (\u00e9coute active), Boutinet (projet), loi 2002-2","J'utilise seulement les protocoles de l'institution"], correct: 2, explanation: "Les r\u00e9f\u00e9rences cl\u00e9s : Vygotski (ZPD), Winnicott (holding), Rogers (\u00e9coute active), Boutinet (projet) et la loi 2002-2 (droits des usagers)." },
+  { label: "Distance pro", q: "Comment g\u00e9rez-vous la distance professionnelle ?", options: ["Je reste distant pour ne pas m'attacher","Empathie sans fusion, secret professionnel (art. 226-13) et supervision","Je suis tr\u00e8s proche pour cr\u00e9er la confiance","Je ne me pose pas la question"], correct: 1, explanation: "La juste distance : empathie sans fusion, respect du secret professionnel (art. 226-13) et utilisation de la supervision." },
+  { label: "Violence", q: "Comment r\u00e9agissez-vous aux comportements violents ?", options: ["J'isole imm\u00e9diatement la personne","J'ignore le comportement pour ne pas renforcer","Contenir sans punir, verbaliser l'\u00e9motion, s\u00e9curiser le cadre, analyser en \u00e9quipe","Je punis pour marquer la limite"], correct: 2, explanation: "Face \u00e0 la violence : contenir sans punir, verbaliser l'\u00e9motion, s\u00e9curiser le cadre puis analyser en \u00e9quipe pour ajuster l'accompagnement." },
+  { label: "Familles", q: "Comment travaillez-vous avec les familles ?", options: ["Je les associe au projet personnalis\u00e9 (loi 2002-2) dans le respect de la confidentialit\u00e9","Je les informe uniquement en cas de probl\u00e8me","Je ne travaille pas directement avec les familles","Je leur donne des conseils \u00e9ducatifs"], correct: 0, explanation: "Les familles sont associ\u00e9es au projet personnalis\u00e9 (loi 2002-2), avec transmission des informations n\u00e9cessaires dans le respect de la confidentialit\u00e9." },
+  { label: "DEES", q: "Que repr\u00e9sente pour vous la validation du DEES ?", options: ["Un dipl\u00f4me pour trouver un emploi","La validation de ma capacit\u00e9 \u00e0 concevoir des projets, travailler en \u00e9quipe et accompagner vers l'autonomie","La fin de mon parcours de formation","Une reconnaissance de mes ann\u00e9es d'exp\u00e9rience"], correct: 1, explanation: "Le DEES valide la capacit\u00e9 \u00e0 concevoir des projets \u00e9ducatifs, travailler en \u00e9quipe pluridisciplinaire et accompagner les personnes vers l'autonomie." }
 ];
 
 var currentIndex = 0;
-var revealed = {};
-var revealedCount = 0;
+var answered = false;
+var score = 0;
+var totalQcm = 0;
 var timerInterval = null;
 var seconds = 0;
 
-function setText(id, txt){var el=document.getElementById(id); if(el) el.textContent=txt;}
-function byId(id){return document.getElementById(id);}
-
-function startTimer(){
-  if(timerInterval) clearInterval(timerInterval);
-  seconds = 0;
-  timerInterval = setInterval(function(){
-    seconds++;
-    var m = Math.floor(seconds/60);
-    var s = seconds % 60;
-    setText('timer',(m<10?'0':'')+m+':'+(s<10?'0':'')+s);
-  },1000);
-}
-function stopTimer(){
-  if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
-}
-
-function renderQuestion(){
-  var q = questions[currentIndex];
-  var html = '';
-  html += '<div class="q-number">Question ' + (currentIndex + 1) + ' / ' + questions.length + '</div>';
-  html += '<div class="q-text"><strong>' + q.title + '</strong></div>';
-  html += '<div class="hint">' + (q.askHtml || '') + '</div>';
-  html += '<button class="btn-reveal" id="revealBtn">Afficher une reponse modele</button>';
-  html += '<div class="answer-section" id="answerSection"><h3>Reponse modele</h3><div>' + (q.answerHtml || '') + '</div></div>';
-  document.getElementById('questionCard').innerHTML = html;
-
-  document.getElementById('progressFill').style.width = ((currentIndex + 1) / questions.length * 100) + '%';
-  document.getElementById('progressText').textContent = (currentIndex + 1) + ' / ' + questions.length;
-
-  document.getElementById('revealBtn').onclick = function(){
-    var ans = document.getElementById('answerSection');
-    ans.style.display = 'block';
-    document.getElementById('revealBtn').style.display = 'none';
-    if(!revealed[String(currentIndex)]){
-      revealed[String(currentIndex)] = true;
-      revealedCount++;
-    }
-    if(window.Mentor) Mentor.onAnswerCorrect(questions[currentIndex]);
-  };
-
-  window.scrollTo({top:0,behavior:'smooth'});
-  if(window.Mentor) Mentor.onQuestionShown(q);
-}
-
-function showResults(){
-  stopTimer();
-  document.getElementById('quizArea').classList.add('hidden');
-  document.getElementById('resultScreen').classList.remove('hidden');
-  document.getElementById('scoreDisplay').textContent = revealedCount + ' / ' + questions.length;
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function startQuiz(){
+function startQuiz() {
   currentIndex = 0;
-  revealed = {};
-  revealedCount = 0;
+  answered = false;
+  score = 0;
+  totalQcm = questions.length;
+  seconds = 0;
   document.getElementById('welcomeScreen').classList.add('hidden');
-  document.getElementById('resultScreen').classList.add('hidden');
   document.getElementById('quizArea').classList.remove('hidden');
-  startTimer();
+  document.getElementById('resultScreen').classList.add('hidden');
+  timerInterval = setInterval(function() {
+    seconds++;
+    var m = Math.floor(seconds / 60);
+    var s = seconds % 60;
+    document.getElementById('timer').textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  }, 1000);
   renderQuestion();
 }
 
-document.getElementById('restartBtn').onclick = function(){
-  document.getElementById('resultScreen').classList.add('hidden');
-  startQuiz();
-};
+function renderQuestion() {
+  answered = false;
+  var q = questions[currentIndex];
+  var html = '';
+  html += '<div class="q-number">Question ' + (currentIndex + 1) + ' / ' + questions.length + '</div>';
+  html += '<div class="q-label">' + q.label + '</div>';
+  html += '<div class="q-text">' + q.q + '</div>';
+  html += '<div class="options">';
+  for (var i = 0; i < q.options.length; i++) {
+    html += '<div class="opt" id="opt' + i + '" onclick="selectOption(' + i + ')">' + q.options[i] + '</div>';
+  }
+  html += '</div>';
+  html += '<div class="answer-section" id="answerSection">';
+  html += '<h3>Explication</h3><p>' + q.explanation + '</p>';
+  html += '</div>';
+  document.getElementById('questionCard').innerHTML = html;
+  document.getElementById('progressFill').style.width = ((currentIndex + 1) / questions.length * 100) + '%';
+  document.getElementById('progressText').textContent = (currentIndex + 1) + ' / ' + questions.length;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+  if(window.Mentor) Mentor.onQuestionShown(q);
+}
 
-document.getElementById('prevBtn').onclick = function(){
-  if(currentIndex===0){
-    stopTimer();
+function selectOption(i) {
+  if (answered) return;
+  answered = true;
+  var q = questions[currentIndex];
+  var opts = document.querySelectorAll('.opt');
+  for (var j = 0; j < opts.length; j++) {
+    opts[j].classList.add('disabled');
+    if (j === q.correct) opts[j].classList.add('correct');
+  }
+  if (i !== q.correct) {
+    document.getElementById('opt' + i).classList.add('wrong');
+  } else {
+    score++;
+  }
+  document.getElementById('answerSection').style.display = 'block';
+  if(window.Mentor){
+    if(i === q.correct) Mentor.onAnswerCorrect(q);
+    else Mentor.onAnswerWrong(q, i);
+  }
+  setTimeout(function() {
+    document.getElementById('answerSection').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+  }, 150);
+}
+
+function prevQ() {
+  if (currentIndex === 0) {
+    clearInterval(timerInterval);
     document.getElementById('quizArea').classList.add('hidden');
     document.getElementById('welcomeScreen').classList.remove('hidden');
     return;
   }
   currentIndex--;
   renderQuestion();
-};
+}
 
-document.getElementById('nextBtn').onclick = function(){
-  if(currentIndex >= questions.length - 1){
+function nextQ() {
+  if (currentIndex >= questions.length - 1) {
     showResults();
     return;
   }
   currentIndex++;
   renderQuestion();
-};
+}
 
-document.getElementById('startBtn').onclick = function(){
+function showResults() {
+  clearInterval(timerInterval);
+  document.getElementById('quizArea').classList.add('hidden');
+  document.getElementById('resultScreen').classList.remove('hidden');
+  document.getElementById('scoreDisplay').textContent = score + ' / ' + totalQcm;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function resetQuiz() {
+  document.getElementById('resultScreen').classList.add('hidden');
   startQuiz();
-};
+}
 </script>
 <script src="mentor.js"></script>
 </body>

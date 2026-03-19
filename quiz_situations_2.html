@@ -59,7 +59,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f
 
 <div class="header">
   <h1>Quiz Situations &mdash; &Eacute;l&egrave;ve J &amp; Enfant A</h1>
-  <p>AIS + FINC &mdash; 8 questions QCM &bull; DC1 &agrave; DC4</p>
+  <p>AIS + Dispositif d'inclusion &mdash; 8 questions QCM &bull; DC1 &agrave; DC4</p>
   <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
   <div class="stats">
     <span id="statCurrent">0 / 8</span>
@@ -92,7 +92,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f
 
   <div id="welcomeScreen" class="welcome">
     <h2>Quiz Situations &mdash; &Eacute;l&egrave;ve J &amp; Enfant A</h2>
-    <p><strong>8 QCM</strong> &mdash; 2 situations &times; 4 DC &mdash; AIS + FINC</p>
+    <p><strong>8 QCM</strong> &mdash; 2 situations &times; 4 DC &mdash; AIS + Dispositif d'inclusion</p>
     <p style="margin-top:16px;font-size:.85rem;color:#888">Choisissez la meilleure r&eacute;ponse en &laquo; je &raquo; pour chaque situation</p>
     <button class="start-btn" onclick="startQuiz()">Commencer</button>
     <br>
@@ -167,18 +167,18 @@ var qcmData = [
     q: "Comment inscrivez-vous votre action dans le cadre institutionnel pour J. ?",
     opts: [
       "Je m\u2019appuie sur mon exp\u00e9rience personnelle pour d\u00e9cider des actions, sans me r\u00e9f\u00e9rer aux protocoles institutionnels. R\u00e9sultat : je suis plus r\u00e9actif.",
-      "Je respecte le cadre AIS et les protocoles du DIP, je mobilise les partenaires (m\u00e9decin scolaire, famille, enseignante) et je m\u2019appuie sur les textes r\u00e9glementaires. Cela inscrit mon action dans une logique institutionnelle.",
+      "Je respecte le cadre AIS et les protocoles de l\u2019institution, je mobilise les partenaires (m\u00e9decin scolaire, famille, enseignante) et je m\u2019appuie sur les textes r\u00e9glementaires. Cela inscrit mon action dans une logique institutionnelle.",
       "Je d\u00e9l\u00e8gue la coordination institutionnelle au directeur car c\u2019est son r\u00f4le hi\u00e9rarchique. R\u00e9sultat : le directeur g\u00e8re les partenariats.",
       "Je travaille en bin\u00f4me avec l\u2019enseignante uniquement, sans impliquer les partenaires externes. R\u00e9sultat : l\u2019accompagnement reste simple et efficace."
     ],
     correct: 1,
-    why: "<strong>DC vis\u00e9 : DC4.</strong> Je respecte le cadre du dispositif AIS et les protocoles du DIP pour le retour de convalescence. Je mobilise les partenaires \u2014 m\u00e9decin scolaire, famille, enseignante \u2014 pour un accompagnement coordonn\u00e9. Je m\u2019appuie sur les textes r\u00e9glementaires encadrant l\u2019inclusion scolaire. Cela inscrit mon action dans une logique institutionnelle et partenariale."
+    why: "<strong>DC vis\u00e9 : DC4.</strong> Je respecte le cadre du dispositif AIS et les protocoles de l\u2019institution pour le retour de convalescence. Je mobilise les partenaires \u2014 m\u00e9decin scolaire, famille, enseignante \u2014 pour un accompagnement coordonn\u00e9. Je m\u2019appuie sur les textes r\u00e9glementaires encadrant l\u2019inclusion scolaire. Cela inscrit mon action dans une logique institutionnelle et partenariale."
   },
   {
     dc: "DC1",
     dcColor: "#e10600",
     sit: "B.2.1 \u2014 Enfant A",
-    q: "Comment construisez-vous la relation \u00e9ducative avec Enfant A en dispositif FINC ?",
+    q: "Comment construisez-vous la relation \u00e9ducative avec Enfant A en dispositif d\u2019inclusion ?",
     opts: [
       "J\u2019ai impos\u00e9 un cadre ferme d\u00e8s le d\u00e9part pour stopper les comportements de mise \u00e0 l\u2019\u00e9preuve de A. R\u00e9sultat : A. a compris les limites rapidement.",
       "J\u2019ai orient\u00e9 A. vers un psychologue car ses comportements d\u00e9passaient mes comp\u00e9tences \u00e9ducatives. R\u00e9sultat : A. a b\u00e9n\u00e9fici\u00e9 d\u2019un suivi sp\u00e9cialis\u00e9.",
@@ -210,11 +210,11 @@ var qcmData = [
     opts: [
       "Je r\u00e9dige un rapport annuel sur A. que je transmets \u00e0 la direction. R\u00e9sultat : la direction est inform\u00e9e une fois par an.",
       "Je partage mes impressions personnelles sur A. avec les coll\u00e8gues sans distinguer faits et interpr\u00e9tations. R\u00e9sultat : l\u2019\u00e9quipe conna\u00eet mon ressenti.",
-      "Je fais des transmissions r\u00e9guli\u00e8res \u00e0 l\u2019\u00e9quipe FINC, je participe aux r\u00e9unions pour confronter mes analyses et je distingue les faits de mes interpr\u00e9tations. Cela permet une prise en charge coh\u00e9rente.",
+      "Je fais des transmissions r\u00e9guli\u00e8res \u00e0 l\u2019\u00e9quipe du dispositif d\u2019inclusion, je participe aux r\u00e9unions pour confronter mes analyses et je distingue les faits de mes interpr\u00e9tations. Cela permet une prise en charge coh\u00e9rente.",
       "Je communique principalement avec la famille de A. et je laisse la famille transmettre \u00e0 l\u2019\u00e9quipe. R\u00e9sultat : la famille est au centre de la communication."
     ],
     correct: 2,
-    why: "<strong>DC vis\u00e9 : DC3.</strong> Je fais des transmissions r\u00e9guli\u00e8res \u00e0 l\u2019\u00e9quipe FINC sur l\u2019\u00e9volution de A. Je participe aux r\u00e9unions d\u2019\u00e9quipe pour confronter mes analyses avec celles de mes coll\u00e8gues. Je veille \u00e0 distinguer les faits de mes interpr\u00e9tations dans mes transmissions. Cela permet une prise en charge coh\u00e9rente et ajust\u00e9e par l\u2019ensemble de l\u2019\u00e9quipe."
+    why: "<strong>DC vis\u00e9 : DC3.</strong> Je fais des transmissions r\u00e9guli\u00e8res \u00e0 l\u2019\u00e9quipe du dispositif d\u2019inclusion sur l\u2019\u00e9volution de A. Je participe aux r\u00e9unions d\u2019\u00e9quipe pour confronter mes analyses avec celles de mes coll\u00e8gues. Je veille \u00e0 distinguer les faits de mes interpr\u00e9tations dans mes transmissions. Cela permet une prise en charge coh\u00e9rente et ajust\u00e9e par l\u2019ensemble de l\u2019\u00e9quipe."
   },
   {
     dc: "DC4",
@@ -225,10 +225,10 @@ var qcmData = [
       "Je me concentre uniquement sur la maison de quartier sans impliquer les partenaires externes. R\u00e9sultat : l\u2019accompagnement reste cibl\u00e9 sur un seul lieu.",
       "Je contourne les orientations institutionnelles quand elles ne correspondent pas aux besoins de A. R\u00e9sultat : A. b\u00e9n\u00e9ficie d\u2019un accompagnement personnalis\u00e9.",
       "J\u2019attends que les partenaires me contactent pour collaborer, car l\u2019initiative leur revient. R\u00e9sultat : les partenaires pilotent la coordination.",
-      "J\u2019inscris mon action dans le cadre FINC et les missions de la FASe, je mobilise le r\u00e9seau (\u00e9cole, famille, services sociaux) et je m\u2019appuie sur les orientations institutionnelles. Cela ancre mon intervention dans une dynamique interinstitutionnelle."
+      "J\u2019inscris mon action dans le cadre du dispositif d\u2019inclusion et les missions de la structure d\u2019animation socioculturelle, je mobilise le r\u00e9seau (\u00e9cole, famille, services sociaux) et je m\u2019appuie sur les orientations institutionnelles. Cela ancre mon intervention dans une dynamique interinstitutionnelle."
     ],
     correct: 3,
-    why: "<strong>DC vis\u00e9 : DC4.</strong> J\u2019inscris mon action dans le cadre du dispositif FINC et des missions de la FASe. Je mobilise les partenaires du r\u00e9seau \u2014 \u00e9cole, famille, services sociaux \u2014 pour un accompagnement global. Je m\u2019appuie sur les orientations institutionnelles pour justifier mes choix \u00e9ducatifs. Cela ancre mon intervention dans une dynamique interinstitutionnelle au service de A."
+    why: "<strong>DC vis\u00e9 : DC4.</strong> J\u2019inscris mon action dans le cadre du dispositif d\u2019inclusion et des missions de la structure d\u2019animation socioculturelle. Je mobilise les partenaires du r\u00e9seau \u2014 \u00e9cole, famille, services sociaux \u2014 pour un accompagnement global. Je m\u2019appuie sur les orientations institutionnelles pour justifier mes choix \u00e9ducatifs. Cela ancre mon intervention dans une dynamique interinstitutionnelle au service de A."
   }
 ];
 
