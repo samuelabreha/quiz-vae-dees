@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M&eacute;morisation Oral &mdash; VAE DEES</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 20px 40px}
+
+.navbar{width:100vw;margin:0 -20px 32px;padding:14px 24px;background:linear-gradient(135deg,#1a1a2e 0%,#2d2d5e 100%);display:flex;justify-content:center;gap:6px;box-shadow:0 4px 20px rgba(0,0,0,.15)}
+.navbar a{text-decoration:none;color:rgba(255,255,255,.7);font-weight:700;font-size:.95rem;padding:10px 28px;border-radius:10px;transition:all .2s;display:flex;align-items:center;gap:8px}
+.navbar a:hover{color:#fff;background:rgba(255,255,255,.1)}
+.navbar a.active{color:#fff;background:rgba(255,255,255,.15);box-shadow:inset 0 -3px 0 #7c3aed}
+.navbar .nav-icon{font-size:1.1rem}
+
+.container{max-width:680px;width:100%;margin-top:10px}
+h1{font-size:1.6rem;color:#1a1a2e;margin:20px 0 6px;text-align:center}
+p.sub{font-size:.92rem;color:#666;margin-bottom:24px;text-align:center}
+
+.recap{background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.08);padding:20px;margin-bottom:24px}
+.recap h2{font-size:1rem;color:#7c3aed;margin-bottom:12px}
+.recap-step{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;margin-bottom:6px;background:#f8f7ff;font-size:.88rem;color:#1a1a2e}
+.recap-step .step-num{background:#7c3aed;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem;flex-shrink:0}
+.recap-step .step-label{font-weight:600}
+.recap-step .step-time{margin-left:auto;color:#7c3aed;font-size:.78rem;font-weight:700;flex-shrink:0}
+.recap-step.optional{opacity:.7;border:1px dashed #c4b5fd}
+
+.mode-btns{display:flex;gap:10px;margin-bottom:24px;justify-content:center;flex-wrap:wrap}
+.mode-btn{padding:12px 24px;border:none;border-radius:12px;font-size:.92rem;font-weight:700;cursor:pointer;transition:all .2s;color:#fff}
+.mode-btn.ordre{background:#7c3aed}
+.mode-btn.contenu{background:#0891b2}
+.mode-btn.mixte{background:#dc2626}
+.mode-btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.mode-btn.active-mode{box-shadow:0 0 0 3px #fff,0 0 0 6px currentColor}
+
+.quiz-box{background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.08);padding:24px;display:none}
+.progress-bar{height:6px;background:#e5e7eb;border-radius:3px;margin-bottom:8px}
+.progress-fill{height:100%;border-radius:3px;background:#7c3aed;transition:width .3s}
+.progress-text{text-align:center;font-size:.8rem;color:#888;margin-bottom:16px}
+.q-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.78rem;font-weight:700;color:#fff;background:#7c3aed;margin-bottom:10px}
+.q-text{font-size:1.05rem;color:#1a1a2e;font-weight:600;margin-bottom:18px;line-height:1.5}
+.options{}
+.option-btn{display:block;width:100%;text-align:left;padding:14px 18px;margin-bottom:10px;border:2px solid #e5e7eb;border-radius:12px;background:#fff;font-size:.92rem;color:#1a1a2e;cursor:pointer;transition:all .15s;line-height:1.4}
+.option-btn:hover{border-color:#7c3aed;background:#f8f7ff}
+.option-btn.correct{border-color:#059669;background:#ecfdf5;color:#065f46}
+.option-btn.wrong{border-color:#dc2626;background:#fef2f2;color:#991b1b}
+.option-btn.disabled{pointer-events:none}
+.explanation{display:none;padding:14px 16px;background:#fffbeb;border-left:4px solid #d97706;border-radius:0 10px 10px 0;font-size:.88rem;color:#92400e;line-height:1.5;margin-top:12px}
+.explanation.visible{display:block}
+.next-btn{display:none;margin-top:16px;padding:12px 28px;background:#7c3aed;color:#fff;border:none;border-radius:10px;font-size:.92rem;font-weight:700;cursor:pointer;width:100%}
+.next-btn.visible{display:block}
+.next-btn:hover{background:#6d28d9}
+
+.results{display:none;text-align:center;padding:30px 20px}
+.score-big{font-size:2.5rem;font-weight:800;color:#7c3aed}
+.score-label{font-size:1rem;color:#555;margin:10px 0 20px}
+.restart-btn{padding:12px 28px;background:#7c3aed;color:#fff;border:none;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer;margin:6px}
+.restart-btn:hover{background:#6d28d9}
+.restart-btn.secondary{background:#e5e7eb;color:#1a1a2e}
+.restart-btn.secondary:hover{background:#d1d5db}
+
+.footer{margin-top:48px;font-size:.8rem;color:#aaa;text-align:center}
+
+@media(max-width:640px){
+  body{padding:0 12px 24px}
+  .navbar{padding:10px 12px;gap:4px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;justify-content:flex-start}
+  .navbar a{padding:8px 14px;font-size:.78rem;white-space:nowrap;flex-shrink:0}
+  .mode-btns{flex-direction:column;align-items:stretch}
+  .mode-btn{text-align:center}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="Top_r%C3%A9visions.html"><span class="nav-icon">&#11088;</span> Top R&eacute;visions</a>
+  <a href="index.html"><span class="nav-icon">&#128221;</span> Quiz</a>
+  <a href="revision.html"><span class="nav-icon">&#128640;</span> R&eacute;vision</a>
+  <a href="educateurs_specialises.html"><span class="nav-icon">&#127922;</span> Jeu ES</a>
+  <a href="quiz_oral.html" class="active"><span class="nav-icon">&#127908;</span> Oral</a>
+  <a href="audio.html"><span class="nav-icon">&#127911;</span> Audio</a>
+</nav>
+
+<div class="container">
+
+<h1>&#127908; M&eacute;morisation Oral</h1>
+<p class="sub">Retiens l'ordre et les mots-cl&eacute;s de ta pr&eacute;sentation</p>
+
+<div class="recap">
+  <h2>&#128203; Structure de ton oral (~5 min)</h2>
+  <div class="recap-step"><span class="step-num">1</span><span class="step-label">Introduction</span><span class="step-time">~30s</span></div>
+  <div class="recap-step"><span class="step-num">2</span><span class="step-label">Fonction scolaire &mdash; AIS / DIP</span><span class="step-time">~30s</span></div>
+  <div class="recap-step"><span class="step-num">3</span><span class="step-label">Socio-&eacute;ducatif &mdash; FASe / FINC</span><span class="step-time">~30s</span></div>
+  <div class="recap-step"><span class="step-num">4</span><span class="step-label">Sport &mdash; Basket</span><span class="step-time">~30s</span></div>
+  <div class="recap-step"><span class="step-num">5</span><span class="step-label">Fil rouge &mdash; sens de la d&eacute;marche</span><span class="step-time">~30s</span></div>
+  <div class="recap-step"><span class="step-num">6</span><span class="step-label">D&eacute;buts &mdash; Service civil (D&eacute;clic)</span><span class="step-time">~30s</span></div>
+  <div class="recap-step"><span class="step-num">7</span><span class="step-label">Pr&eacute;vention sp&eacute;cialis&eacute;e &mdash; Transit</span><span class="step-time">~30s</span></div>
+  <div class="recap-step"><span class="step-num">8</span><span class="step-label">Mont&eacute;e en comp&eacute;tences &mdash; Formations</span><span class="step-time">~30s</span></div>
+  <div class="recap-step optional"><span class="step-num">9</span><span class="step-label">Situation pr&eacute;sent&eacute;e</span><span class="step-time">~30s</span></div>
+  <div class="recap-step optional"><span class="step-num">10</span><span class="step-label">R&eacute;ponse &eacute;ducative</span><span class="step-time">~30s</span></div>
+  <div class="recap-step"><span class="step-num">11</span><span class="step-label">Posture &amp; projection + remerciement</span><span class="step-time">~30s</span></div>
+</div>
+
+<div class="mode-btns">
+  <button class="mode-btn ordre" onclick="startQuiz('ordre')">&#128290; Ordre des &eacute;tapes</button>
+  <button class="mode-btn contenu" onclick="startQuiz('contenu')">&#128161; Mots-cl&eacute;s par &eacute;tape</button>
+  <button class="mode-btn mixte" onclick="startQuiz('mixte')">&#127942; Mix complet</button>
+</div>
+
+<div class="quiz-box" id="quiz-box">
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  <div class="progress-text" id="progress-text">1 / 10</div>
+  <div id="question-container">
+    <div class="q-badge" id="q-badge">Ordre</div>
+    <div class="q-text" id="q-text"></div>
+    <div class="options" id="options"></div>
+    <div class="explanation" id="explanation"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Suivante &rarr;</button>
+  </div>
+  <div class="results" id="results">
+    <div class="score-big" id="score-big"></div>
+    <div class="score-label" id="score-label"></div>
+    <button class="restart-btn" onclick="startQuiz(lastMode)">&#128260; Recommencer</button>
+    <button class="restart-btn secondary" onclick="backToMenu()">&#8592; Choisir un autre mode</button>
+  </div>
+</div>
+
+</div>
+
+<div class="footer">Oral VAE DEES &mdash; 26 mars 2026</div>
+
+<script>
+var ordreQuestions = [
+  {q:"Quelle est la 1&egrave;re &eacute;tape de ton oral ?",
+   opts:["Fonction scolaire &mdash; AIS","Introduction","Fil rouge","Service civil"],correct:1,
+   explain:"&Eacute;tape 1 : Introduction. Tu te pr&eacute;sentes, tu annonces ton parcours et la VAE."},
+  {q:"Que vient juste APR&Egrave;S l'introduction ?",
+   opts:["Sport &mdash; Basket","Socio-&eacute;ducatif &mdash; FASe","Fonction scolaire &mdash; AIS / DIP","Fil rouge"],correct:2,
+   explain:"&Eacute;tape 2 : Fonction scolaire &mdash; AIS / DIP. Tu parles de ton r&ocirc;le de rempla&ccedil;ant AIS depuis 2018."},
+  {q:"Quelle &eacute;tape vient en 3&egrave;me position ?",
+   opts:["Socio-&eacute;ducatif &mdash; FASe / FINC","Pr&eacute;vention sp&eacute;cialis&eacute;e","Sport &mdash; Basket","Formations"],correct:0,
+   explain:"&Eacute;tape 3 : Socio-&eacute;ducatif &mdash; FASe / FINC. Depuis 2014, moniteur d'encadrement sp&eacute;cialis&eacute;."},
+  {q:"Quelle &eacute;tape vient juste APR&Egrave;S le socio-&eacute;ducatif ?",
+   opts:["Fil rouge","Service civil","Sport &mdash; Basket","Formations"],correct:2,
+   explain:"&Eacute;tape 4 : Sport &mdash; Basket. Outil &eacute;ducatif : coop&eacute;ration, confiance, gestion des &eacute;motions."},
+  {q:"Quelle est l'&eacute;tape 5 ?",
+   opts:["D&eacute;buts &mdash; Service civil","Fil rouge &mdash; sens de la d&eacute;marche","Pr&eacute;vention sp&eacute;cialis&eacute;e","Posture et projection"],correct:1,
+   explain:"&Eacute;tape 5 : Fil rouge. Tu prends du recul : inclusion, relation, comp&eacute;tences. La VAE = suite logique."},
+  {q:"Que vient APR&Egrave;S le fil rouge ?",
+   opts:["Formations","D&eacute;buts &mdash; Service civil (D&eacute;clic)","Situation pr&eacute;sent&eacute;e","Pr&eacute;vention sp&eacute;cialis&eacute;e"],correct:1,
+   explain:"&Eacute;tape 6 : D&eacute;buts &mdash; Service civil. Le d&eacute;clic entre 2013-2014."},
+  {q:"Quelle &eacute;tape vient en 7&egrave;me position ?",
+   opts:["Formations","Posture et projection","Pr&eacute;vention sp&eacute;cialis&eacute;e &mdash; Transit / Vaudagne","R&eacute;ponse &eacute;ducative"],correct:2,
+   explain:"&Eacute;tape 7 : Pr&eacute;vention sp&eacute;cialis&eacute;e. Travail hors murs avec Transit."},
+  {q:"Que vient APR&Egrave;S la pr&eacute;vention sp&eacute;cialis&eacute;e ?",
+   opts:["Situation pr&eacute;sent&eacute;e","Posture et projection","Mont&eacute;e en comp&eacute;tences &mdash; Formations","Introduction"],correct:2,
+   explain:"&Eacute;tape 8 : Formations. HETS, Jeunesse+Sport, gestion de l'agressivit&eacute;, TSA."},
+  {q:"Les &eacute;tapes 9 et 10 sont optionnelles. Lesquelles ?",
+   opts:["Fil rouge + Formations","Situation pr&eacute;sent&eacute;e + R&eacute;ponse &eacute;ducative","Service civil + Pr&eacute;vention","Posture + Remerciement"],correct:1,
+   explain:"&Eacute;tapes 9-10 (optionnelles) : Situation pr&eacute;sent&eacute;e (match U15) + R&eacute;ponse &eacute;ducative."},
+  {q:"Quelle est la DERNI&Egrave;RE &eacute;tape de ton oral ?",
+   opts:["Formations","R&eacute;ponse &eacute;ducative","Fil rouge","Posture &amp; projection + remerciement"],correct:3,
+   explain:"&Eacute;tape 11 : Posture &amp; projection + remerciement. Respect, adaptation, collectif. &Eacute;voluer vers le sp&eacute;cialis&eacute;."}
+];
+
+var contenuQuestions = [
+  {q:"Dans l'INTRODUCTION, quel est le mot-cl&eacute; pour d&eacute;crire tes 3 axes ?",
+   opts:["Scolaire, socio-&eacute;ducatif, sport","M&eacute;dical, juridique, social","Enseignement, animation, th&eacute;rapie","Recherche, formation, gestion"],correct:0,
+   explain:"Tes 3 axes : scolaire (AIS), socio-&eacute;ducatif (FASe/FINC), sport (basket)."},
+  {q:"&Eacute;tape AIS/DIP : depuis quelle ann&eacute;e travailles-tu comme rempla&ccedil;ant AIS ?",
+   opts:["2014","2016","2018","2020"],correct:2,
+   explain:"Depuis 2018, rempla&ccedil;ant AIS au DIP &agrave; Gen&egrave;ve."},
+  {q:"&Eacute;tape AIS/DIP : quel est ton r&ocirc;le principal ?",
+   opts:["Remplacer l'enseignant","S&eacute;curiser les temps de classe et aider l'acc&egrave;s aux apprentissages","Donner des cours particuliers","G&eacute;rer les punitions"],correct:1,
+   explain:"S&eacute;curiser + acc&egrave;s aux apprentissages, sans prendre la place de l'enseignant."},
+  {q:"&Eacute;tape FASe/FINC : depuis quelle ann&eacute;e ?",
+   opts:["2010","2014","2018","2016"],correct:1,
+   explain:"Depuis 2014, moniteur d'encadrement sp&eacute;cialis&eacute; &agrave; la FASe."},
+  {q:"&Eacute;tape FASe/FINC : sur quoi repose ton travail ?",
+   opts:["Les notes scolaires","Le lien, la m&eacute;diation et le cadre","La th&eacute;rapie individuelle","Le sport"],correct:1,
+   explain:"Lien + m&eacute;diation + cadre. Chacun trouve sa place dans le groupe."},
+  {q:"&Eacute;tape BASKET : qu'est-ce que le basket t'a permis de travailler ?",
+   opts:["La comp&eacute;tition et la performance","La coop&eacute;ration, la confiance, la gestion des &eacute;motions, le respect","La technique sportive uniquement","L'endurance physique"],correct:1,
+   explain:"Outil &eacute;ducatif : coop&eacute;ration, confiance en soi, gestion des &eacute;motions, respect des r&egrave;gles."},
+  {q:"&Eacute;tape FIL ROUGE : quels sont les 3 mots qui reviennent toujours ?",
+   opts:["Discipline, autorit&eacute;, performance","Inclusion, relation, comp&eacute;tences","Th&eacute;orie, pratique, stage","Budget, planning, objectifs"],correct:1,
+   explain:"Fil rouge = inclusion + relation + d&eacute;veloppement des comp&eacute;tences."},
+  {q:"&Eacute;tape SERVICE CIVIL : quel mot d&eacute;crit ce moment ?",
+   opts:["Routine","Obligation","D&eacute;clic","Hasard"],correct:2,
+   explain:"Le d&eacute;clic. 2013-2014 : d&eacute;couverte du travail &eacute;ducatif."},
+  {q:"&Eacute;tape TRANSIT : quel type de travail social ?",
+   opts:["Travail en bureau","Travail social hors murs","Travail hospitalier","Travail scolaire"],correct:1,
+   explain:"Pr&eacute;vention sp&eacute;cialis&eacute;e = travail social hors murs avec l'association Transit."},
+  {q:"&Eacute;tape POSTURE FINALE : quels 3 mots d&eacute;crivent ta posture ?",
+   opts:["Autorit&eacute;, contr&ocirc;le, distance","Respect, adaptation, travail en collectif","Intuition, exp&eacute;rience, habitude","Th&eacute;orie, m&eacute;thode, protocole"],correct:1,
+   explain:"Posture = respect + adaptation + collectif. Projection : structures plus sp&eacute;cialis&eacute;es."}
+];
+
+var mixteQuestions = ordreQuestions.concat(contenuQuestions);
+
+var currentQuestions,currentQ,score,answered,lastMode;
+
+function shuffle(arr){
+  for(var i=arr.length-1;i>0;i--){
+    var j=Math.floor(Math.random()*(i+1));
+    var t=arr[i];arr[i]=arr[j];arr[j]=t;
+  }
+  return arr;
+}
+
+function startQuiz(mode){
+  lastMode=mode;
+  if(mode==='ordre') currentQuestions=ordreQuestions.slice();
+  else if(mode==='contenu') currentQuestions=contenuQuestions.slice();
+  else{currentQuestions=mixteQuestions.slice();shuffle(currentQuestions);}
+  currentQ=0;score=0;answered=false;
+  document.getElementById('quiz-box').style.display='block';
+  document.getElementById('results').style.display='none';
+  document.getElementById('question-container').style.display='block';
+  document.querySelectorAll('.mode-btn').forEach(function(b){b.classList.remove('active-mode')});
+  if(mode==='ordre') document.querySelector('.mode-btn.ordre').classList.add('active-mode');
+  else if(mode==='contenu') document.querySelector('.mode-btn.contenu').classList.add('active-mode');
+  else document.querySelector('.mode-btn.mixte').classList.add('active-mode');
+  renderQ();
+  document.getElementById('quiz-box').scrollIntoView({behavior:'smooth'});
+}
+
+function renderQ(){
+  var q=currentQuestions[currentQ];
+  var total=currentQuestions.length;
+  document.getElementById('progress-fill').style.width=(currentQ/total*100)+'%';
+  document.getElementById('progress-text').textContent=(currentQ+1)+' / '+total;
+  var badgeColor=lastMode==='ordre'?'#7c3aed':lastMode==='contenu'?'#0891b2':'#dc2626';
+  var badgeLabel=lastMode==='ordre'?'Ordre':lastMode==='contenu'?'Mots-cl&eacute;s':'Mix';
+  document.getElementById('q-badge').style.background=badgeColor;
+  document.getElementById('q-badge').innerHTML=badgeLabel+' &bull; Q'+(currentQ+1);
+  document.getElementById('q-text').innerHTML=q.q;
+  var optDiv=document.getElementById('options');
+  optDiv.innerHTML='';
+  q.opts.forEach(function(o,i){
+    var btn=document.createElement('button');
+    btn.className='option-btn';
+    btn.innerHTML=String.fromCharCode(65+i)+'. '+o;
+    btn.onclick=function(){checkAnswer(i)};
+    optDiv.appendChild(btn);
+  });
+  document.getElementById('explanation').className='explanation';
+  document.getElementById('explanation').innerHTML='';
+  document.getElementById('next-btn').className='next-btn';
+  answered=false;
+}
+
+function checkAnswer(idx){
+  if(answered)return;
+  answered=true;
+  var q=currentQuestions[currentQ];
+  var btns=document.querySelectorAll('.option-btn');
+  btns.forEach(function(b,i){
+    b.classList.add('disabled');
+    if(i===q.correct)b.classList.add('correct');
+    if(i===idx&&idx!==q.correct)b.classList.add('wrong');
+  });
+  if(idx===q.correct)score++;
+  document.getElementById('explanation').innerHTML='<strong>&#128161;</strong> '+q.explain;
+  document.getElementById('explanation').className='explanation visible';
+  document.getElementById('next-btn').className='next-btn visible';
+}
+
+function nextQuestion(){
+  currentQ++;
+  if(currentQ>=currentQuestions.length){showResults();return}
+  renderQ();
+}
+
+function showResults(){
+  document.getElementById('question-container').style.display='none';
+  document.getElementById('results').style.display='block';
+  var total=currentQuestions.length;
+  var pct=Math.round(score/total*100);
+  document.getElementById('score-big').textContent=score+' / '+total;
+  var msg=pct>=80?'Tu connais ton oral par coeur !':pct>=60?'Encore un passage pour tout retenir.':'Continue, tu progresses !';
+  document.getElementById('score-label').innerHTML=pct+'% &mdash; '+msg;
+  document.getElementById('progress-fill').style.width='100%';
+}
+
+function backToMenu(){
+  document.getElementById('quiz-box').style.display='none';
+  document.querySelectorAll('.mode-btn').forEach(function(b){b.classList.remove('active-mode')});
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+<script src="mentor.js"></script>
+</body>
+</html>
