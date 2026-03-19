@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Circuit Intelligent &mdash; VAE DEES</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:0 0 60px}
+.navbar{width:100%;padding:14px 24px;background:linear-gradient(135deg,#1a1a2e 0%,#2d2d5e 100%);display:flex;justify-content:center;gap:6px;box-shadow:0 4px 20px rgba(0,0,0,.15)}
+.navbar a{text-decoration:none;color:rgba(255,255,255,.7);font-weight:700;font-size:.95rem;padding:10px 28px;border-radius:10px;transition:all .2s;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.navbar a:hover{color:#fff;background:rgba(255,255,255,.1)}
+.navbar a.active{color:#fff;background:rgba(255,255,255,.15);box-shadow:inset 0 -3px 0 #f59e0b}
+.hero{text-align:center;padding:28px 20px 12px}
+.hero h1{font-size:1.7rem;color:#f59e0b;margin-bottom:6px}
+.hero p{color:#94a3b8;font-size:.9rem}
+.resume-banner{max-width:800px;margin:0 auto 16px;padding:16px 20px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:14px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:transform .2s}
+.resume-banner:hover{transform:scale(1.02)}
+.pulse-dot{width:14px;height:14px;background:#fff;border-radius:50%;animation:pulse 2s infinite;flex-shrink:0}
+.resume-banner .info{flex:1}
+.resume-banner .info h3{font-size:.95rem;color:#1a1a2e;margin-bottom:2px}
+.resume-banner .info p{font-size:.78rem;color:#451a03}
+.resume-banner .go{background:#1a1a2e;color:#f59e0b;border:none;padding:10px 20px;border-radius:10px;font-weight:800;font-size:.85rem;cursor:pointer}
+.stats{max-width:800px;margin:0 auto 16px;display:flex;gap:8px;padding:0 20px;flex-wrap:wrap}
+.stat-card{flex:1;min-width:80px;background:#1e293b;border-radius:12px;padding:12px;text-align:center}
+.stat-card .num{font-size:1.3rem;font-weight:800;color:#f59e0b}
+.stat-card .label{font-size:.68rem;color:#64748b;margin-top:2px}
+.section{max-width:800px;margin:0 auto 24px;padding:0 20px}
+.section-title{font-size:1.1rem;color:#f59e0b;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid #1e293b;display:flex;align-items:center;gap:8px}
+.tree-node{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#1e293b;border-radius:14px;border-left:4px solid #334155;transition:all .3s;cursor:pointer;margin-bottom:2px}
+.tree-node:hover{background:#263348;transform:translateX(4px)}
+.tree-node.done{border-left-color:#22c55e;background:#0f2a1a}
+.tree-node.current{border-left-color:#f59e0b;background:#2a2000;animation:glowNode 2s infinite}
+.tree-node.locked{opacity:.5;cursor:default}
+.tree-node.locked:hover{transform:none;background:#1e293b}
+.tree-node .icon{font-size:1.3rem;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:#0f172a;flex-shrink:0}
+.tree-node .node-info{flex:1}
+.tree-node .node-info h4{font-size:.85rem;color:#e2e8f0;margin-bottom:2px}
+.tree-node .node-info p{font-size:.7rem;color:#64748b}
+.tree-node .badge{padding:3px 10px;border-radius:20px;font-size:.65rem;font-weight:800;flex-shrink:0}
+.badge-done{background:#22c55e;color:#052e16}
+.badge-current{background:#f59e0b;color:#1a1a2e}
+.badge-todo{background:#334155;color:#64748b}
+.badge-count{background:#334155;color:#94a3b8}
+.connector{width:3px;height:14px;background:#334155;margin:0 0 0 33px;border-radius:2px}
+.connector.done{background:#22c55e}
+.connector.current{background:#f59e0b}
+.branch-split{display:flex;gap:12px;margin:8px 0 8px 20px;padding:12px;background:#1e293b;border-radius:14px}
+.branch-side{flex:1;display:flex;flex-direction:column;gap:6px}
+.branch-side h5{font-size:.78rem;color:#f59e0b;margin-bottom:4px;text-align:center}
+.branch-node{padding:8px 12px;background:#0f172a;border-radius:10px;font-size:.75rem;color:#94a3b8;text-align:center;cursor:pointer;transition:all .2s;border:2px solid transparent}
+.branch-node:hover{border-color:#f59e0b;color:#e2e8f0}
+.dc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.dc-col{background:#1e293b;border-radius:14px;padding:14px;border-top:4px solid}
+.dc-col h4{font-size:.85rem;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.dc-col .dc-pct{font-size:1.4rem;font-weight:800;margin-bottom:6px}
+.dc-col .dc-bar{height:6px;background:#0f172a;border-radius:3px;overflow:hidden;margin-bottom:6px}
+.dc-col .dc-fill{height:100%;border-radius:3px;transition:width .5s}
+.dc-col .dc-items{display:flex;flex-direction:column;gap:4px}
+.dc-item{padding:6px 10px;background:#0f172a;border-radius:8px;font-size:.72rem;color:#94a3b8;display:flex;justify-content:space-between;align-items:center}
+.dc-item .di-badge{padding:2px 8px;border-radius:10px;font-size:.6rem;font-weight:800}
+.mem-stats{display:flex;gap:10px;margin-bottom:14px}
+.mem-box{flex:1;background:#1e293b;border-radius:12px;padding:12px;text-align:center}
+.mem-box .mb-num{font-size:1.5rem;font-weight:800}
+.mem-box .mb-label{font-size:.68rem;color:#64748b;margin-top:2px}
+.mb-new{color:#60a5fa}.mb-learn{color:#f59e0b}.mb-master{color:#22c55e}
+.mem-row{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:.78rem}
+.mem-label{width:120px;color:#94a3b8;flex-shrink:0;font-size:.74rem}
+.bar-bg{flex:1;height:8px;background:#0f172a;border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width .5s}
+.mem-val{width:36px;text-align:right;color:#e2e8f0;font-weight:700;flex-shrink:0;font-size:.75rem}
+.quiz-inline{max-width:800px;margin:0 auto;padding:0 20px;display:none}
+.quiz-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.quiz-back{background:#334155;color:#e2e8f0;border:none;padding:8px 16px;border-radius:10px;font-size:.85rem;cursor:pointer;font-weight:700}
+.quiz-title{font-size:1.05rem;color:#f59e0b;font-weight:800}
+.quiz-progress{background:#1e293b;border-radius:10px;height:8px;margin-bottom:6px;overflow:hidden}
+.quiz-progress-fill{height:100%;background:#f59e0b;border-radius:10px;transition:width .3s}
+.quiz-progress-text{font-size:.72rem;color:#64748b;margin-bottom:10px;text-align:center}
+.quiz-question{background:#1e293b;border-radius:16px;padding:18px}
+.quiz-q-text{font-size:.95rem;color:#e2e8f0;line-height:1.6;margin-bottom:14px}
+.quiz-opts{display:flex;flex-direction:column;gap:8px}
+.quiz-opt{background:#0f172a;border:2px solid #334155;border-radius:12px;padding:12px 16px;color:#e2e8f0;font-size:.85rem;cursor:pointer;transition:all .2s;text-align:left;line-height:1.5}
+.quiz-opt:hover{border-color:#f59e0b;background:#1a1a2e}
+.quiz-opt.disabled{pointer-events:none;opacity:.7}
+.quiz-opt.correct{border-color:#22c55e;background:#052e16;color:#22c55e}
+.quiz-opt.wrong{border-color:#ef4444;background:#450a0a;color:#ef4444}
+.quiz-explain{display:none;background:#1a2e1a;border:2px solid #22c55e;border-radius:12px;padding:12px;margin-top:10px;font-size:.82rem;color:#86efac;line-height:1.5}
+.quiz-explain.visible{display:block}
+.quiz-next{display:none;margin-top:10px;background:#f59e0b;color:#1a1a2e;border:none;padding:12px 24px;border-radius:10px;font-weight:800;font-size:.88rem;cursor:pointer;width:100%}
+.quiz-next.visible{display:block}
+.sr-feedback{display:none;margin-top:8px;padding:8px 12px;border-radius:10px;font-size:.75rem;font-weight:700;text-align:center}
+.sr-feedback.visible{display:block}
+.sr-up{background:#052e16;border:1px solid #22c55e;color:#22c55e}
+.sr-down{background:#450a0a;border:1px solid #ef4444;color:#ef4444}
+.quiz-result{text-align:center;padding:28px 20px}
+.quiz-score{font-size:2.2rem;font-weight:800;color:#f59e0b}
+.quiz-score-label{font-size:.95rem;color:#94a3b8;margin-top:6px}
+.quiz-return{margin-top:18px;background:#f59e0b;color:#1a1a2e;border:none;padding:12px 24px;border-radius:12px;font-weight:800;font-size:.95rem;cursor:pointer}
+.reset-row{max-width:800px;margin:24px auto 0;padding:0 20px;text-align:center}
+.reset-btn{background:#1e293b;color:#64748b;border:2px solid #334155;padding:10px 20px;border-radius:10px;font-size:.8rem;cursor:pointer}
+.reset-btn:hover{border-color:#ef4444;color:#ef4444}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes glowNode{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,.3)}50%{box-shadow:0 0 12px 4px rgba(245,158,11,.15)}}
+@media(max-width:640px){
+  body{padding:0 0 40px}
+  .navbar{padding:10px 12px;gap:4px;overflow-x:auto;justify-content:flex-start}
+  .navbar a{padding:8px 14px;font-size:.78rem;flex-shrink:0}
+  .hero h1{font-size:1.3rem}
+  .dc-grid{grid-template-columns:1fr}
+  .branch-split{flex-direction:column}
+  .mem-stats{flex-direction:column}
+  .stats{gap:6px}.stat-card{min-width:70px;padding:10px 6px}.stat-card .num{font-size:1.1rem}
+}
+</style>
+</head>
+<body>
+<nav class="navbar">
+<a href="circuit_revision.html" class="active"><span>&#128736;</span> Circuit</a>
+<a href="quiz_oral.html"><span>&#127908;</span> Oral</a>
+<a href="educateurs_specialises.html"><span>&#127922;</span> Jeu ES</a>
+<a href="audio.html"><span>&#127911;</span> Audio</a>
+<a href="index.html"><span>&#128221;</span> Quiz</a>
+</nav>
+<div class="hero"><h1>&#129504; Circuit Intelligent de M&eacute;morisation</h1>
+<p>GPS de r&eacute;vision &bull; M&eacute;tronome analytique &bull; Coach oral</p></div>
+<div class="resume-banner" id="resumeBanner" onclick="launchSmart()">
+<div class="pulse-dot"></div>
+<div class="info"><h3 id="resumeTitle">Chargement...</h3><p id="resumeSub"></p></div>
+<button class="go">LANCER &#9654;</button></div>
+<div class="stats">
+<div class="stat-card"><div class="num" id="stDue">0</div><div class="label">&Agrave; revoir</div></div>
+<div class="stat-card"><div class="num" id="stMast">0</div><div class="label">Ma&icirc;tris&eacute;es</div></div>
+<div class="stat-card"><div class="num" id="stTot">0</div><div class="label">Total</div></div>
+<div class="stat-card"><div class="num" id="stSes">0</div><div class="label">Sessions</div></div>
+<div class="stat-card" style="border-top-color:#8b5cf6"><div class="num" id="stPass">0/3</div><div class="label">Passage</div></div></div>
+<div class="section" id="secParcours"><div class="section-title">&#127919; PARCOURS GLOBAL &mdash; Chemin de m&eacute;morisation</div><div id="treeParcours"></div></div>
+<div class="section" id="secOral"><div class="section-title">&#127908; STRUCTURE ORAL &mdash; Pr&eacute;sentation</div><div id="treeOral"></div></div>
+<div class="section" id="secJury"><div class="section-title">&#10067; QUESTIONS JURY &mdash; Par domaine de comp&eacute;tence</div><div id="treeJury"></div></div>
+<div class="section" id="secMemoire"><div class="section-title">&#129504; CYCLE M&Eacute;MOIRE &mdash; Apprentissage &amp; consolidation</div><div id="treeMem"></div></div>
+<div class="quiz-inline" id="quizInline">
+<div class="quiz-header"><button class="quiz-back" onclick="exitQuiz()">&#8592; Retour</button><span class="quiz-title" id="quizTitle"></span></div>
+<div class="quiz-progress"><div class="quiz-progress-fill" id="qFill"></div></div>
+<div class="quiz-progress-text" id="qText"></div>
+<div id="quizBody"></div></div>
+<div class="reset-row"><button class="reset-btn" onclick="resetAll()">&#128260; R&eacute;initialiser</button></div>
+<script>
+var QUIZZES = [
+  {id:'jury', name:'Questions Jury', icon:'&#9889;', desc:'Autisme, DEES, secret, projet'},
+  {id:'lois', name:'Lois & Concepts', icon:'&#9878;', desc:'Loi 2002-2, RGPD, loi 2007, art. 226-14'},
+  {id:'posture', name:'Posture & DC', icon:'&#128736;', desc:'4 DC, ajustement, relation de confiance'},
+  {id:'simulation', name:'Simulation Jury', icon:'&#127891;', desc:'Discours ES, arguments, cadre'},
+  {id:'livret', name:'Livret & Jury', icon:'&#128270;', desc:'Transfert, autonomie, outils, limites'},
+  {id:'pieges', name:'Pi\u00e8ges Jury', icon:'&#9888;', desc:'Retrait, observation fine, \u00e9motions'},
+  {id:'situations', name:'Relecture Situations', icon:'&#128214;', desc:'N., R., M., B., A. - vos situations'},
+  {id:'oral1', name:'Indicateurs Oral 1', icon:'&#127908;', desc:'DC, preuve, comp\u00e9tence, posture'},
+  {id:'oral2', name:'Indicateurs Oral 2', icon:'&#127897;', desc:'Analyse, \u00e9valuation, projet, th\u00e9orie'},
+  {id:'jury_av1', name:'Jury Avanc\u00e9 1', icon:'&#9889;', desc:'Identit\u00e9 pro, posture, projet, r\u00e9flexivit\u00e9'},
+  {id:'jury_av2', name:'Jury Avanc\u00e9 2', icon:'&#128172;', desc:'\u00c9quipe, autorit\u00e9, th\u00e9orie, distance pro'},
+  {id:'sit_dc2', name:'Situations DC (2)', icon:'&#128203;', desc:'\u00c9l\u00e8ve J + Enfant A par domaine DC'},
+  {id:'sit_dc3', name:'Situations DC (3)', icon:'&#128204;', desc:'Journ\u00e9e type + projet collectif par DC'},
+  {id:'micro_dc', name:'Micro Quiz DC', icon:'&#127919;', desc:'Identifier le DC dominant rapidement'},
+  {id:'micro_lois', name:'Micro Quiz Lois', icon:'&#9878;', desc:'Lois 2002-2, 2005, 2007, secret pro'}
+];
+
+var ALL_QUESTIONS=[
+[
+{q:"Comment je d\u00e9finis l'autisme si le jury me le demande ?",opts:["C'est un trouble du comportement li\u00e9 \u00e0 l'\u00e9ducation","Trouble du neurod\u00e9veloppement : difficult\u00e9s de communication, d'interactions sociales, comportements restreints et r\u00e9p\u00e9titifs","C'est un handicap moteur qui emp\u00eache l'apprentissage","C'est un retard mental diagnostiqu\u00e9 \u00e0 l'\u00e9cole"],correct:1,explain:"TSA = trouble du neurod\u00e9veloppement. Diagnostic : CRA ou \u00e9quipe pluridisciplinaire. M\u00e9thodes : ABA et TEACCH."},
+{q:"Pourquoi je veux le dipl\u00f4me fran\u00e7ais sp\u00e9cifiquement ?",opts:["Parce que le dipl\u00f4me suisse n'existe pas","J'exerce depuis plusieurs ann\u00e9es, j'ai un projet de vie en France et je veux faire reconna\u00eetre mes comp\u00e9tences","Parce que c'est obligatoire pour travailler en Suisse","Parce que mon employeur me l'impose"],correct:1,explain:"Le DEES me permet de faire reconna\u00eetre mes comp\u00e9tences et poursuivre ma carri\u00e8re en France."},
+{q:"Si un enfant me demande de garder un secret, que dois-je faire ?",opts:["Je garde le secret pour maintenir la confiance","Je lui explique que je ne peux pas si sa s\u00e9curit\u00e9 est en jeu. Je transmets en restant transparent pour maintenir la confiance","Je pr\u00e9viens imm\u00e9diatement ses parents sans lui dire","Je refuse et je lui dis que les secrets sont interdits"],correct:1,explain:"Mon r\u00f4le est de prot\u00e9ger l'enfant. Je transmets tout en restant transparent pour pr\u00e9server la relation de confiance."},
+{q:"Quelles sont les \u00e9tapes d'une d\u00e9marche de projet ?",opts:["Id\u00e9e, Budget, Action, Bilan","Observations, Recueil des attentes, Besoins, Objectifs, Moyens, Mise en oeuvre, \u00c9valuation","Diagnostic, Prescription, Traitement, Gu\u00e9rison","Projet, R\u00e9union, D\u00e9cision, Rapport"],correct:1,explain:"7 \u00e9tapes : Observations, Recueil des attentes, Identification des besoins, D\u00e9finition des objectifs, Moyens, Mise en oeuvre, \u00c9valuation."},
+{q:"Quelle est la diff\u00e9rence entre r\u00e9seau et partenariat ?",opts:["Le r\u00e9seau est formel, le partenariat est informel","R\u00e9seau = acteurs du territoire, lien ponctuel. Partenariat = collaboration formalis\u00e9e autour de la personne","C'est la m\u00eame chose, juste deux mots diff\u00e9rents","Le r\u00e9seau concerne les familles, le partenariat les institutions"],correct:1,explain:"R\u00e9seau = ponctuel. Partenariat = formalis\u00e9, avec \u00e9changes d'informations."},
+{q:"Pourquoi je ne prends pas de notes sur t\u00e9l\u00e9phone ou ordinateur ?",opts:["Parce que c'est impoli devant les familles","Le RGPD impose la protection des donn\u00e9es personnelles des usagers sur des supports s\u00e9curis\u00e9s","Parce que les \u00e9crans sont interdits dans les \u00e9coles","Parce que je pr\u00e9f\u00e8re le papier"],correct:1,explain:"RGPD = R\u00e8glement G\u00e9n\u00e9ral sur la Protection des Donn\u00e9es."},
+{q:"Qu'est-ce qu'un objectif partag\u00e9 ?",opts:["Un objectif fix\u00e9 par le directeur seul","Un objectif co-construit avec la personne, la famille et l'\u00e9quipe dans la d\u00e9marche de projet","Un objectif vot\u00e9 en r\u00e9union d'\u00e9quipe","Un objectif impos\u00e9 par le r\u00e9f\u00e9rentiel"],correct:1,explain:"Il s'inscrit dans la d\u00e9marche de projet en 7 \u00e9tapes."},
+{q:"Qu'est-ce qu'une posture \u00e9ducative adapt\u00e9e ?",opts:["Rester toujours dans la m\u00eame posture quoi qu'il arrive","J'ajuste ma mani\u00e8re d'agir selon la situation, les besoins de la personne et le contexte","Appliquer strictement le protocole sans jamais d\u00e9vier","Laisser la personne d\u00e9cider de tout"],correct:1,explain:"J'ajuste ma posture en prenant en compte les retours de l'enfant, des parents et de l'\u00e9quipe."},
+{q:"Pourquoi pas un autre dipl\u00f4me que le DEES ?",opts:["Parce que c'est le seul qui existe","Mes comp\u00e9tences correspondent \u00e0 celles d'un ES : accompagnement, relation de confiance, travail en \u00e9quipe et en r\u00e9seau","Parce que c'est le plus facile \u00e0 obtenir","Parce que mon pr\u00e9parateur me l'a conseill\u00e9"],correct:1,explain:"Le DEES correspond aux comp\u00e9tences que j'ai d\u00e9velopp\u00e9es sur le terrain."},
+{q:"Quelle est la place d'un \u00e9ducateur sp\u00e9cialis\u00e9 ?",opts:["Il remplace les parents dans l'\u00e9ducation","Il accompagne l'autonomie, participe \u00e0 la dynamique d'\u00e9quipe et coordonne les actions \u00e9ducatives","Il donne des cours de soutien scolaire","Il fait de la th\u00e9rapie"],correct:1,explain:"L'ES accompagne, coordonne et est attentif \u00e0 la dynamique d'\u00e9quipe."}
+],
+[
+{q:"Que dit la loi du 2 janvier 2002 ?",opts:["Elle cr\u00e9e le DEES","La loi sur la r\u00e9novation de l'action sociale","Elle interdit le travail des mineurs","Elle cr\u00e9e le RGPD"],correct:1,explain:"Loi 2002-2 de r\u00e9novation de l'action sociale. Droits des usagers : projet personnalis\u00e9, livret d'accueil, charte des droits."},
+{q:"Que signifie RGPD ?",opts:["R\u00e8glement G\u00e9n\u00e9ral sur la Protection des Donn\u00e9es","R\u00e9f\u00e9rentiel G\u00e9n\u00e9ral des Pratiques DEES","R\u00e8glement de Gestion des Projets D\u00e9partementaux","R\u00e9pertoire des Partenaires Disponibles"],correct:0,explain:"RGPD = protection des donn\u00e9es personnelles."},
+{q:"Que signifie ABA ?",opts:["Association des Besoins Alimentaires","Applied Behavior Analysis : analyse appliqu\u00e9e du comportement","Aide aux B\u00e9n\u00e9ficiaires de l'ASE","Accompagnement Bienveillant Adapt\u00e9"],correct:1,explain:"ABA = approche bas\u00e9e sur l'analyse du comportement pour l'accompagnement des personnes avec TSA."},
+{q:"Que signifie TEACCH ?",opts:["Test d'\u00c9valuation des Acquis","Structuration de l'environnement pour l'autonomie des personnes autistes","Technique d'Entretien et d'Aide","Th\u00e9rapie \u00c9ducative par les Arts"],correct:1,explain:"TEACCH = Treatment and Education of Autistic and Communication Handicapped Children."},
+{q:"Qu'est-ce que la loi du 5 mars 2007 apporte ?",opts:["Elle cr\u00e9e le DEES","R\u00e9forme de la protection de l'enfance : pr\u00e9vention, signalement, int\u00e9r\u00eat sup\u00e9rieur de l'enfant","Elle supprime le secret professionnel","Elle interdit le placement en foyer"],correct:1,explain:"Loi 2007 : renforce la pr\u00e9vention, le signalement et place l'int\u00e9r\u00eat de l'enfant au centre."},
+{q:"Quels sont les 4 DC du DEES ?",opts:["DC1 Relation \u00e9ducative, DC2 Projet \u00e9ducatif, DC3 Communication pro, DC4 Dynamiques interinstitutionnelles","DC1 P\u00e9dagogie, DC2 Psychologie, DC3 Droit, DC4 M\u00e9decine","DC1 Accueil, DC2 H\u00e9bergement, DC3 Insertion, DC4 Suivi","DC1 \u00c9coute, DC2 Animation, DC3 Gestion, DC4 Direction"],correct:0,explain:"DC1 = Relation \u00e9ducative. DC2 = Projet. DC3 = Communication pro. DC4 = Partenariats/r\u00e9seaux."},
+{q:"Qu'est-ce qu'un projet personnalis\u00e9 d'accompagnement ?",opts:["Un document administratif sans importance","Projet co-construit avec la personne : objectifs, moyens et \u00e9valuation centr\u00e9s sur ses besoins","Un plan impos\u00e9 par la direction","Un bilan de fin d'ann\u00e9e"],correct:1,explain:"Le projet personnalis\u00e9 est au coeur de la loi 2002-2. Co-construit, centr\u00e9 sur la personne."},
+{q:"Qu'est-ce que l'\u00e9thique professionnelle pour un ES ?",opts:["Faire ce que les familles demandent","Respecter la dignit\u00e9, agir dans l'int\u00e9r\u00eat de la personne, respecter le cadre l\u00e9gal et rendre compte de sa pratique","Ne jamais prendre de d\u00e9cision seul","Appliquer les r\u00e8gles sans r\u00e9fl\u00e9chir"],correct:1,explain:"L'\u00e9thique : dignit\u00e9, int\u00e9r\u00eat de la personne, cadre l\u00e9gal, transparence."},
+{q:"Que signifie CRA ?",opts:["Centre R\u00e9gional d'Animation","Centre de Ressources Autisme : \u00e9valuation, orientation, accompagnement","Comit\u00e9 de R\u00e9f\u00e9rence Acad\u00e9mique","Certificat de Reconnaissance des Acquis"],correct:1,explain:"CRA = structures sp\u00e9cialis\u00e9es dans le diagnostic et l'accompagnement de l'autisme."},
+{q:"Qu'est-ce que le travail en \u00e9quipe pluriprofessionnelle ?",opts:["Travailler chacun de son c\u00f4t\u00e9","Croiser les regards de diff\u00e9rentes disciplines pour une prise en charge coh\u00e9rente","Faire des r\u00e9unions sans suite","D\u00e9l\u00e9guer tout aux sp\u00e9cialistes"],correct:1,explain:"Pluripro = croiser les regards, coordonner les actions, garantir la coh\u00e9rence."}
+],
+[
+{q:"DC1 \u2014 Comment je construis une relation \u00e9ducative de confiance ?",opts:["En \u00e9tant ami avec l'enfant","Par le respect inconditionnel, l'\u00e9coute active et la continuit\u00e9 \u00e9ducative dans un cadre professionnel","En imposant des r\u00e8gles strictes sans discussion","En laissant l'enfant d\u00e9cider de tout"],correct:1,explain:"DC1 = relation de confiance + adaptation \u00e0 la singularit\u00e9 + cadre professionnel."},
+{q:"DC2 \u2014 Comment j'ai con\u00e7u le projet collectif en maison de quartier ?",opts:["J'ai suivi un mod\u00e8le pr\u00e9d\u00e9fini","Observation du groupe, objectifs partag\u00e9s avec l'\u00e9quipe, ajustements selon les dynamiques r\u00e9elles","J'ai demand\u00e9 aux enfants ce qu'ils voulaient","J'ai copi\u00e9 le projet pr\u00e9c\u00e9dent"],correct:1,explain:"DC2 = observer, analyser, d\u00e9finir des objectifs, mettre en oeuvre et ajuster."},
+{q:"DC3 \u2014 Ma communication professionnelle ?",opts:["Je communique uniquement par \u00e9crit","Int\u00e9gration rapide aux \u00e9quipes, transmissions orales et \u00e9crites au service de la coh\u00e9rence \u00e9ducative","Je garde mes observations pour moi","Je parle seulement avec la direction"],correct:1,explain:"DC3 = travail en \u00e9quipe pluripro + transmissions pertinentes + rendre compte de sa pratique."},
+{q:"DC4 \u2014 Comment je m'inscris dans les dynamiques interinstitutionnelles ?",opts:["Je travaille seul","J'articule mon intervention avec les institutions, les familles, les sp\u00e9cialistes et les politiques sociales du territoire","Je contacte les partenaires en cas de crise","Je d\u00e9l\u00e8gue tout au r\u00e9seau"],correct:1,explain:"DC4 = inscrire mon action dans un cadre institutionnel large + mobiliser les partenaires."},
+{q:"L'ajustement de posture, c'est quoi concr\u00e8tement ?",opts:["Changer de position physique","J'adapte gr\u00e2ce aux retours de l'enfant, des parents et de l'\u00e9quipe. Analyse continue, pas intuition","Suivre toujours le m\u00eame protocole","Demander \u00e0 mon sup\u00e9rieur quoi faire"],correct:1,explain:"Retours formels ET informels. Adapter mes actions en continu."},
+{q:"Qu'est-ce que le jury attend de mon discours ?",opts:["Des exemples personnels sans lien avec le m\u00e9tier","Un discours d'ES : argumenter avec des connaissances pro et les fonctions du m\u00e9tier","R\u00e9citer mon livret 2 par coeur","Parler de mes \u00e9motions"],correct:1,explain:"Le jury veut : connaissances pro + fonctions du m\u00e9tier + analyse."},
+{q:"Les 4 axes \u00e0 ma\u00eetriser pour le jury ?",opts:["Lecture, \u00e9criture, calcul, sport","Relation \u00e9ducative, d\u00e9marche de projet, travail d'\u00e9quipe, travail en r\u00e9seau et partenariat","Psychologie, sociologie, droit, m\u00e9decine","Animation, gestion, communication, marketing"],correct:1,explain:"4 axes = les 4 DC. Chacun doit \u00eatre illustr\u00e9 par des situations concr\u00e8tes."},
+{q:"Qu'est-ce qui diff\u00e9rencie mon oral de mon livret \u00e9crit ?",opts:["Rien, je r\u00e9p\u00e8te ce qui est \u00e9crit","Un regard enrichi et plus mature, nourri par le recul depuis le d\u00e9p\u00f4t du livret","Je corrige les erreurs du livret","Je parle d'autres exp\u00e9riences"],correct:1,explain:"Pas une r\u00e9p\u00e9tition, un regard enrichi."},
+{q:"Comment je pr\u00e9viens les crises plut\u00f4t que d'y r\u00e9agir ?",opts:["J'isole l'enfant d\u00e8s le moindre signe","J'observe les signes pr\u00e9curseurs et j'ajuste : reformulation, objectif interm\u00e9diaire, micro-responsabilit\u00e9","J'appelle la direction","J'attends que la crise passe"],correct:1,explain:"Posture de pr\u00e9vention : observer, intervenir en amont."},
+{q:"Pourquoi la VAE m'a transform\u00e9 ?",opts:["Elle ne m'a pas transform\u00e9","Avant j'agissais par intuition, aujourd'hui je sais nommer et relier ma pratique \u00e0 un cadre th\u00e9orique","Elle m'a appris un nouveau m\u00e9tier","Elle m'a donn\u00e9 confiance uniquement"],correct:1,explain:"VAE = passage de l'intuition \u00e0 l'analyse."}
+],
+[
+{q:"Le jury demande : \u00ab Comment d\u00e9finissez-vous l'autisme ? \u00bb Quelle r\u00e9ponse montre un discours d'ES ?",opts:["J'ai accompagn\u00e9 un enfant autiste, il avait du mal \u00e0 communiquer","TSA = trouble du neurod\u00e9veloppement : difficult\u00e9s de communication et d'interactions sociales, comportements restreints. Diagnostic par CRA. M\u00e9thodes : ABA, TEACCH","C'est quand un enfant ne parle pas et reste dans son coin","C'est une maladie mentale qu'on soigne avec des m\u00e9dicaments"],correct:1,explain:"Le jury attend une d\u00e9finition professionnelle + lieux de diagnostic + m\u00e9thodes."},
+{q:"\u00ab Pourquoi le DEES et pas un autre dipl\u00f4me ? \u00bb Quelle r\u00e9ponse est argument\u00e9e ?",opts:["Parce que c'est le dipl\u00f4me que je vise depuis longtemps","Mes comp\u00e9tences correspondent aux 4 DC de l'ES : accompagnement individualis\u00e9, relation de confiance, \u00e9quipe pluripro et r\u00e9seau","C'est le seul dipl\u00f4me que je connais","Mon pr\u00e9parateur m'a dit que c'\u00e9tait le bon choix"],correct:1,explain:"Argumenter avec les fonctions du m\u00e9tier : les 4 DC."},
+{q:"\u00ab Si un enfant vous demande de garder un secret ? \u00bb Quelle r\u00e9ponse est professionnelle ?",opts:["Je garde le secret car la confiance est prioritaire","S\u00e9curit\u00e9 d'abord : je transmets si n\u00e9cessaire, en restant transparent avec l'enfant et en lui laissant un espace de parole","Je pr\u00e9viens tout le monde imm\u00e9diatement","Je lui dis que les secrets sont interdits dans l'institution"],correct:1,explain:"3 \u00e9l\u00e9ments cl\u00e9s : protection, transparence, espace de parole."},
+{q:"\u00ab Quelles sont les \u00e9tapes d'une d\u00e9marche de projet ? \u00bb",opts:["J'observe, puis j'agis, puis je fais un bilan","7 \u00e9tapes : observations, attentes, besoins, objectifs, moyens, mise en oeuvre, \u00e9valuation. Co-construit avec la personne, la famille et l'\u00e9quipe","Je fais un projet quand la direction me le demande","Je m'adapte au jour le jour sans plan pr\u00e9cis"],correct:1,explain:"7 \u00e9tapes pr\u00e9cises \u00e0 conna\u00eetre par coeur."},
+{q:"\u00ab Diff\u00e9rence entre r\u00e9seau et partenariat ? \u00bb R\u00e9ponse d'ES ?",opts:["C'est pareil","R\u00e9seau = acteurs du territoire, lien ponctuel. Partenariat = collaboration formalis\u00e9e autour de la personne. La diff\u00e9rence : le niveau d'engagement","Le r\u00e9seau c'est les institutions, le partenariat c'est les familles","Je ne fais pas la diff\u00e9rence"],correct:1,explain:"Le jury teste ta ma\u00eetrise du vocabulaire professionnel."},
+{q:"\u00ab Quelle est la place de l'ES ? \u00bb R\u00e9ponse argument\u00e9e ?",opts:["Je fais tout ce qu'on me demande","L'ES accompagne l'autonomie, participe \u00e0 la coordination \u00e9ducative et inscrit son action dans un cadre institutionnel et \u00e9thique","Je remplace les parents","Je suis l\u00e0 pour surveiller"],correct:1,explain:"3 fonctions : accompagnement, \u00e9quipe, cadre institutionnel."},
+{q:"\u00ab Pourquoi ne pas prendre de notes sur t\u00e9l\u00e9phone ? \u00bb Argument professionnel ?",opts:["Parce que c'est mal vu","Le RGPD impose que les donn\u00e9es personnelles soient consign\u00e9es sur des supports institutionnels s\u00e9curis\u00e9s","Parce que mon t\u00e9l\u00e9phone n'a plus de batterie","Parce que je pr\u00e9f\u00e8re tout retenir de t\u00eate"],correct:1,explain:"Argument l\u00e9gal : RGPD. Argument pro : supports institutionnels s\u00e9curis\u00e9s."},
+{q:"\u00ab Comment ajustez-vous votre posture ? \u00bb R\u00e9ponse d'ES ?",opts:["Je fais comme je le sens","J'ajuste gr\u00e2ce aux retours de la personne, des familles et de l'\u00e9quipe. Analyse continue, pas intuition","Je fais ce que la direction me dit","Je ne change jamais ma posture"],correct:1,explain:"Ajustement = retours formels ET informels, de 3 sources."},
+{q:"\u00ab Qu'est-ce qu'un objectif partag\u00e9 ? \u00bb R\u00e9ponse argument\u00e9e ?",opts:["Un objectif que tout le monde conna\u00eet","Objectif co-construit avec la personne, la famille et l'\u00e9quipe, inscrit dans la d\u00e9marche de projet en 7 \u00e9tapes","Un objectif fix\u00e9 par l'\u00e9ducateur seul","Un objectif du projet d'\u00e9tablissement"],correct:1,explain:"Partag\u00e9 = co-construit avec les 3 acteurs."},
+{q:"Le jury dit : \u00ab Donnez-nous un exemple. \u00bb Quel pi\u00e8ge \u00e9viter ?",opts:["Raconter une longue anecdote sans analyse","Exemple court PUIS argumentation : DC vis\u00e9, comp\u00e9tence mobilis\u00e9e, cadre th\u00e9orique et \u00e9valuation","R\u00e9pondre que je n'ai pas d'exemple","Donner plusieurs exemples rapidement"],correct:1,explain:"Pi\u00e8ge = rester dans l'anecdote. Le jury veut : exemple COURT + analyse."}
+],
+[
+{q:"\u00ab Vos 3 exp\u00e9riences sont en Suisse. Comment transf\u00e9rez-vous ces comp\u00e9tences au contexte fran\u00e7ais ? \u00bb",opts:["Les syst\u00e8mes sont identiques","Relation de confiance, observation, d\u00e9marche de projet et travail en r\u00e9seau sont des fondamentaux transf\u00e9rables quel que soit le pays","Je ne connais pas le syst\u00e8me fran\u00e7ais","Je vais me former en France"],correct:1,explain:"Les 4 DC sont universels. Distinguez comp\u00e9tences transf\u00e9rables et cadre local."},
+{q:"\u00ab Dans la situation de N. (Perthes), comment avez-vous pr\u00e9serv\u00e9 son autonomie ? \u00bb",opts:["J'ai tout fait \u00e0 sa place","J'ai propos\u00e9 sans imposer, laiss\u00e9 N. accomplir ce qu'elle ma\u00eetrisait et valoris\u00e9 chaque initiative. La surprotection renforce la d\u00e9pendance","Je l'ai laiss\u00e9e se d\u00e9brouiller seule","J'ai demand\u00e9 aux parents de g\u00e9rer"],correct:1,explain:"DC1+DC2 : \u00e9quilibre aide/autonomie. La surprotection nuit \u00e0 l'estime de soi."},
+{q:"\u00ab Avec l'enfant B. (FINC), comment avez-vous \u00e9vit\u00e9 la d\u00e9pendance affective ? \u00bb",opts:["J'ai gard\u00e9 mes distances d\u00e8s le d\u00e9part","Rep\u00e8res stables et routine s\u00e9curisante, puis retrait progressif vers l'autonomie. Juste distance : rep\u00e8re fiable sans attachement exclusif","J'ai demand\u00e9 \u00e0 un coll\u00e8gue de prendre le relais","Je n'ai pas rencontr\u00e9 ce probl\u00e8me"],correct:1,explain:"Cl\u00e9s : rep\u00e8res stables, retrait progressif, passage de relais."},
+{q:"\u00ab Quels outils d'observation avez-vous utilis\u00e9s dans le FINC ? \u00bb",opts:["Mon intuition et ma m\u00e9moire","Carnets de suivi illustr\u00e9s, grilles d'observation comportementale, cahier de liaison \u00e9quipe et bilans p\u00e9riodiques","Le dossier de l'enfant fourni par l'\u00e9cole","Aucun outil formel"],correct:1,explain:"Montrez la vari\u00e9t\u00e9 : outils personnalis\u00e9s, outils d'\u00e9quipe, \u00e9crits formels."},
+{q:"\u00ab Avec l'enfant A. (impulsif), d\u00e9crivez un ajustement concret. \u00bb",opts:["J'ai augment\u00e9 les punitions","Carnet de suivi avec micro-objectifs concrets (attendre son tour, dire non sans crier) et valorisation de ses ressources","J'ai appel\u00e9 ses parents","J'ai demand\u00e9 son changement de groupe"],correct:1,explain:"Approche par les ressources + micro-objectifs + outil concret."},
+{q:"\u00ab Comment g\u00e9rez-vous un d\u00e9saccord avec un coll\u00e8gue ? \u00bb",opts:["Je fais ce que je pense \u00eatre juste","J'argumente avec mes observations, je reste ouvert et nous cherchons une r\u00e9ponse coh\u00e9rente en r\u00e9gulation d'\u00e9quipe","Je c\u00e8de pour \u00e9viter le conflit","J'en r\u00e9f\u00e8re directement \u00e0 la direction"],correct:1,explain:"DC3 = argumentation + \u00e9coute + cadre collectif."},
+{q:"\u00ab Quelles limites avez-vous identifi\u00e9es dans votre pratique ? \u00bb",opts:["Je n'ai pas de limites","Besoin d'am\u00e9liorer l'anticipation des tensions et de m'appuyer plus sur l'\u00e9quipe. La r\u00e9flexivit\u00e9 transforme ces limites en axes de progression","Mes limites sont li\u00e9es au manque de formation","Je ne suis pas \u00e0 l'aise avec les ados"],correct:1,explain:"Nommer ses limites = force professionnelle. Posture r\u00e9flexive."},
+{q:"\u00ab L'enfant M. (fracture) \u2014 comment articuler s\u00e9curit\u00e9 et autonomie ? \u00bb",opts:["J'ai tout fait pour lui","Retrait progressif : s\u00e9curiser au d\u00e9but puis r\u00e9duire l'aide pour maintenir son sentiment de comp\u00e9tence","J'ai laiss\u00e9 l'enseignante g\u00e9rer seule","J'ai attendu la fin de sa convalescence"],correct:1,explain:"Ajustement fin entre pr\u00e9sence et retrait."},
+{q:"\u00ab Qu'est-ce que le FINC vous a appris sur l'inclusion ? \u00bb",opts:["L'inclusion c'est mettre l'enfant dans le groupe","L'inclusion d\u00e9passe la pr\u00e9sence physique : activit\u00e9s accessibles, r\u00f4les valorisants, place r\u00e9elle reconnue par les pairs","L'inclusion est impossible avec certains profils","Le FINC m'a surtout appris l'individuel"],correct:1,explain:"Inclusion r\u00e9elle = participation + reconnaissance + absence de stigmatisation."},
+{q:"\u00ab Comment avez-vous impliqu\u00e9 les familles ? \u00bb",opts:["Via la coordinatrice uniquement","\u00c9changes quotidiens aux accueils, valorisation des r\u00e9ussites, partage des difficult\u00e9s. Transparence = continuit\u00e9 \u00e9ducative","Les familles n'\u00e9taient pas impliqu\u00e9es","J'envoyais un rapport mensuel"],correct:1,explain:"DC4 + loi 2002-2 : \u00e9changes r\u00e9guliers, transparence, valorisation."}
+],
+[
+{q:"\u00ab Comment savez-vous quand vous retirer de l'accompagnement ? \u00bb",opts:["Quand l'enfant me le dit","Indicateurs observables : l'enfant initie seul ses interactions et g\u00e8re les transitions. Processus progressif \u00e9valu\u00e9 en \u00e9quipe","Quand la direction me le demande","Quand l'ann\u00e9e se termine"],correct:1,explain:"Cl\u00e9 : indicateurs observables + d\u00e9cision collective."},
+{q:"\u00ab Donnez un d\u00e9clencheur concret que vous avez rep\u00e9r\u00e9. \u00bb",opts:["Je voyais que l'enfant n'allait pas bien","Changement de rythme respiratoire ou retrait du regard = surcharge sensorielle imminente","Il pleurait souvent","Je le sentais tendu"],correct:1,explain:"Observation fine = signaux non verbaux pr\u00e9cis."},
+{q:"\u00ab Comment g\u00e9rez-vous vos propres \u00e9motions face \u00e0 la violence ? \u00bb",opts:["Je reste calme naturellement","Ma stabilit\u00e9 \u00e9motionnelle est un outil pro. Je m'appuie sur la r\u00e9gulation d'\u00e9quipe et l'analyse de pratique","Je demande \u00e0 un coll\u00e8gue de g\u00e9rer","Je mets l'enfant \u00e0 l'\u00e9cart"],correct:1,explain:"R\u00e9gulation \u00e9motionnelle comme outil pro + analyse de pratique."},
+{q:"\u00ab L'approche par les ressources : que faire quand \u00e7a ne marche pas ? \u00bb",opts:["Je change de m\u00e9thode","Je r\u00e9\u00e9value en \u00e9quipe et j'ajuste les micro-\u00e9tapes. L'absence de progr\u00e8s est un indicateur qui r\u00e9oriente l'intervention","J'insiste avec la m\u00eame approche","Je signale que l'enfant n'est pas adapt\u00e9"],correct:1,explain:"L'\u00e9chec n'existe pas, il y a des indicateurs."},
+{q:"\u00ab Quels indicateurs mesurables utilisez-vous ? \u00bb",opts:["Je sens que l'enfant va mieux","Fr\u00e9quence des interactions initi\u00e9es, dur\u00e9e de participation, nombre de conflits n\u00e9cessitant m\u00e9diation. Donn\u00e9es crois\u00e9es en \u00e9quipe","Les retours positifs des parents","L'enfant sourit plus souvent"],correct:1,explain:"Le jury veut des indicateurs quantifiables. Fr\u00e9quence, dur\u00e9e, nombre."},
+{q:"\u00ab Quel cadre th\u00e9orique avec un enfant impulsif ? \u00bb",opts:["Mon exp\u00e9rience de terrain","ABA (renforcement positif) et zone proximale de d\u00e9veloppement de Vygotsky : micro-objectifs atteignables","La psychanalyse","Je n'utilise pas de th\u00e9orie"],correct:1,explain:"Cl\u00e9s : ABA, Vygotsky (ZPD), Bowlby (attachement)."},
+{q:"\u00ab Situation o\u00f9 vous avez arbitr\u00e9 entre confidentialit\u00e9 et protection ? \u00bb",opts:["Je n'ai jamais eu ce dilemme","Article 226-14 du code p\u00e9nal : lev\u00e9e du secret en cas de danger pour un mineur. Je transmets en \u00e9quipe en restant transparent","Je garde toujours le secret","Je pr\u00e9viens directement les parents"],correct:1,explain:"Argument l\u00e9gal : article 226-14. Argument \u00e9ducatif : transparence + protection."},
+{q:"\u00ab Votre autonomie a-t-elle atteint ses limites ? \u00bb",opts:["Non, j'ai toujours g\u00e9r\u00e9 seul","Oui, face \u00e0 des souffrances familiales d\u00e9passant mon champ. La limite de l'autonomie marque le d\u00e9but du travail en r\u00e9seau","Oui, quand j'\u00e9tais fatigu\u00e9","Oui, quand la direction n'\u00e9tait pas d'accord"],correct:1,explain:"Nommer ses limites = force. Limite = relais vers le r\u00e9seau (DC4)."},
+{q:"\u00ab Dans le projet collectif FINC, comment inclure sans stigmatiser ? \u00bb",opts:["J'ai cr\u00e9\u00e9 un groupe \u00e0 part","R\u00f4les vari\u00e9s et valorisants. R\u00e9gulation par les r\u00e8gles communes, pas en d\u00e9signant l'enfant accompagn\u00e9","J'ai demand\u00e9 aux autres d'\u00eatre gentils","J'ai laiss\u00e9 le groupe se r\u00e9guler seul"],correct:1,explain:"Inclusion = r\u00f4les diff\u00e9renci\u00e9s, r\u00e8gles communes, retrait progressif."},
+{q:"\u00ab Comment savez-vous que c'est votre action et pas juste le temps ? \u00bb",opts:["Je ne peux pas le prouver","Croisement des observations d'\u00e9quipe, retours familiaux et grilles de suivi. Les avanc\u00e9es correspondent aux ajustements \u00e9ducatifs","L'enfant me l'a dit","Les parents confirment"],correct:1,explain:"Croisement des sources + corr\u00e9lation ajustements/progr\u00e8s. Posture d'analyse."}
+],
+[
+{q:"Dans quel dispositif exercez-vous en tant que rempla\u00e7ant depuis 2018 ?",opts:["Le dispositif AIS (Appui \u00e0 l'Int\u00e9gration Scolaire)","Le dispositif AESH","Le dispositif SESSAD","Le dispositif IME"],correct:0,explain:"J'exerce dans le dispositif AIS depuis avril 2018, au sein de la DGEO/DIP."},
+{q:"Quel est le public que vous accompagnez en AIS ?",opts:["Des adultes en r\u00e9insertion","Des enfants de 4 \u00e0 15 ans \u00e0 besoins \u00e9ducatifs particuliers","Des personnes \u00e2g\u00e9es d\u00e9pendantes","Des adolescents d\u00e9linquants"],correct:1,explain:"J'accompagne des enfants et adolescents de 4 \u00e0 15 ans, scolaris\u00e9s en milieu ordinaire."},
+{q:"Quelle est la probl\u00e9matique de N. ?",opts:["La maladie de Perthes (maladie de la hanche)","Un trouble du spectre autistique","Un trouble de l'attention","Une d\u00e9ficience visuelle"],correct:0,explain:"N. est une \u00e9l\u00e8ve de 1P atteinte de la maladie de Perthes."},
+{q:"Quels sont les troubles principaux de R. ?",opts:["Troubles de l'attention et impulsivit\u00e9","Troubles du spectre autistique","Handicap moteur","Troubles du langage"],correct:0,explain:"R. pr\u00e9sente des troubles de l'attention avec impulsivit\u00e9."},
+{q:"Dans quelle structure exercez-vous en tant que moniteur FINC ?",opts:["La maison de quartier de Saint-Jean (FASe)","Un IME","Un h\u00f4pital de jour","Une \u00e9cole primaire"],correct:0,explain:"J'exerce \u00e0 la maison de quartier de Saint-Jean, dans le cadre du dispositif FINC de la FASe."},
+{q:"Quelle est la probl\u00e9matique principale de B. ?",opts:["Il est tr\u00e8s anxieux, se retire ou r\u00e9agit violemment","Il a des troubles du spectre autistique","Il a un handicap moteur","Il est en \u00e9chec scolaire"],correct:0,explain:"B. est anxieux, a du mal \u00e0 exprimer ses besoins et se retire ou r\u00e9agit violemment."},
+{q:"Quel outil cr\u00e9ez-vous pour accompagner A. ?",opts:["Un dossier m\u00e9dical","Un carnet de suivi illustr\u00e9 avec micro-objectifs","Un contrat de comportement punitif","Un programme scolaire adapt\u00e9"],correct:1,explain:"Je cr\u00e9e un carnet de suivi illustr\u00e9 : attendre son tour, proposer un jeu, dire non sans crier."},
+{q:"Quel est votre premier principe d'action dans le FINC ?",opts:["L'autorit\u00e9 bienveillante","Le respect inconditionnel de la personne","La performance \u00e9ducative","La neutralit\u00e9 \u00e9motionnelle"],correct:1,explain:"Mon premier principe est le respect inconditionnel."},
+{q:"Comment \u00e9valuez-vous votre intervention dans le FINC ?",opts:["Par des tests scolaires","Par des indicateurs crois\u00e9s : observations, retours familles, r\u00e9unions d'\u00e9quipe, auto\u00e9val de l'enfant","Par le jugement du directeur","Je n'\u00e9value pas"],correct:1,explain:"J'\u00e9value par des indicateurs formels et informels crois\u00e9s."},
+{q:"Combien d'ann\u00e9es d'accompagnement pour B. et A. au total ?",opts:["1 an","3 ans","Pr\u00e8s de 5 ans","10 ans"],correct:2,explain:"Les suivis de B. et A. repr\u00e9sentent au total pr\u00e8s de cinq ann\u00e9es."}
+]
+,
+[
+{q:"Quand le jury pose une question, quel est le premier reflexe professionnel ?",opts:["Raconter directement une situation en detail","Identifier le DC / la competence dominante et annoncer son fil de reponse","Citer une loi avant toute chose","Parler de sa motivation personnelle"],correct:1,explain:"Le jury evalue une competence : commencer par identifier le DC rend la reponse lisible."},
+{q:"A quoi sert d'identifier un DC (DC1-DC4) dans une reponse orale ?",opts:["A faire une reponse plus longue","A montrer que la reponse s'inscrit dans le referentiel et une competence pro","A eviter de parler de faits concrets","A reciter le referentiel"],correct:1,explain:"Le DC sert a ancrer la reponse dans le referentiel et a montrer la competence mobilisee."},
+{q:"Le jury cherche principalement :",opts:["L'histoire detaillee de la personne accompagnee","Une demonstration de tes competences et de tes choix professionnels","Des emotions et des intentions","Une reponse theorique sans exemple"],correct:1,explain:"Les situations sont des supports : le jury veut tes competences, pas l'anecdote."},
+{q:"Quelle formulation montre le mieux une competence ?",opts:["Je suis a l'ecoute et je m'adapte","J'ai observe, j'ai mis en place, cela a permis, puis j'ai ajuste","Je suis bienveillant et professionnel","Je fais toujours au mieux"],correct:1,explain:"Une competence se demontre : observation, action, effet, ajustement."},
+{q:"Que doit-on montrer au jury sur ta pratique ?",opts:["La meme reponse pour toutes les situations","Ce qui est universel (structure pro) et ce qui est specifique (adaptation)","Uniquement ce qui est specifique","Uniquement ce qui est universel"],correct:1,explain:"La structure reste stable, la mise en oeuvre s'adapte a la personne et au contexte."},
+{q:"Quelles lois minimum dois-tu pouvoir mobiliser a l'oral ?",opts:["2002-2 et 2005","2007 uniquement","Aucune loi","Uniquement le code du sport"],correct:0,explain:"Au minimum : loi 2002-2 (droits, participation, outils) et loi 2005 (inclusion/compensation)."},
+{q:"A l'oral, citer une loi est utile surtout si :",opts:["Tu la recites avec son numero exact","Tu la relies a un choix concret dans une situation","Tu cites plusieurs lois sans lien","Tu la cites a la fin sans exemple"],correct:1,explain:"Le jury attend du droit applique : un repere legal + un exemple d'impact concret."},
+{q:"La relation educative se construit principalement :",opts:["En un entretien formel unique","Dans la duree, par l'observation et l'ajustement","Par l'autorite et la sanction","Par des activites uniquement"],correct:1,explain:"La relation educative se construit dans le temps, via observation et ajustement."},
+{q:"Quelle posture est la plus jury-compatible face a une difficulte ?",opts:["Punitive et immediate","Contenante, explicative, non jugeante, avec cadre clair","Evitement pour ne pas creer de tension","Deni du probleme"],correct:1,explain:"Posture pro : cadre clair + sens + contenance, sans basculer dans la punition."}
+],
+[
+{q:"Avant d'agir, l'analyse sert surtout a :",opts:["Trouver un responsable","Comprendre besoins/facteurs et justifier les objectifs","Gagner du temps","Citer une theorie"],correct:1,explain:"Analyse = hypotheses + besoins + facteurs, puis objectifs coherents."},
+{q:"Quel element manque le plus souvent dans une reponse trop narrative ?",opts:["Le nom de la personne","L'evaluation : effets observes + ajustements","Les details de l'activite","Le lieu exact"],correct:1,explain:"Le jury attend : ce que ca a change et comment tu reajustes."},
+{q:"Si une situation parle d'un projet, le jury veut surtout voir :",opts:["Un titre de projet","Conception, mise en oeuvre, evaluation (technicien du projet)","Une activite sympa","Une intention generale"],correct:1,explain:"Projet = methode : analyser, objectifs, plan d'actions, evaluation/reajustement."},
+{q:"A quoi sert l'appui theorique a l'oral ?",opts:["Remplacer la situation","Donner du sens et justifier des choix a partir de reperes pro","Faire savant","Allonger la reponse"],correct:1,explain:"La theorie sert a eclairer la pratique, pas a la remplacer."},
+{q:"Lors d'une transmission en equipe, l'attendu le plus professionnel est :",opts:["Tout dire pour etre transparent","Transmettre le strict necessaire, factuel, utile, cadre du secret partage","Ne rien dire","Parler uniquement des ressentis"],correct:1,explain:"Transmissions : factuel, utile, cadre ethique et legal."},
+{q:"Quel est le bon critere pour savoir si ta reponse est professionnelle ?",opts:["Elle est longue","Elle suit une logique, montre des actions, des effets, et un cadre (DC/loi/theorie)","Elle est emotionnelle","Elle evite les details concrets"],correct:1,explain:"Pro = structure + concret + effets + cadre (DC/loi/theorie) + posture."},
+{q:"Le jury demande 'Comment evalues-tu ton accompagnement ?'. Quel attendu ?",opts:["Dire que ca se passe bien","Donner des criteres/indicateurs, des effets observes, et un reajustement","Citer la loi 2002-2 uniquement","Parler du ressenti de l'equipe"],correct:1,explain:"Evaluation = criteres + effets + ajustements (pas un ressenti global)."},
+{q:"On te dit 'Votre ecrit affirme beaucoup'. Que corriger a l'oral ?",opts:["Parler plus vite","Remplacer les affirmations par une demonstration (comment, avec quoi, effets)","Citer plus de lois","Rester general"],correct:1,explain:"Passer de l'affirmation a la preuve : comment tu fais + observations + effets."},
+{q:"Tu reponds sans citer aucun acteur (equipe/famille/partenaires). Quel indicateur fragile ?",opts:["Reseau","Decrire les faits","Objectifs","Posture"],correct:0,explain:"Si le travail mobilise d'autres acteurs, rendre visible le reseau."}
+],
+[
+{q:"Qu'est-ce qui distingue un \u00e9ducateur sp\u00e9cialis\u00e9 d'un animateur ?",opts:["Il gagne un meilleur salaire","Il con\u00e7oit des projets individualis\u00e9s dans un cadre institutionnel","Il travaille uniquement avec des enfants","Il fait des activit\u00e9s collectives"],correct:1,explain:"L'\u00e9ducateur sp\u00e9cialis\u00e9 con\u00e7oit des projets individualis\u00e9s dans un cadre institutionnel."},
+{q:"Qu'entendez-vous par posture \u00e9ducative ?",opts:["\u00catre autoritaire pour maintenir l'ordre","Observation, \u00e9coute active (Rogers) et holding (Winnicott) pour un cadre s\u00e9curisant","Laisser faire sans intervenir","Suivre uniquement les consignes de l'institution"],correct:1,explain:"La posture \u00e9ducative repose sur l'observation, l'\u00e9coute active et le holding."},
+{q:"Pourquoi avoir choisi cette situation pour l'oral ?",opts:["Elle mobilise les 4 DC et montre ma capacit\u00e9 \u00e0 observer, analyser, agir et \u00e9valuer","C'est la plus r\u00e9cente","Elle est la plus facile \u00e0 raconter","Mon tuteur me l'a conseill\u00e9e"],correct:0,explain:"Une situation pertinente mobilise les 4 DC."},
+{q:"Comment concevez-vous un projet \u00e9ducatif ?",opts:["Je reproduis ce qui a fonctionn\u00e9","Je suis les consignes du chef de service","Observation, objectifs avec l'\u00e9quipe, plan d'actions, \u00e9valuation (Boutinet)","Je fais une activit\u00e9 qui pla\u00eet"],correct:2,explain:"Projet : observation, objectifs, plan d'actions, \u00e9valuation r\u00e9guli\u00e8re (Boutinet)."},
+{q:"Qu'avez-vous appris sur vous-m\u00eame dans cette situation ?",opts:["Que je suis fait pour ce m\u00e9tier","\u00c0 ajuster ma posture gr\u00e2ce \u00e0 l'analyse de pratique et la supervision","Que j'ai toujours raison","Rien de particulier"],correct:1,explain:"L'apprentissage sur soi passe par l'analyse de pratique et la supervision."},
+{q:"Avez-vous v\u00e9cu un \u00e9chec ? Comment avez-vous r\u00e9agi ?",opts:["Non, jamais","J'ai chang\u00e9 de poste","J'analyse, j'ajuste dans la ZPD (Vygotski) et je r\u00e9\u00e9value","J'ai appliqu\u00e9 la m\u00eame m\u00e9thode plus fort"],correct:2,explain:"L'\u00e9chec est un levier : analyser, ajuster dans la ZPD et r\u00e9\u00e9valuer."},
+{q:"Quelle est votre conception de l'accompagnement ?",opts:["Faire avec et non \u00e0 la place, respect du projet personnalis\u00e9 (loi 2002-2)","D\u00e9cider pour la personne","Attendre que la personne demande","Appliquer un protocole identique pour tous"],correct:0,explain:"Accompagner : faire avec, respect du projet personnalis\u00e9, ZPD (Vygotski)."},
+{q:"Comment d\u00e9finissez-vous l'\u00e9thique professionnelle ?",opts:["Faire ce que dit le chef","Secret professionnel (art. 226-13), consentement \u00e9clair\u00e9, confidentialit\u00e9 en \u00e9quipe","\u00catre gentil avec tout le monde","Ne jamais partager d'information"],correct:1,explain:"\u00c9thique : secret professionnel (art. 226-13), consentement \u00e9clair\u00e9, confidentialit\u00e9."}
+],
+[
+{q:"Comment travaillez-vous en \u00e9quipe ?",opts:["Observations factuelles en r\u00e9union, regards crois\u00e9s, coordination du projet personnalis\u00e9","Je fais mon travail seul","Je suis les d\u00e9cisions sans discuter","J'\u00e9vite les r\u00e9unions"],correct:0,explain:"Travail en \u00e9quipe : transmission d'observations factuelles, \u00e9coute, coordination."},
+{q:"Quelle est votre posture face \u00e0 l'autorit\u00e9 ?",opts:["Autorit\u00e9 \u00e9ducative fond\u00e9e sur le cadre et la confiance (Winnicott)","Autorit\u00e9 par la sanction","Pas d'autorit\u00e9, juste bienveillance","L'autorit\u00e9 vient du statut"],correct:0,explain:"Autorit\u00e9 \u00e9ducative : cadre + relation de confiance (Winnicott)."},
+{q:"Avez-vous des r\u00e9f\u00e9rences th\u00e9oriques ?",opts:["Non, instinct","Je connais Freud uniquement","Vygotski (ZPD), Winnicott (holding), Rogers (\u00e9coute active), Boutinet (projet), loi 2002-2","Protocoles de l'institution seulement"],correct:2,explain:"R\u00e9f\u00e9rences cl\u00e9s : Vygotski, Winnicott, Rogers, Boutinet, loi 2002-2."},
+{q:"Comment g\u00e9rez-vous la distance professionnelle ?",opts:["Je reste distant","Empathie sans fusion, secret professionnel (art. 226-13) et supervision","Tr\u00e8s proche pour la confiance","Je ne me pose pas la question"],correct:1,explain:"Juste distance : empathie sans fusion, secret pro, supervision."},
+{q:"Comment r\u00e9agissez-vous aux comportements violents ?",opts:["J'isole imm\u00e9diatement","J'ignore","Contenir sans punir, verbaliser l'\u00e9motion, s\u00e9curiser, analyser en \u00e9quipe","Je punis"],correct:2,explain:"Violence : contenir, verbaliser, s\u00e9curiser, puis analyser en \u00e9quipe."},
+{q:"Comment travaillez-vous avec les familles ?",opts:["Associ\u00e9es au projet personnalis\u00e9 (loi 2002-2) dans le respect de la confidentialit\u00e9","Inform\u00e9es uniquement en cas de probl\u00e8me","Pas de travail direct avec les familles","Conseils \u00e9ducatifs"],correct:0,explain:"Familles associ\u00e9es au projet personnalis\u00e9 (loi 2002-2), avec confidentialit\u00e9."},
+{q:"Que repr\u00e9sente la validation du DEES ?",opts:["Un dipl\u00f4me pour trouver un emploi","Validation de ma capacit\u00e9 \u00e0 concevoir des projets, travailler en \u00e9quipe et accompagner vers l'autonomie","Fin de formation","Reconnaissance d'exp\u00e9rience"],correct:1,explain:"DEES valide : concevoir des projets, travailler en \u00e9quipe, accompagner vers l'autonomie."}
+],
+[
+{q:"[DC1] \u00c9l\u00e8ve J : Comment construisez-vous la relation \u00e9ducative en convalescence ?",opts:["Posture adapt\u00e9e, relation s\u00e9curisante, respect du rythme de reprise","Cadre strict pour rattraper le retard scolaire","Laisser J. g\u00e9rer seul sa reprise","Confier le suivi \u00e0 l'enseignante"],correct:0,explain:"DC1 : adapter sa posture \u00e0 la fragilit\u00e9, relation s\u00e9curisante, respect du rythme."},
+{q:"[DC2] \u00c9l\u00e8ve J : Comment avez-vous con\u00e7u le projet \u00e9ducatif ?",opts:["M\u00eame projet que les autres \u00e9l\u00e8ves","Observer, objectifs progressifs (reprise, socialisation, confiance), ajuster selon fatigue","La famille d\u00e9finit les objectifs","Programme intensif de rattrapage"],correct:1,explain:"DC2 : observer, objectifs progressifs, ajuster, \u00e9valuer r\u00e9guli\u00e8rement."},
+{q:"[DC3] \u00c9l\u00e8ve J : Comment communiquez-vous avec l'\u00e9quipe ?",opts:["Communiquer uniquement en cas de probl\u00e8me grave","La famille fait le relais","Transmissions r\u00e9guli\u00e8res, r\u00e9unions de suivi, bilans \u00e9crits pour coh\u00e9rence","\u00c9changes informels dans les couloirs"],correct:2,explain:"DC3 : transmissions r\u00e9guli\u00e8res, r\u00e9unions, bilans \u00e9crits, coh\u00e9rence."},
+{q:"[DC4] \u00c9l\u00e8ve J : Comment inscrivez-vous votre action dans le cadre institutionnel ?",opts:["Exp\u00e9rience personnelle sans protocoles","Respecter le cadre AIS, mobiliser partenaires (m\u00e9decin, famille, enseignante), textes r\u00e9glementaires","D\u00e9l\u00e9guer la coordination au directeur","Travailler en bin\u00f4me avec l'enseignante uniquement"],correct:1,explain:"DC4 : cadre AIS, partenaires mobilis\u00e9s, textes r\u00e9glementaires, logique institutionnelle."},
+{q:"[DC1] Enfant A : Comment construisez-vous la relation \u00e9ducative en inclusion ?",opts:["Cadre ferme pour stopper les mises \u00e0 l'\u00e9preuve","Orienter vers un psychologue","\u00c9viter de confronter A.","Respect inconditionnel, \u00e9coute active, temps informels, posture contenante"],correct:3,explain:"DC1 : respect inconditionnel, \u00e9coute active, temps informels, posture contenante."},
+{q:"[DC2] Enfant A : Comment avez-vous con\u00e7u le projet \u00e9ducatif ?",opts:["Observer, objectifs avec l'\u00e9quipe (socialisation, \u00e9motions, autonomie), m\u00e9diations adapt\u00e9es","Reprendre le projet du pr\u00e9c\u00e9dent \u00e9ducateur","Laisser A. choisir ses activit\u00e9s","D\u00e9finir seul les objectifs depuis le diagnostic"],correct:0,explain:"DC2 : observer, d\u00e9finir objectifs avec l'\u00e9quipe, m\u00e9diations adapt\u00e9es, \u00e9valuation continue."},
+{q:"[DC3] Enfant A : Comment communiquez-vous avec l'\u00e9quipe ?",opts:["Rapport annuel \u00e0 la direction","Impressions personnelles sans distinguer faits et interpr\u00e9tations","Transmissions r\u00e9guli\u00e8res, r\u00e9unions d'analyse, distinction faits/interpr\u00e9tations","La famille transmet \u00e0 l'\u00e9quipe"],correct:2,explain:"DC3 : transmissions r\u00e9guli\u00e8res, analyses crois\u00e9es, distinction faits/interpr\u00e9tations."},
+{q:"[DC4] Enfant A : Comment inscrivez-vous votre action dans le cadre institutionnel ?",opts:["Uniquement la maison de quartier","Contourner les orientations institutionnelles","Attendre que les partenaires me contactent","Cadre d'inclusion, r\u00e9seau (\u00e9cole, famille, services sociaux), orientations institutionnelles"],correct:3,explain:"DC4 : cadre d'inclusion, mobiliser le r\u00e9seau, s'appuyer sur les orientations institutionnelles."}
+],
+[
+{q:"[DC1] Journ\u00e9e type : Comment construisez-vous la relation \u00e9ducative ?",opts:["Relation \u00e0 travers les temps de la journ\u00e9e, signaux de chaque enfant, temps informels","Entretiens individuels formels + grille d'\u00e9valuation","Laisser les enfants g\u00e9rer seuls, intervenir en cas de conflit","Activit\u00e9s structur\u00e9es uniquement, sans temps informels"],correct:0,explain:"DC1 : relation \u00e0 travers tous les temps, attention aux signaux, temps informels comme supports."},
+{q:"[DC2] Journ\u00e9e type : Comment concevez-vous le projet \u00e9ducatif ?",opts:["M\u00eame programme chaque semaine","Temps structur\u00e9s et libres avec objectifs, activit\u00e9s adapt\u00e9es, observation et ajustement","Choix libre des enfants sans objectifs","Activit\u00e9s formelles uniquement"],correct:1,explain:"DC2 : articuler temps structur\u00e9s/libres, objectifs, observer, \u00e9valuer, r\u00e9ajuster."},
+{q:"[DC3] Journ\u00e9e type : Comment communiquez-vous avec l'\u00e9quipe ?",opts:["Mails en fin de semaine","G\u00e9rer seul, solliciter en cas de crise","Transmissions orales d\u00e9but/fin de journ\u00e9e, signaler les situations, bilan d'\u00e9quipe","Partager directement avec les parents"],correct:2,explain:"DC3 : transmissions orales, signalement imm\u00e9diat, bilan d'\u00e9quipe, continuit\u00e9 \u00e9ducative."},
+{q:"[DC4] Journ\u00e9e type : Comment inscrire dans le cadre institutionnel ?",opts:["Bien-\u00eatre imm\u00e9diat sans projet institutionnel","R\u00e8glement int\u00e9rieur uniquement","Directives de la direction sans questionnement","Projet de la structure, missions d'inclusion/socialisation/pr\u00e9vention, lien activit\u00e9s-objectifs"],correct:3,explain:"DC4 : inscrire dans le projet de structure, missions d'inclusion, lien activit\u00e9s-objectifs."},
+{q:"[DC1] Projet collectif : Comment construire la relation \u00e9ducative ?",opts:["D\u00e9signer un leader, ne pas intervenir dans les conflits","Valoriser la place de chacun, attention aux dynamiques, r\u00e9guler, favoriser la coop\u00e9ration","Entretiens individuels en parall\u00e8le","Posture neutre et distante, focus technique"],correct:1,explain:"DC1 : valoriser chacun, attention aux dynamiques, r\u00e9gulation, coop\u00e9ration."},
+{q:"[DC2] Projet collectif : Comment avez-vous con\u00e7u et conduit ce projet ?",opts:["D\u00e9cid\u00e9 seul du th\u00e8me, fix\u00e9 les r\u00f4les sans consulter","Choix libre sans objectifs \u00e9ducatifs","Co-construit avec les jeunes, objectifs (coop\u00e9ration, autonomie), \u00e9tapes structur\u00e9es, \u00e9valuation","Repris le projet de l'ann\u00e9e pr\u00e9c\u00e9dente"],correct:2,explain:"DC2 : co-construction, objectifs \u00e9ducatifs, \u00e9tapes, \u00e9valuation avec le groupe."},
+{q:"[DC3] Projet collectif : Comment communiquer avec l'\u00e9quipe ?",opts:["Pr\u00e9senter le projet, points r\u00e9guliers, bilan \u00e9crit, dynamique d'\u00e9quipe","G\u00e9rer seul, r\u00e9sultats pr\u00e9sent\u00e9s \u00e0 la fin","Communiquer avec la hi\u00e9rarchie uniquement","Informer par mail sans attendre de retour"],correct:0,explain:"DC3 : pr\u00e9senter, points r\u00e9guliers, bilan \u00e9crit, inscription dans la dynamique d'\u00e9quipe."},
+{q:"[DC4] Projet collectif : Comment inscrire dans les dynamiques institutionnelles ?",opts:["Ind\u00e9pendamment des orientations institutionnelles","R\u00e8glement int\u00e9rieur uniquement","Orientations de la structure, partenaires locaux, lien avec politiques d'inclusion/pr\u00e9vention","Autorisation de la direction avant chaque \u00e9tape"],correct:2,explain:"DC4 : orientations de la structure, partenaires locaux, politiques d'inclusion/pr\u00e9vention."}
+],
+[
+{q:"Un \u00e9ducateur observe un enfant dans le quotidien pour ajuster sa posture. Quel DC domine ?",opts:["DC2","DC1","DC3","DC4"],correct:1,explain:"Observation, relation \u00e9ducative, adaptation \u00e0 la singularit\u00e9 = DC1."},
+{q:"Un \u00e9ducateur co-construit des objectifs, met en oeuvre des actions, puis \u00e9value. Quel DC ?",opts:["DC2","DC4","DC1","DC3"],correct:0,explain:"Conception, conduite et \u00e9valuation du projet \u00e9ducatif = DC2."},
+{q:"Un \u00e9ducateur r\u00e9dige une note pour un magistrat en distinguant faits et analyse. Quel DC ?",opts:["DC1","DC2","DC3","DC4"],correct:2,explain:"Communication professionnelle, \u00e9crits adapt\u00e9s au destinataire = DC3."},
+{q:"Un \u00e9ducateur mobilise des partenaires externes pour s\u00e9curiser le parcours d'un jeune. Quel DC ?",opts:["DC4","DC1","DC3","DC2"],correct:0,explain:"Partenariat, r\u00e9seau, dynamiques interinstitutionnelles = DC4."},
+{q:"Le jury demande comment vous avez r\u00e9gul\u00e9 les passages \u00e0 l'acte de R. Quel r\u00e9flexe ?",opts:["Commencer par une anecdote","Identifier d'abord le DC dominant, puis structurer","Citer une loi au hasard","Donner une r\u00e9ponse courte sans situation"],correct:1,explain:"R\u00e9flexe pro : identifier le DC (ici DC1/DC2), puis structurer la r\u00e9ponse."}
+],
+[
+{q:"Quelle loi fonde les droits des usagers, la participation, le projet personnalis\u00e9 et les outils (livret, contrat, CVS) ?",opts:["Loi 2005","Loi 2007","Loi 2002-2","CIDE"],correct:2,explain:"Rep\u00e8re cl\u00e9 : droits de l'usager et cadre de l'action sociale."},
+{q:"Inclusion, compensation, accessibilit\u00e9, MDPH renvoient principalement \u00e0 :",opts:["Loi 2005","Loi 2002-2","Loi 2007","Code p\u00e9nal 226-13"],correct:0,explain:"\u00c9galit\u00e9 des droits et des chances des personnes en situation de handicap."},
+{q:"Risque ou danger pour un enfant : quel cadre est prioritairement mobilis\u00e9 ?",opts:["Loi 2007","Loi 2005","CIDE art. 31","Code du sport"],correct:0,explain:"Protection de l'enfance, pr\u00e9vention, signalement."},
+{q:"Partager uniquement les informations n\u00e9cessaires avec les professionnels concern\u00e9s correspond \u00e0 :",opts:["Libert\u00e9 d'expression CIDE","Secret professionnel et secret partag\u00e9","Projet de vie MDPH","R\u00e8glement de fonctionnement"],correct:1,explain:"Art. 226-13 Code p\u00e9nal et art. L.226-2-2 CASF."},
+{q:"\u00c0 l'oral, quelle r\u00e8gle de m\u00e9morisation est la plus efficace pour les lois ?",opts:["Citer des num\u00e9ros de loi sans lien pratique","Relier chaque loi \u00e0 une situation v\u00e9cue du livret","Ne citer aucune loi","Citer toutes les lois dans chaque r\u00e9ponse"],correct:1,explain:"Le jury attend du droit appliqu\u00e9, pas une r\u00e9citation abstraite."}
+]
+];
+
+var ORAL_STEPS = [
+  {name:'Introduction', icon:'&#128075;', desc:'Pr\u00e9sentation, excuses anonymisation, parcours'},
+  {name:'Fonction scolaire \u2013 AIS/DIP', icon:'&#127979;', desc:'Remplaçant AIS depuis 2018, \u00e9l\u00e8ves \u00e0 besoins sp\u00e9cifiques'},
+  {name:'Socio-\u00e9ducatif \u2013 FASe/FINC', icon:'&#127968;', desc:'Moniteur depuis 2014, maisons de quartier, lien et m\u00e9diation'},
+  {name:'Sport \u2013 Basket', icon:'&#127936;', desc:'Jeunes 12-20 ans, outil \u00e9ducatif, coop\u00e9ration'},
+  {name:'Fil rouge', icon:'&#129517;', desc:'Accompagnement, inclusion, relation, d\u00e9veloppement'},
+  {name:'D\u00e9buts \u2013 Service civil', icon:'&#128161;', desc:'2013-2014, d\u00e9clic, gestion des conflits'},
+  {name:'Pr\u00e9vention \u2013 Transit', icon:'&#128694;', desc:'Travail hors murs, compr\u00e9hension des jeunes'},
+  {name:'Formations', icon:'&#127891;', desc:'HETS, Jeunesse+Sport, TSA, agressivit\u00e9'},
+  {name:'Situation pr\u00e9sent\u00e9e', icon:'&#128214;', desc:'Match U15, crise, \u00e9motions (optionnel)'},
+  {name:'R\u00e9ponse \u00e9ducative', icon:'&#129309;', desc:'S\u00e9curiser, analyser, m\u00e9diation (optionnel)'},
+  {name:'Posture + remerciement', icon:'&#127775;', desc:'Respect, adaptation, projection, merci'}
+];
+
+/* === SM-2 SPACED REPETITION ENGINE === */
+var DB_KEY='circuit_sr';
+function getDB(){try{return JSON.parse(localStorage.getItem(DB_KEY))||{}}catch(e){return{}}}
+function saveDB(d){localStorage.setItem(DB_KEY,JSON.stringify(d))}
+function cardKey(qi,qj){return 'q_'+qi+'_'+qj}
+function getCard(qi,qj){var db=getDB();return db[cardKey(qi,qj)]||{ef:2.5,iv:0,reps:0,next:0,last:0,sc:-1}}
+function updateCard(qi,qj,quality){
+  var db=getDB(),k=cardKey(qi,qj),c=db[k]||{ef:2.5,iv:0,reps:0,next:0,last:0,sc:-1};
+  if(quality<3){c.reps=0;c.iv=1}else{
+    if(c.reps===0)c.iv=1;else if(c.reps===1)c.iv=3;else c.iv=Math.round(c.iv*c.ef);c.reps++;}
+  c.ef=Math.max(1.3,c.ef+(0.1-(5-quality)*(0.08+(5-quality)*0.02)));
+  c.next=Date.now()+c.iv*86400000;c.last=Date.now();c.sc=quality;
+  db[k]=c;saveDB(db);return c;
+}
+
+/* === ANALYTICS === */
+var TOTAL_Q=0;
+for(var _i=0;_i<ALL_QUESTIONS.length;_i++)TOTAL_Q+=ALL_QUESTIONS[_i].length;
+
+function allCards(){
+  var r=[];for(var i=0;i<ALL_QUESTIONS.length;i++)
+    for(var j=0;j<ALL_QUESTIONS[i].length;j++)
+      r.push({qi:i,qj:j,c:getCard(i,j),q:ALL_QUESTIONS[i][j]});return r;
+}
+function dueCards(){var now=Date.now();return allCards().filter(function(x){return x.c.sc>=0&&x.c.next<=now})}
+function newCards(){return allCards().filter(function(x){return x.c.sc<0})}
+function masteredCards(){return allCards().filter(function(x){return x.c.reps>=3&&x.c.ef>=2.0})}
+function learningCards(){return allCards().filter(function(x){return x.c.sc>=0&&(x.c.reps<3||x.c.ef<2.0)})}
+function weakCards(){return allCards().filter(function(x){return x.c.sc>=0&&x.c.sc<3}).sort(function(a,b){return a.c.ef-b.c.ef})}
+function quizMastery(qi){
+  var qs=ALL_QUESTIONS[qi],good=0;
+  for(var j=0;j<qs.length;j++){var c=getCard(qi,j);if(c.reps>=2)good++;}
+  return qs.length>0?Math.round(good/qs.length*100):0;
+}
+function quizDone(qi){
+  var qs=ALL_QUESTIONS[qi];
+  for(var j=0;j<qs.length;j++){if(getCard(qi,j).sc<0)return false;}return true;
+}
+function quizStarted(qi){
+  var qs=ALL_QUESTIONS[qi];
+  for(var j=0;j<qs.length;j++){if(getCard(qi,j).sc>=0)return true;}return false;
+}
+
+/* === PARCOURS ORDER === */
+/* Phase 1: PRÉSENTATION (StructureOral → Oral1 → Oral2)
+   Phase 2: JURY (QJury → JuryAv1 → JuryAv2 → Simul → Pièges → Livret → Situations → SitDC2 → SitDC3)
+   Phase 3: CONTENU (Lois → Posture → MicroDC → MicroLois)
+   Phase 4: MÉMOIRE (boucle) */
+var PARCOURS_ORDER=[7,8,0,9,10,3,5,4,6,11,12,1,2,13,14];
+var PARCOURS_ICONS=['\uD83C\uDFA4','\uD83C\uDFA4','\u26A1','\u26A1','\uD83D\uDCAC','\uD83C\uDF93','\u26A0\uFE0F','\uD83D\uDD0E','\uD83D\uDCD6','\uD83D\uDCCB','\uD83D\uDCCB','\u2696\uFE0F','\uD83D\uDEE0','\uD83C\uDFAF','\u2696\uFE0F'];
+var PHASE_BREAKS={0:'PHASE 1 \u2014 PR\u00c9SENTATION',2:'PHASE 2 \u2014 JURY',11:'PHASE 3 \u2014 CONTENU'};
+
+function getCurrentStep(){
+  var db=getDB();if(db._lastStep!==undefined)return db._lastStep;
+  for(var i=0;i<PARCOURS_ORDER.length;i++){if(!quizDone(PARCOURS_ORDER[i]))return i;}
+  return PARCOURS_ORDER.length;
+}
+function saveStep(s){var db=getDB();db._lastStep=s;saveDB(db)}
+
+/* === RENDER: SMART RESUME BANNER === */
+function renderResume(){
+  var step=getCurrentStep(),d=dueCards().length,w=weakCards().length,n=newCards().length;
+  var title,sub;
+  /* Priorit\u00e9 1 : \u00e9tapes orales non coch\u00e9es */
+  var oralDone=getOralChecked();
+  var firstUnchecked=-1;
+  for(var oi=0;oi<ORAL_STEPS.length;oi++){if(oralDone.indexOf(oi)<0){firstUnchecked=oi;break;}}
+  if(firstUnchecked>=0){
+    title='\uD83C\uDFA4 R\u00e9cite : '+ORAL_STEPS[firstUnchecked].name;
+    sub='\u00c9tape '+(firstUnchecked+1)+'/'+ORAL_STEPS.length+' \u2014 '+ORAL_STEPS[firstUnchecked].desc;
+  }
+  else if(d>0){title='\u26A1 '+d+' question'+(d>1?'s':'')+' \u00e0 revoir maintenant';sub='R\u00e9p\u00e9tition espac\u00e9e : renforce ta m\u00e9moire'}
+  else if(step<PARCOURS_ORDER.length){var qz=QUIZZES[PARCOURS_ORDER[step]];title='\u25B6\uFE0F Continue : '+qz.name;sub='\u00c9tape '+(step+12)+'/26 \u2014 '+qz.desc}
+  else if(w>0){title='\uD83D\uDD01 '+w+' question'+(w>1?'s':'')+' fragile'+(w>1?'s':'');sub='Consolide avant de valider'}
+  else if(n>0){title='\uD83C\uDD95 Nouvelles questions disponibles';sub=n+' questions \u00e0 d\u00e9couvrir'}
+  else{title='\uD83C\uDFC6 Parcours ma\u00eetris\u00e9 !';sub='Continue de r\u00e9viser pour maintenir'}
+  document.getElementById('resumeTitle').textContent=title;
+  document.getElementById('resumeSub').textContent=sub;
+}
+
+var PASSAGE_GOAL=3;
+function getPassage(){var db=getDB();return db._passage||0}
+function checkPassageComplete(){
+  for(var i=0;i<ALL_QUESTIONS.length;i++){if(!quizDone(i))return false;}return true;
+}
+function advancePassage(){
+  var db=getDB(),p=(db._passage||0)+1;
+  db._passage=p;db._lastStep=0;saveDB(db);
+  return p;
+}
+
+function renderStats(){
+  document.getElementById('stDue').textContent=dueCards().length;
+  document.getElementById('stMast').textContent=masteredCards().length;
+  document.getElementById('stTot').textContent=TOTAL_Q;
+  var db=getDB();document.getElementById('stSes').textContent=db._ses||0;
+  var p=db._passage||0;
+  document.getElementById('stPass').textContent=Math.min(p+1,PASSAGE_GOAL)+'/'+PASSAGE_GOAL;
+  document.getElementById('stPass').style.color=p>=PASSAGE_GOAL?'#22c55e':'#8b5cf6';
+}
+
+/* === ORAL STEPS IN PARCOURS === */
+function getOralChecked(){var db=getDB();return db._oralChecked||[]}
+function toggleOralStep(idx){
+  var db=getDB(),arr=db._oralChecked||[];
+  if(arr.indexOf(idx)>=0)arr.splice(arr.indexOf(idx),1);else arr.push(idx);
+  db._oralChecked=arr;saveDB(db);renderParcours();
+}
+
+/* === RENDER: PARCOURS GLOBAL TREE === */
+function renderParcours(){
+  var step=getCurrentStep(),h='';
+  var curPass=getPassage();
+  h+='<div style="text-align:center;padding:12px 0 8px"><span style="display:inline-block;padding:8px 20px;border-radius:20px;background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;font-weight:800;font-size:.9rem;letter-spacing:1px">\uD83D\uDD01 PASSAGE '+(Math.min(curPass+1,PASSAGE_GOAL))+' / '+PASSAGE_GOAL+(curPass>=PASSAGE_GOAL?' \u2014 TERMIN\u00c9 \uD83C\uDFC6':'')+'</span></div>';
+  h+='<div class="tree-node current" onclick="launchSmart()" style="border-left-color:#f59e0b;margin-bottom:2px"><div class="icon">\uD83C\uDFAF</div><div class="node-info"><h4>D\u00c9PART</h4><p>Cliquez pour lancer la session optimale</p></div><span class="badge badge-current">\u25B6 GO</span></div>';
+  h+='<div class="connector current"></div>';
+  /* --- Phase 1 header + Oral Structure --- */
+  h+='<div style="text-align:center;padding:10px 0 6px;font-weight:800;font-size:.85rem;color:#8b5cf6;letter-spacing:1px">\uD83C\uDF99\uFE0F PHASE 1 \u2014 PR\u00c9SENTATION</div>';
+  h+='<div style="text-align:center;font-size:.8rem;color:#666;margin-bottom:10px">R\u00e9cite chaque \u00e9tape \u00e0 voix haute puis coche</div>';
+  var oralChecked=getOralChecked();
+  for(var oi=0;oi<ORAL_STEPS.length;oi++){
+    var os=ORAL_STEPS[oi],checked=oralChecked.indexOf(oi)>=0;
+    var oCls=checked?'done':'';
+    h+='<div class="tree-node '+oCls+'" onclick="toggleOralStep('+oi+')" style="cursor:pointer;border-left-color:'+(checked?'#22c55e':'#f59e0b')+'">';
+    h+='<div class="icon">'+os.icon+'</div>';
+    h+='<div class="node-info"><h4>\u00c9tape '+(oi+1)+' \u2014 '+os.name+'</h4><p>'+os.desc+'</p></div>';
+    h+='<span class="badge '+(checked?'badge-done':'badge-current')+'">'+(checked?'\u2705 r\u00e9vis\u00e9':'\u25B6 R\u00c9CITER')+'</span></div>';
+    h+='<div class="connector '+(checked?'done':'')+'">'+'</div>';
+  }
+  /* --- Quiz modules with phase headers --- */
+  var stepNum=12;
+  for(var i=0;i<PARCOURS_ORDER.length;i++){
+    if(PHASE_BREAKS[i]&&i>0){
+      h+='<div style="text-align:center;padding:14px 0 6px;font-weight:800;font-size:.85rem;color:#8b5cf6;letter-spacing:1px">'+PHASE_BREAKS[i]+'</div>';
+    }
+    var qi=PARCOURS_ORDER[i],qz=QUIZZES[qi],done=quizDone(qi),started=quizStarted(qi);
+    var cls=done?'done':(i===step?'current':(i<step?'done':''));
+    var pct=quizMastery(qi);
+    var badgeCls=done?'badge-done':(i===step?'badge-current':'badge-todo');
+    var badgeTxt=done?(pct+'%'):(i===step?'\u25B6 EN COURS':(started?pct+'%':'\u25B6 LANCER'));
+    h+='<div class="tree-node '+cls+'" onclick="launchQuiz('+qi+')">';
+    h+='<div class="icon">'+qz.icon+'</div>';
+    h+='<div class="node-info"><h4>\u00c9tape '+stepNum+' \u2014 '+qz.name+'</h4><p>'+qz.desc+(started?' \u2014 '+pct+'% ma\u00eetris\u00e9e':'')+'</p></div>';
+    h+='<span class="badge '+badgeCls+'">'+badgeTxt+'</span></div>';
+    if(i<PARCOURS_ORDER.length-1)h+='<div class="connector '+(done?'done':(i===step?'current':''))+'"></div>';
+    stepNum++;
+  }
+  h+='<div class="connector"></div>';
+  h+='<div style="text-align:center;padding:14px 0 6px;font-weight:800;font-size:.85rem;color:#8b5cf6;letter-spacing:1px">PHASE 4 \u2014 M\u00c9MOIRE</div>';
+  h+='<div class="tree-node" style="border-left-color:#8b5cf6" onclick="launchSmart()"><div class="icon">\uD83D\uDD01</div><div class="node-info"><h4>BOUCLE M\u00c9MOIRE</h4><p>R\u00e9vision cibl\u00e9e + consolidation</p></div></div>';
+  h+='<div class="branch-split">';
+  h+='<div class="branch-side"><h5>\uD83D\uDD04 R\u00e9vision cibl\u00e9e</h5><div class="branch-node" onclick="launchType(\'due\')">'+dueCards().length+' questions dues</div></div>';
+  h+='<div class="branch-side"><h5>\uD83E\uDDE0 Quiz faibles</h5><div class="branch-node" onclick="launchType(\'consol\')">'+weakCards().length+' questions fragiles</div></div>';
+  h+='</div>';
+  var errCount=weakCards().length;
+  h+='<div class="connector" style="border-color:#ef4444"></div>';
+  h+='<div class="tree-node '+(errCount>0?'current':'done')+'" style="border-left-color:#ef4444;cursor:pointer" onclick="launchErrors()">';
+  h+='<div class="icon">\u274C</div><div class="node-info"><h4>QUIZ DES ERREURS</h4>';
+  h+='<p>'+(errCount>0?errCount+' question'+(errCount>1?'s':'')+' rat\u00e9e'+(errCount>1?'s':'')+' \u00e0 retravailler':'Aucune erreur \u2014 Bravo !')+'</p></div>';
+  h+='<span class="badge '+(errCount>0?'badge-current':'badge-done')+'">'+(errCount>0?'\u25B6 LANCER':'\u2705 0')+'</span></div>';
+  h+='<div class="connector"></div>';
+  h+='<div class="tree-node" style="border-left-color:#06b6d4"><div class="icon">\uD83D\uDD01</div><div class="node-info"><h4>Repasser le cycle</h4><p>Reprendre depuis le d\u00e9but avec r\u00e9p\u00e9tition espac\u00e9e</p></div></div>';
+  h+='<div class="connector"></div>';
+  h+='<div class="tree-node" style="border-left-color:#22c55e"><div class="icon">\u2705</div><div class="node-info"><h4>Validation bloc</h4><p>'+masteredCards().length+'/'+TOTAL_Q+' questions ma\u00eetris\u00e9es</p></div></div>';
+  h+='<div class="connector"></div>';
+  h+='<div class="tree-node" style="border-left-color:#94a3b8"><div class="icon">\u23F8\uFE0F</div><div class="node-info"><h4>Pause / Reprise</h4><p>Le syst\u00e8me m\u00e9morise ton point d\'arr\u00eat</p></div></div>';
+  document.getElementById('treeParcours').innerHTML=h;
+}
+
+/* === RENDER: ORAL TREE === */
+function renderOral(){
+  var steps=[
+    {icon:'\uD83D\uDC64',name:'Pr\u00e9sentation personnelle',desc:'Qui suis-je, excuses anonymisation'},
+    {icon:'\uD83E\uDDED',name:'Parcours professionnel',desc:'AIS/DIP, FASe/FINC, basket, fil rouge'},
+    {icon:'\uD83E\uDDE0',name:'Positionnement \u00e9ducatif',desc:'Posture, valeurs, \u00e9thique professionnelle'},
+    {icon:'\uD83D\uDCDA',name:'Exp\u00e9riences principales',desc:'Situations choisies, contexte, enjeux'},
+    {icon:'\uD83D\uDD0D',name:'Analyse de pratique',desc:'R\u00e9flexivit\u00e9, ajustements, apprentissages'},
+    {icon:'\uD83E\uDD1D',name:'Travail en r\u00e9seau',desc:'Partenariats, \u00e9quipe, coordination'},
+    {icon:'\uD83C\uDFAF',name:'Conclusion / ouverture',desc:'Projection, remerciement, posture'}
+  ];
+  var h='<div class="tree-node current" style="border-left-color:#f59e0b"><div class="icon">\uD83C\uDFA4</div><div class="node-info"><h4>D\u00c9BUT PR\u00c9SENTATION</h4><p>~30 min d\'oral devant le jury</p></div><span class="badge badge-count">~30 min</span></div>';
+  h+='<div class="connector current"></div>';
+  for(var i=0;i<steps.length;i++){
+    var s=steps[i];
+    h+='<div class="tree-node"><div class="icon">'+s.icon+'</div><div class="node-info"><h4>'+(i+1)+'. '+s.name+'</h4><p>'+s.desc+'</p></div><span class="badge badge-count">~'+(i<2?'3':'5')+' min</span></div>';
+    if(i<steps.length-1)h+='<div class="connector"></div>';
+  }
+  document.getElementById('treeOral').innerHTML=h;
+}
+
+/* === RENDER: QUESTIONS JURY DC TREE === */
+function renderJuryDC(){
+  function assignDC(q){
+    var t=(q.q+' '+q.explain).toLowerCase();
+    if(/dc1|relation|posture|distance|observation|ajust|confiance|accompagn|pr.sence|retrait|.coute/.test(t))return'DC1';
+    if(/dc2|projet|objectif|.valuation|m.thodologie|7 .tapes|conception|livret/.test(t))return'DC2';
+    if(/dc3|.quipe|communication|transmission|coordination|r.gulation|coh.rence/.test(t))return'DC3';
+    if(/dc4|r.seau|partenariat|famille|institution|politique|loi|rgpd|226|2002|2007|cra/.test(t))return'DC4';
+    return'DC1';
+  }
+  var dcData={DC1:[],DC2:[],DC3:[],DC4:[]};
+  allCards().forEach(function(x){dcData[assignDC(x.q)].push(x)});
+  var colors={DC1:'#8b5cf6',DC2:'#06b6d4',DC3:'#22c55e',DC4:'#f59e0b'};
+  var names={DC1:'DC1 \uD83E\uDDE0 Accompagnement',DC2:'DC2 \uD83D\uDEE0 Projet \u00e9ducatif',DC3:'DC3 \uD83E\uDD1D Travail d\'\u00e9quipe',DC4:'DC4 \uD83D\uDCCA Partenariat'};
+  var subs={DC1:['Relation \u00e9ducative','Positionnement','Analyse'],DC2:['M\u00e9thodologie','Organisation','Conception'],DC3:['Communication','Coordination','R\u00e9gulation'],DC4:['R\u00e9seau','Institutions','Politiques']};
+  var h='<div class="tree-node" style="border-left-color:#f59e0b"><div class="icon">\u2753</div><div class="node-info"><h4>QUESTIONS JURY</h4><p>'+TOTAL_Q+' questions r\u00e9parties par domaine de comp\u00e9tence</p></div></div>';
+  h+='<div class="connector"></div><div class="dc-grid">';
+  ['DC1','DC2','DC3','DC4'].forEach(function(dc){
+    var cards=dcData[dc],m=cards.filter(function(x){return x.c.reps>=3&&x.c.ef>=2.0}).length;
+    var pct=cards.length>0?Math.round(m/cards.length*100):0;
+    h+='<div class="dc-col" style="border-color:'+colors[dc]+'">';
+    h+='<h4 style="color:'+colors[dc]+'">'+names[dc]+'</h4>';
+    h+='<div class="dc-pct" style="color:'+colors[dc]+'">'+pct+'%</div>';
+    h+='<div class="dc-bar"><div class="dc-fill" style="width:'+pct+'%;background:'+colors[dc]+'"></div></div>';
+    h+='<div class="dc-items">';
+    subs[dc].forEach(function(s){h+='<div class="dc-item">'+s+'<span class="di-badge" style="background:'+colors[dc]+'22;color:'+colors[dc]+'">'+cards.length+'q</span></div>'});
+    h+='</div></div>';
+  });
+  h+='</div>';
+  document.getElementById('treeJury').innerHTML=h;
+}
+
+/* === RENDER: MEMORY CYCLE === */
+function renderMemoire(){
+  var n=newCards().length,l=learningCards().length,m=masteredCards().length;
+  var h='<div class="mem-stats">';
+  h+='<div class="mem-box"><div class="mb-num mb-new">'+n+'</div><div class="mb-label">Nouvelles</div></div>';
+  h+='<div class="mem-box"><div class="mb-num mb-learn">'+l+'</div><div class="mb-label">En cours</div></div>';
+  h+='<div class="mem-box"><div class="mb-num mb-master">'+m+'</div><div class="mb-label">Ma\u00eetris\u00e9es</div></div></div>';
+  var memSteps=[
+    {icon:'\uD83D\uDCE5',name:'Apprentissage',desc:'D\u00e9couvrir les nouvelles questions',val:n+' nouvelles'},
+    {icon:'\uD83D\uDD01',name:'R\u00e9p\u00e9tition',desc:'Revoir les questions en cours',val:l+' en cours'},
+    {icon:'\uD83E\uDDE0',name:'Compr\u00e9hension',desc:'Analyser les erreurs et comprendre'},
+    {icon:'\u26A1',name:'Rappel actif',desc:'Tester sa m\u00e9moire sans aide'},
+    {icon:'\u2757',name:'Erreurs d\u00e9tect\u00e9es',desc:weakCards().length+' questions fragiles identifi\u00e9es'}
+  ];
+  memSteps.forEach(function(s,i){
+    h+='<div class="tree-node"><div class="icon">'+s.icon+'</div><div class="node-info"><h4>'+s.name+'</h4><p>'+s.desc+'</p></div>'+(s.val?'<span class="badge badge-count">'+s.val+'</span>':'')+'</div>';
+    if(i<memSteps.length-1)h+='<div class="connector"></div>';
+  });
+  h+='<div class="connector"></div>';
+  h+='<div class="branch-split">';
+  h+='<div class="branch-side"><h5>\uD83D\uDD04 R\u00e9vision cibl\u00e9e</h5><div class="branch-node" onclick="launchType(\'consol\')">Consolider les faiblesses</div></div>';
+  h+='<div class="branch-side"><h5>\u2705 Validation</h5><div class="branch-node" onclick="launchType(\'due\')">Questions ma\u00eetris\u00e9es: '+m+'</div></div>';
+  h+='</div><div class="connector"></div>';
+  h+='<div class="tree-node" style="border-left-color:#8b5cf6"><div class="icon">\uD83D\uDD01</div><div class="node-info"><h4>Consolidation</h4><p>Cycle continu de renforcement m\u00e9moriel</p></div></div>';
+  h+='<div style="margin-top:14px"><h4 style="color:#f59e0b;font-size:.88rem;margin-bottom:8px">\uD83D\uDCC8 R\u00e9tention par module</h4>';
+  QUIZZES.forEach(function(qz,qi){
+    var pct=quizMastery(qi),color=pct>=80?'#22c55e':pct>=40?'#f59e0b':'#ef4444';
+    h+='<div class="mem-row"><div class="mem-label">'+qz.icon+' '+qz.name+'</div>';
+    h+='<div class="bar-bg"><div class="bar-fill" style="width:'+pct+'%;background:'+color+'"></div></div>';
+    h+='<div class="mem-val">'+pct+'%</div></div>';
+  });
+  h+='</div>';
+  document.getElementById('treeMem').innerHTML=h;
+}
+
+/* === QUIZ SESSION === */
+var curSession=[],sesIdx=0,sesScore=0,sesType='',sesAnswered=false;
+
+function buildSession(type){
+  var cards;
+  if(type==='due'){cards=dueCards().sort(function(a,b){return a.c.ef-b.c.ef}).slice(0,10)}
+  else if(type==='new'){cards=newCards().slice(0,10)}
+  else if(type==='consol'){var w=weakCards();cards=w.length>0?w.slice(0,10):learningCards().slice(0,10)}
+  else if(type==='quiz'){return null}
+  else{
+    var d=dueCards();if(d.length>=3)return{type:'due',cards:d.sort(function(a,b){return a.c.ef-b.c.ef}).slice(0,10)};
+    var step=getCurrentStep();
+    if(step<PARCOURS_ORDER.length){
+      var qi=PARCOURS_ORDER[step];
+      cards=[];for(var j=0;j<ALL_QUESTIONS[qi].length;j++)cards.push({qi:qi,qj:j,c:getCard(qi,j),q:ALL_QUESTIONS[qi][j]});
+      return{type:'parcours',cards:cards};
+    }
+    var w2=weakCards();if(w2.length>=2)return{type:'consol',cards:w2.slice(0,10)};
+    return{type:'new',cards:newCards().slice(0,10)};
+  }
+  return{type:type,cards:cards||[]};
+}
+
+function startSession(cards,type,title){
+  if(!cards||cards.length===0){alert('Aucune question disponible.');return}
+  curSession=cards;sesIdx=0;sesScore=0;sesType=type;sesAnswered=false;
+  hideMain();document.getElementById('quizInline').style.display='block';
+  document.getElementById('quizTitle').textContent=title||('\uD83E\uDDE0 '+(
+    {due:'R\u00e9vision due',new:'D\u00e9couverte',consol:'Consolidation',parcours:'Parcours'}[type]||'Session'));
+  renderQ();window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function launchSmart(){var s=buildSession('smart');if(s)startSession(s.cards,s.type)}
+function launchType(type){var s=buildSession(type);if(s)startSession(s.cards,s.type)}
+function launchErrors(){
+  var cards=weakCards();
+  if(cards.length===0){alert('Aucune question fausse ! Bravo !');return}
+  startSession(cards,'errors','❌ Quiz des erreurs — '+cards.length+' question'+(cards.length>1?'s':''));
+}
+function launchQuiz(qi){
+  var cards=[];for(var j=0;j<ALL_QUESTIONS[qi].length;j++)cards.push({qi:qi,qj:j,c:getCard(qi,j),q:ALL_QUESTIONS[qi][j]});
+  startSession(cards,'quiz',QUIZZES[qi].icon+' '+QUIZZES[qi].name);
+}
+
+function hideMain(){
+  ['resumeBanner','secParcours','secOral','secJury','secMemoire'].forEach(function(id){document.getElementById(id).style.display='none'});
+  document.querySelector('.stats').style.display='none';
+  document.querySelector('.reset-row').style.display='none';
+}
+function showMain(){
+  document.getElementById('quizInline').style.display='none';
+  ['resumeBanner'].forEach(function(id){document.getElementById(id).style.display='flex'});
+  ['secParcours','secOral','secJury','secMemoire'].forEach(function(id){document.getElementById(id).style.display='block'});
+  document.querySelector('.stats').style.display='flex';
+  document.querySelector('.reset-row').style.display='block';
+  renderAll();window.scrollTo({top:0,behavior:'smooth'});
+}
+function exitQuiz(){showMain()}
+
+function renderQ(){
+  sesAnswered=false;var item=curSession[sesIdx],q=item.q,total=curSession.length;
+  document.getElementById('qFill').style.width=(sesIdx/total*100)+'%';
+  document.getElementById('qText').textContent='Question '+(sesIdx+1)+' / '+total;
+  var h='<div class="quiz-question"><div class="quiz-q-text">'+q.q+'</div><div class="quiz-opts">';
+  for(var i=0;i<q.opts.length;i++)h+='<button class="quiz-opt" onclick="sesAnswer('+i+')">'+String.fromCharCode(65+i)+'. '+q.opts[i]+'</button>';
+  h+='</div><div class="quiz-explain" id="sesExp">'+q.explain+'</div>';
+  h+='<div class="sr-feedback" id="srFb"></div>';
+  h+='<button class="quiz-next" id="sesNext" onclick="sesNext()">Suivante \u2192</button></div>';
+  document.getElementById('quizBody').innerHTML=h;
+}
+
+function sesAnswer(idx){
+  if(sesAnswered)return;sesAnswered=true;
+  var item=curSession[sesIdx],q=item.q,ok=idx===q.correct;
+  document.querySelectorAll('.quiz-opt').forEach(function(b,i){
+    b.classList.add('disabled');if(i===q.correct)b.classList.add('correct');if(i===idx&&!ok)b.classList.add('wrong');
+  });
+  if(ok)sesScore++;
+  var updated=updateCard(item.qi,item.qj,ok?5:1);
+  document.getElementById('sesExp').classList.add('visible');
+  var fb=document.getElementById('srFb');
+  if(ok){fb.className='sr-feedback visible sr-up';fb.textContent='\u2705 Prochaine r\u00e9vision dans '+updated.iv+' jour'+(updated.iv>1?'s':'')+' (EF: '+updated.ef.toFixed(2)+')'}
+  else{fb.className='sr-feedback visible sr-down';fb.textContent='\u274C Replanifi\u00e9e demain \u2014 sera repropos\u00e9e'}
+  document.getElementById('sesNext').classList.add('visible');
+}
+
+function sesNext(){
+  sesIdx++;if(sesIdx>=curSession.length){showResult();return}
+  renderQ();document.querySelector('.quiz-question').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function showResult(){
+  var total=curSession.length,pct=Math.round(sesScore/total*100);
+  var msg=pct>=80?'Excellent ! M\u00e9moire renforc\u00e9e !':pct>=60?'Bien ! Encore un passage.':'Continue, tu progresses !';
+  document.getElementById('qFill').style.width='100%';
+  document.getElementById('qText').textContent='Termin\u00e9 !';
+  var errCount=weakCards().length;
+  var h='<div class="quiz-result"><div class="quiz-score">'+sesScore+'/'+total+'</div>';
+  h+='<div class="quiz-score-label">'+pct+'% \u2014 '+msg+'</div>';
+  if(errCount>0&&sesType!=='errors'){h+='<button class="quiz-return" style="background:#ef4444;margin-bottom:10px" onclick="launchErrors()">\u274C Revoir mes '+errCount+' erreur'+(errCount>1?'s':'')+' \u2192</button>';}
+  h+='<button class="quiz-return" onclick="showMain()">\u2713 Retour au circuit</button></div>';
+  document.getElementById('quizBody').innerHTML=h;
+  if(sesType==='parcours'){var step=getCurrentStep();if(pct>=50&&step<PARCOURS_ORDER.length){saveStep(step+1)}}
+  var db=getDB();db._ses=(db._ses||0)+1;saveDB(db);
+  if(checkPassageComplete()&&(db._passage||0)<PASSAGE_GOAL){
+    var newP=advancePassage();
+    if(newP<PASSAGE_GOAL){alert('\uD83C\uDF89 Passage '+newP+'/'+PASSAGE_GOAL+' termin\u00e9 ! Le suivant commence.')}
+    else{alert('\uD83C\uDFC6 F\u00e9licitations ! 3 passages termin\u00e9s ! Tu es pr\u00eat pour le jury.')}
+  }
+}
+
+/* === RESET === */
+function resetAll(){if(confirm('R\u00e9initialiser tout le circuit intelligent ?')){localStorage.removeItem(DB_KEY);renderAll()}}
+
+/* === INIT === */
+function renderAll(){renderResume();renderStats();renderParcours();renderOral();renderJuryDC();renderMemoire()}
+renderAll();
+</script>
+<script src="mentor.js"></script>
+</body>
+</html>
